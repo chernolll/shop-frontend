@@ -13,5 +13,11 @@
     "title": "Dashboard",
     "analytics": "Analytics",
     "workspace": "Workspace"
+  },
+   "bd": {
+    "title": "BD",
+    "dashboard": "Dashboard",
+    "tasks": "Task Center",
+    "taskProgress": "Task Progress"
   }
 }

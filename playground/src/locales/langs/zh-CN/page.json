@@ -13,5 +13,11 @@
     "title": "概览",
     "analytics": "分析页",
     "workspace": "工作台"
+  },
+  "bd": {
+    "title": "BD",
+    "dashboard": "数据面板",
+    "tasks": "任务中心",
+    "taskProgress": "任务完成情况"
   }
 }
