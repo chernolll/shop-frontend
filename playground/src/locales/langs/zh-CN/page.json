@@ -18,6 +18,10 @@
     "title": "BD",
     "dashboard": "数据面板",
     "tasks": "任务中心",
-    "taskProgress": "任务完成情况"
+    "taskProgress": "任务完成情况",
+    "sop": {
+      "title": "SOP",
+      "list-title": "总览"
+    }
   }
 }

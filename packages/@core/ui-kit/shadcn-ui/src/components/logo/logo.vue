@@ -83,7 +83,7 @@ const logoSrc = computed(() => {
       <template v-if="!collapsed">
         <slot name="text">
           <span class="text-foreground truncate font-semibold text-nowrap">
-            {{ text }}
+            LIVETIEND
           </span>
         </slot>
       </template>

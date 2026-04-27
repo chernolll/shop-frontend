@@ -14,10 +14,14 @@
     "analytics": "Analytics",
     "workspace": "Workspace"
   },
-   "bd": {
+  "bd": {
     "title": "BD",
     "dashboard": "Dashboard",
     "tasks": "Task Center",
-    "taskProgress": "Task Progress"
+    "taskProgress": "Task Progress",
+    "sop": {
+      "title": "SOP",
+      "list-title": "Table"
+    }
   }
 }

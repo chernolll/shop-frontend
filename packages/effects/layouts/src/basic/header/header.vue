@@ -172,7 +172,7 @@ function clearPreferencesAndLogout() {
         <template v-else-if="slot.name === 'fullscreen'">
           <VbenFullScreen class="mr-1" />
         </template>
-</slot>
+      </slot>
     </template>
   </div>
 </template>
