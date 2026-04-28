@@ -1,0 +1,160 @@
+{
+  "api": "GET /bd/my-tasks",
+  "description": "BD用户-我的任务列表",
+
+  "request": {
+    "params": {
+      "page": { "type": "number", "required": true, "description": "页码，从1开始" },
+      "pageSize": { "type": "number", "required": true, "description": "每页条数" },
+      "productName": { "type": "string", "required": false, "description": "商品名称模糊搜索" },
+      "prepareStatus": { "type": "string", "required": false, "description": "筹备状态筛选", "enum": ["NOT_STARTED", "IN_PROGRESS", "PARTIAL", "DONE"] },
+      "deadlineStart": { "type": "string", "required": false, "description": "截止时间起始，ISO date" },
+      "deadlineEnd": { "type": "string", "required": false, "description": "截止时间结束，ISO date" }
+    }
+  },
+
+  "response": {
+    "items": [
+      {
+        "taskId": { "type": "number", "description": "任务ID，同时也是表格行key" },
+        "productName": { "type": "string", "description": "商品名称" },
+        "productImage": { "type": "string", "description": "商品图片URL" },
+        "shopName": { "type": "string", "description": "店铺名称" },
+        "platform": { "type": "number", "description": "平台", "enum": { "1": "TikTok", "2": "Shopee", "3": "Lazada" } },
+        "country": { "type": "string", "description": "国家/站点代码，如TH、CN" },
+        "commission": { "type": "number", "description": "佣金（任务固定佣金）" },
+        "myVideoNum": { "type": "number", "description": "当前BD负责的视频数量" },
+        "totalVideoNum": { "type": "number", "description": "该任务总视频数量" },
+        "preparePassed": { "type": "number", "description": "已通过筹备的达人数量" },
+        "preparePending": { "type": "number", "description": "待审核的达人数量" },
+        "prepareTotal": { "type": "number", "description": "筹备达人总数" },
+        "progress": { "type": "number", "description": "筹备进度百分比，0-100的整数" },
+        "prepareStatus": { "type": "string", "description": "筹备状态", "enum": ["NOT_STARTED", "IN_PROGRESS", "PARTIAL", "DONE"] },
+        "deadline": { "type": "string", "description": "截止日期，ISO date格式" },
+        "followEntryTime": { "type": "string", "description": "BD跟进录入时间，ISO datetime格式" },
+        "taskType": { "type": "number", "description": "任务类型", "enum": { "0": "定制", "1": "公开" } }
+      }
+    ],
+    "total": { "type": "number", "description": "总记录数，用于分页" }
+  },
+
+  "_mockData": {
+    "items": [
+      {
+        "taskId": 1001,
+        "productName": "夏季纯棉T恤 男女同款宽松短袖",
+        "productImage": "https://picsum.photos/seed/product1/200/200",
+        "shopName": "曼谷潮牌集合店",
+        "platform": 1,
+        "country": "TH",
+        "commission": 15.5,
+        "myVideoNum": 8,
+        "totalVideoNum": 20,
+        "preparePassed": 3,
+        "preparePending": 2,
+        "prepareTotal": 8,
+        "progress": 37,
+        "prepareStatus": "IN_PROGRESS",
+        "deadline": "2026-05-15",
+        "followEntryTime": "2026-04-20T10:30:00+07:00",
+        "taskType": 0
+      },
+      {
+        "taskId": 1002,
+        "productName": "iPhone 15 Pro Max 透明防摔手机壳",
+        "productImage": "https://picsum.photos/seed/product2/200/200",
+        "shopName": "3C数码旗舰店",
+        "platform": 3,
+        "country": "TH",
+        "commission": 8.0,
+        "myVideoNum": 5,
+        "totalVideoNum": 10,
+        "preparePassed": 0,
+        "preparePending": 0,
+        "prepareTotal": 5,
+        "progress": 0,
+        "prepareStatus": "NOT_STARTED",
+        "deadline": "2026-05-20",
+        "followEntryTime": "2026-04-22T14:00:00+07:00",
+        "taskType": 1
+      },
+      {
+        "taskId": 1003,
+        "productName": "泰国本土椰子油护发精油 100ml",
+        "productImage": "https://picsum.photos/seed/product3/200/200",
+        "shopName": "清迈本土美妆店",
+        "platform": 2,
+        "country": "TH",
+        "commission": 12.0,
+        "myVideoNum": 10,
+        "totalVideoNum": 15,
+        "preparePassed": 5,
+        "preparePending": 1,
+        "prepareTotal": 10,
+        "progress": 50,
+        "prepareStatus": "PARTIAL",
+        "deadline": "2026-05-10",
+        "followEntryTime": "2026-04-18T09:00:00+07:00",
+        "taskType": 0
+      },
+      {
+        "taskId": 1004,
+        "productName": "便携式蓝牙音箱 户外防水重低音",
+        "productImage": "https://picsum.photos/seed/product4/200/200",
+        "shopName": "曼谷潮牌集合店",
+        "platform": 1,
+        "country": "TH",
+        "commission": 20.0,
+        "myVideoNum": 6,
+        "totalVideoNum": 6,
+        "preparePassed": 6,
+        "preparePending": 0,
+        "prepareTotal": 6,
+        "progress": 100,
+        "prepareStatus": "DONE",
+        "deadline": "2026-04-30",
+        "followEntryTime": "2026-04-15T11:00:00+07:00",
+        "taskType": 0
+      },
+      {
+        "taskId": 1005,
+        "productName": "女士瑜伽服套装 运动健身紧身衣",
+        "productImage": "https://picsum.photos/seed/product5/200/200",
+        "shopName": "东南亚运动户外专营",
+        "platform": 3,
+        "country": "CN",
+        "commission": 18.5,
+        "myVideoNum": 12,
+        "totalVideoNum": 25,
+        "preparePassed": 8,
+        "preparePending": 3,
+        "prepareTotal": 12,
+        "progress": 66,
+        "prepareStatus": "IN_PROGRESS",
+        "deadline": "2026-05-25",
+        "followEntryTime": "2026-04-25T16:30:00+07:00",
+        "taskType": 1
+      },
+      {
+        "taskId": 1006,
+        "productName": "天然乳胶枕头 颈椎按摩护颈枕",
+        "productImage": "https://picsum.photos/seed/product6/200/200",
+        "shopName": "清迈本土美妆店",
+        "platform": 2,
+        "country": "TH",
+        "commission": 25.0,
+        "myVideoNum": 4,
+        "totalVideoNum": 8,
+        "preparePassed": 0,
+        "preparePending": 0,
+        "prepareTotal": 4,
+        "progress": 0,
+        "prepareStatus": "NOT_STARTED",
+        "deadline": "2026-06-05",
+        "followEntryTime": "2026-04-26T08:00:00+07:00",
+        "taskType": 0
+      }
+    ],
+    "total": 6
+  }
+}
