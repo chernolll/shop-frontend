@@ -1,9 +1,9 @@
 import type {
   ComponentRecordType,
-  GenerateMenuAndRoutesOptions,
-} from '@vben/types';
+  GenerateAccessOptions,
+} from './dynamic-access';
+import type { RouteRecordStringComponent } from './utils';
 
-import { generateAccessible } from '@vben/access';
 import { preferences } from '@vben/preferences';
 
 import { message } from 'ant-design-vue';
@@ -12,9 +12,18 @@ import { getAllMenusApi } from '#/api';
 import { BasicLayout, IFrameView } from '#/layouts';
 import { $t } from '#/locales';
 
-const forbiddenComponent = () => import('#/views/_core/fallback/forbidden.vue');
+import { generateAccess as generateAccessCore } from './dynamic-access';
 
-async function generateAccess(options: GenerateMenuAndRoutesOptions) {
+async function generateAccess(
+  options: Omit<
+    GenerateAccessOptions,
+    | 'fetchMenuListAsync'
+    | 'forbiddenComponent'
+    | 'layoutMap'
+    | 'mode'
+    | 'pageMap'
+  >,
+) {
   const pageMap: ComponentRecordType = import.meta.glob('../views/**/*.vue');
 
   const layoutMap: ComponentRecordType = {
@@ -22,20 +31,19 @@ async function generateAccess(options: GenerateMenuAndRoutesOptions) {
     IFrameView,
   };
 
-  return await generateAccessible(preferences.app.accessMode, {
+  return generateAccessCore({
     ...options,
-    fetchMenuListAsync: async () => {
+    forbiddenComponent: () => import('#/views/_core/fallback/forbidden.vue'),
+    layoutMap,
+    mode: preferences.app.accessMode,
+    pageMap,
+    fetchMenuListAsync: async (): Promise<RouteRecordStringComponent[]> => {
       message.loading({
         content: `${$t('common.loadingMenu')}...`,
         duration: 1.5,
       });
-      return await getAllMenusApi();
+      return (await getAllMenusApi()) as RouteRecordStringComponent[];
     },
-    // 可以指定没有权限跳转403页面
-    forbiddenComponent,
-    // 如果 route.meta.menuVisibleWithForbidden = true
-    layoutMap,
-    pageMap,
   });
 }
 

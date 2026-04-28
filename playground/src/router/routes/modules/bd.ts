@@ -43,6 +43,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '我的任务',
           icon: 'lucide:inbox',
+          // permissions: ['task:bd-task:view'],
         },
       },
       {
