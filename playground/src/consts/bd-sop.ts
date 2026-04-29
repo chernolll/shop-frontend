@@ -1,14 +1,17 @@
-/** 达人筹备表，每条记录的审核状态 */
+/** 达人筹备-校验原因码（对应后端 reason_code） */
+export enum KolPrepareReasonCode {
+  CAN_PREPARE = 0, // 可筹备
+  TASK_DUPLICATE = 1, // 任务内重复提交
+  HAS_BD = 2, // 已有所属BD
+  PREPARED_BY_OTHER = 3, // 被其他BD筹备
+  KOL_DELETED = 4, // 达人已删除
+  KOL_ABNORMAL = 5, // 达人状态异常
+}
+
+/** 达人筹备表-审核状态（对应后端 prepare_status） */
 export enum KoaPrepareAuditStatus {
+  WAITING = 0, // 待审核
   PENDING = 1, // 审核中
   REJECT = 2, // 审核不通过
   PASS = 3, // 审核通过
-}
-/** 达人筹备表-达人状态 */
-export enum KoaPrepareKolStatus {
-  NORMAL, // 正常，可使用
-  TASK_REPEAT, // 同一条任务，达人重复
-  HAS_BD, // 已有所属BD
-  PREPARED, // 已被筹备
-  REJECT, // 审核不通过
 }

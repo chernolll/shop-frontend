@@ -91,7 +91,7 @@ const [Grid] = useVbenVxeGrid<BdTaskApi.BDTaskRow>({
 });
 
 function goPrepare(row: BdTaskApi.BDTaskRow) {
-  router.push(`/bd/my-task/${row.taskId}`);
+  router.push(`/bd/my-task/${row.relationId}`);
 }
 </script>
 

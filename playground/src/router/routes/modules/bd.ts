@@ -52,6 +52,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/bd/my-tasks/kol-prepare.vue'),
         meta: {
           hideInMenu: true,
+          hideInTab: true,
           title: '达人筹备表',
           activeMenu: '/bd/my-tasks',
         },
