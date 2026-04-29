@@ -532,6 +532,7 @@ watch(activeTab, (tab) => {
 });
 
 const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
+  { type: 'seq', width: 60, title: ' ' },
   { field: 'kol_id', title: '达人ID', width: 180 },
   {
     field: 'kol_link',
@@ -564,6 +565,18 @@ const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
     width: 120,
   },
   {
+    field: 'belong_bd_code',
+    slots: { default: 'belong_bd_code' },
+    title: '所属BD',
+    width: 120,
+  },
+  {
+    field: 'prepared_bd_code',
+    slots: { default: 'prepared_bd_code' },
+    title: '筹备BD',
+    width: 120,
+  },
+  {
     field: 'entry_time',
     formatter: 'formatDateTime',
     title: '录入时间',
@@ -578,6 +591,8 @@ const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
 ];
 
 const recordColumns: VxeGridProps<BdTaskApi.PrepareDataRow>['columns'] = [
+  // 序号
+  { type: 'seq', width: 60, title: ' ' },
   { field: 'kol_id', title: '达人ID', width: 180 },
   {
     field: 'kol_link',
@@ -863,6 +878,16 @@ watch(recordStatusFilter, () => {
                   {{ kolStatusLabel(row.kol_status) }}
                 </Tag>
               </template>
+              <template #belong_bd_code="{ row }">
+                <div class="leading-6 text-slate-600">
+                  {{ row.belong_bd_code || '-' }}
+                </div>
+              </template>
+              <template #prepared_bd_code="{ row }">
+                <div class="leading-6 text-slate-600">
+                  {{ row.prepared_bd_code || '-' }}
+                </div>
+              </template>
               <template #prepare_status="{ row }">
                 <Tag
                   v-if="row.prepare_status !== null"
@@ -872,6 +897,7 @@ watch(recordStatusFilter, () => {
                 </Tag>
                 <span v-else class="text-slate-400">-</span>
               </template>
+
               <template #action="{ row }">
                 <Button size="small" type="link" @click="openEditEditor(row)">
                   编辑
