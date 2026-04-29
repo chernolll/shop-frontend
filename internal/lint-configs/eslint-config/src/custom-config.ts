@@ -129,18 +129,21 @@ const customConfig: Linter.Config[] = [
     files: ['apps/backend-mock/**/**', 'docs/**/**'],
     rules: {
       'no-console': 'off',
+      'no-useless-default-assignment': 'off',
     },
   },
   {
     files: ['**/**/playwright.config.ts'],
     rules: {
       'no-console': 'off',
+      'no-useless-default-assignment': 'off',
     },
   },
   {
     files: ['internal/**/**', 'scripts/**/**'],
     rules: {
       'no-console': 'off',
+      'no-useless-default-assignment': 'off',
     },
   },
   {

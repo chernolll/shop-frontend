@@ -41,6 +41,7 @@ const javascript: OxlintConfig = {
     'no-caller': 'error',
     'no-case-declarations': 'error',
     'no-console': 'off',
+    'no-useless-default-assignment': 'off',
     'no-control-regex': 'off',
     'no-debugger': 'error',
     'no-empty': ['error', { allowEmptyCatch: true }],

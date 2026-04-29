@@ -35,7 +35,7 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
-      // ⭐ 关键：我接收的任务（BD用）
+      // 我的任务（BD用）
       {
         name: 'BD-MyTasks',
         path: '/bd/my-tasks',
@@ -43,19 +43,19 @@ const routes: RouteRecordRaw[] = [
         meta: {
           title: '我的任务',
           icon: 'lucide:inbox',
-          // permissions: ['task:bd-task:view'],
         },
       },
+      // 达人筹备详情（隐藏路由，不在菜单显示）
       {
-        name: 'BD-Task-Progress',
-        path: '/bd/task-progress',
-        component: () => import('#/views/bd/task-progress/index.vue'),
+        name: 'BD-MyTask-Detail',
+        path: '/bd/my-task/:task_id',
+        component: () => import('#/views/bd/my-tasks/kol-prepare.vue'),
         meta: {
-          icon: 'lucide:chart-column-big',
-          title: $t('page.bd.taskProgress'),
+          hideInMenu: true,
+          title: '达人筹备表',
+          activeMenu: '/bd/my-tasks',
         },
       },
-
       {
         name: 'BD-SOP',
         path: '/bd/sop',

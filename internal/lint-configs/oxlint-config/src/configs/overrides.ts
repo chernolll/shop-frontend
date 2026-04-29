@@ -54,6 +54,7 @@ const overrides: OxlintConfig = {
       ],
       rules: {
         'no-console': 'off',
+        'no-useless-default-assignment': 'off',
       },
     },
     {
@@ -89,6 +90,7 @@ const overrides: OxlintConfig = {
       ],
       rules: {
         'no-console': 'off',
+        'no-useless-default-assignment': 'off',
         'unicorn/no-process-exit': 'off',
       },
     },

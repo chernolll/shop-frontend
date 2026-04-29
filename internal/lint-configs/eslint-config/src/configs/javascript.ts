@@ -104,6 +104,7 @@ export async function javascript(): Promise<Linter.Config[]> {
         'keyword-spacing': 'off',
         'no-control-regex': 'error',
         'no-console': 'off',
+        'no-useless-default-assignment': 'off',
         'no-empty-function': 'off',
         'no-octal': 'error',
         'no-octal-escape': 'error',

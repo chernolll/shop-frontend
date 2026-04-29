@@ -62,7 +62,11 @@
 
 当前采用“最小可行结构”：
 
-/docs README.md # 当前文件（入口）overview.md # 系统整体说明 modules.md # 模块划分 flows.md # 业务流程（最重要）database.md # 数据结构（基于 db.sql）
+- `README.md` — 当前文件（入口）
+- `overview.md` — 系统整体说明
+- `modules.md` — 模块划分
+- `flows.md` — 业务流程（最重要）
+- `database.md` — 数据结构（基于 db.sql）
 
 ---
 
