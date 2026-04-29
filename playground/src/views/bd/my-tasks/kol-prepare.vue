@@ -4,6 +4,7 @@
 <script lang="ts" setup>
 // oxlint-disable typescript/no-non-null-assertion
 import type { VxeGridProps } from '#/adapter/vxe-table';
+import type { BdTaskApi } from '#/api/bd/bd-my-task';
 import type { KolApi } from '#/api/bd/kol';
 
 import { computed, ref, watch } from 'vue';
@@ -25,6 +26,7 @@ import {
 import * as XLSX from 'xlsx';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { queryKolPrepareData, uploadKolPrepareData } from '#/api/bd/bd-my-task';
 import { queryKolPrepareState } from '#/api/bd/kol';
 import { KoaPrepareAuditStatus, KolPrepareReasonCode } from '#/consts/bd-sop';
 
@@ -41,12 +43,6 @@ function reasonCodeText(code: number): string {
     [KolPrepareReasonCode.KOL_ABNORMAL]: '状态异常',
   };
   return map[code] ?? String(code);
-}
-
-function reasonCodeColor(code: number): string {
-  if (code === KolPrepareReasonCode.CAN_PREPARE) return 'green';
-  if (code === KolPrepareReasonCode.TASK_DUPLICATE) return 'orange';
-  return 'red';
 }
 
 function kolStatusLabel(kolStatus: null | number): string {
@@ -94,19 +90,8 @@ interface ParsedKolRow {
   kol_link?: string;
 }
 
-interface PrepareRecord {
-  auditStatus: KoaPrepareAuditStatus;
-  entryTime: string;
-  id: number;
-  kolId: string;
-  remark: string;
-  status: number;
-  taskId: number;
-}
-
 const activeTab = ref('upload');
 const previewData = ref<PrepareRow[]>([]);
-const records = ref<PrepareRecord[]>([]);
 const submitting = ref(false);
 const fileInputRef = ref<HTMLInputElement>();
 const editorVisible = ref(false);
@@ -119,6 +104,7 @@ const editorForm = ref<ParsedKolRow>({
 });
 const selectedReasonCode = ref<'all' | number>('all');
 const selectedKolStatus = ref<'all' | number>('all');
+const recordStatusFilter = ref<'all' | KoaPrepareAuditStatus>('all');
 
 const hasNonNormal = computed(() =>
   previewData.value.some((row) => !row.can_prepare),
@@ -175,6 +161,22 @@ const kolStatusOptions = computed(() => [
   { label: kolStatusLabel(2), value: 2 },
   { label: kolStatusLabel(3), value: 3 },
   { label: kolStatusLabel(null), value: -1 },
+]);
+const recordStatusOptions = computed(() => [
+  { label: '全部审核状态', value: 'all' },
+  // { label: auditStatusText(KoaPrepareAuditStatus.WAITING), value: KoaPrepareAuditStatus.WAITING },
+  {
+    label: auditStatusText(KoaPrepareAuditStatus.PENDING),
+    value: KoaPrepareAuditStatus.PENDING,
+  },
+  {
+    label: auditStatusText(KoaPrepareAuditStatus.REJECT),
+    value: KoaPrepareAuditStatus.REJECT,
+  },
+  {
+    label: auditStatusText(KoaPrepareAuditStatus.PASS),
+    value: KoaPrepareAuditStatus.PASS,
+  },
 ]);
 
 function normalizeKolId(value: string) {
@@ -483,66 +485,49 @@ async function handleEditorSubmit() {
 }
 
 async function handleSubmit() {
+  if (previewData.value.length === 0) {
+    message.warning('当前没有可提交的达人筹备数据');
+    return;
+  }
   if (hasNonNormal.value) {
     message.warning('存在状态异常的达人数据，请先删除后再提交');
     return;
   }
 
+  const missingLinkRow = previewData.value.find(
+    (row) => !normalizeKolLink(row.kol_link),
+  );
+  if (missingLinkRow) {
+    message.warning(
+      `达人 ${missingLinkRow.kol_id} 缺少达人链接，请补充后再提交`,
+    );
+    return;
+  }
+
   submitting.value = true;
   try {
-    await new Promise((r) => setTimeout(r, 500));
+    const payload: BdTaskApi.BdKolPrepareParams = {
+      list: previewData.value.map((row) => ({
+        kol_id: row.kol_id,
+        kol_link: normalizeKolLink(row.kol_link),
+      })),
+      task_id: taskRelationId,
+    };
+    await uploadKolPrepareData(payload);
     message.success(`成功提交 ${previewData.value.length} 条达人筹备记录`);
     clearPreviewData();
-    await fetchRecords();
-  } catch {
-    message.error('提交失败，请重试');
+    activeTab.value = 'records';
+    recordGridApi.reload();
+  } catch (error: any) {
+    message.error(error?.message || '提交失败，请重试');
   } finally {
     submitting.value = false;
   }
 }
 
-async function fetchRecords() {
-  recordGridApi.setLoading(true);
-  try {
-    await new Promise((r) => setTimeout(r, 300));
-    records.value = [
-      {
-        auditStatus: KoaPrepareAuditStatus.PASS,
-        entryTime: '2024-10-02 10:00:00',
-        id: 1,
-        kolId: 'KOL_TT_001',
-        remark: '审核通过',
-        status: KolPrepareReasonCode.CAN_PREPARE,
-        taskId: taskRelationId,
-      },
-      {
-        auditStatus: KoaPrepareAuditStatus.PENDING,
-        entryTime: '2024-10-02 11:00:00',
-        id: 2,
-        kolId: 'KOL_TT_002',
-        remark: '',
-        status: KolPrepareReasonCode.CAN_PREPARE,
-        taskId: taskRelationId,
-      },
-      {
-        auditStatus: KoaPrepareAuditStatus.REJECT,
-        entryTime: '2024-10-03 09:00:00',
-        id: 3,
-        kolId: 'KOL_TT_005',
-        remark: '该达人已被其他任务筹备',
-        status: KolPrepareReasonCode.PREPARED_BY_OTHER,
-        taskId: taskRelationId,
-      },
-    ];
-    recordGridApi.setGridOptions({ data: records.value });
-  } finally {
-    recordGridApi.setLoading(false);
-  }
-}
-
 watch(activeTab, (tab) => {
   if (tab === 'records') {
-    fetchRecords();
+    recordGridApi.reload();
   }
 });
 
@@ -592,23 +577,38 @@ const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
   },
 ];
 
-const recordColumns: VxeGridProps<PrepareRecord>['columns'] = [
-  { field: 'taskId', title: '所属任务ID', width: 120 },
-  { field: 'kolId', title: '达人ID', width: 180 },
-  { field: 'entryTime', title: '录入时间', width: 200 },
+const recordColumns: VxeGridProps<BdTaskApi.PrepareDataRow>['columns'] = [
+  { field: 'kol_id', title: '达人ID', width: 180 },
+  {
+    field: 'kol_link',
+    minWidth: 220,
+    slots: { default: 'kol_link' },
+    title: '达人链接',
+  },
+  {
+    field: 'entry_time',
+    formatter: 'formatDateTime',
+    title: '录入时间',
+    width: 180,
+  },
   {
     field: 'status',
     slots: { default: 'status' },
-    title: '校验状态',
+    title: '审核状态',
     width: 150,
   },
   {
-    field: 'auditStatus',
-    slots: { default: 'auditStatus' },
-    title: '审核状态',
-    width: 120,
+    field: 'reviewer_name',
+    title: '审核人',
+    width: 140,
   },
-  { field: 'remark', minWidth: 150, title: '审核意见' },
+  {
+    field: 'audit_time',
+    formatter: 'formatDateTime',
+    title: '审核时间',
+    width: 180,
+  },
+  { field: 'reason', minWidth: 180, title: '审核原因' },
 ];
 
 const [UploadGrid, uploadGridApi] = useVbenVxeGrid<PrepareRow>({
@@ -626,11 +626,37 @@ const [UploadGrid, uploadGridApi] = useVbenVxeGrid<PrepareRow>({
   },
 });
 
-const [RecordGrid, recordGridApi] = useVbenVxeGrid<PrepareRecord>({
+const [RecordGrid, recordGridApi] = useVbenVxeGrid<BdTaskApi.PrepareDataRow>({
   gridOptions: {
     columns: recordColumns,
-    data: [],
-    pagerConfig: { enabled: false },
+    height: 'auto',
+    minHeight: 300,
+    proxyConfig: {
+      ajax: {
+        query: async ({
+          page,
+        }: {
+          page: { currentPage: number; pageSize: number };
+        }) => {
+          const result = await queryKolPrepareData({
+            page: page.currentPage,
+            page_size: page.pageSize,
+            status:
+              recordStatusFilter.value === 'all'
+                ? undefined
+                : recordStatusFilter.value,
+            task_id: taskRelationId,
+          });
+          return {
+            items: result.list,
+            total: result.total,
+          };
+        },
+      },
+    },
+    rowConfig: {
+      keyField: 'kol_id',
+    },
     toolbarConfig: { refresh: true },
   },
 });
@@ -642,6 +668,12 @@ watch(
   },
   { deep: true },
 );
+
+watch(recordStatusFilter, () => {
+  if (activeTab.value === 'records') {
+    recordGridApi.reload();
+  }
+});
 </script>
 
 <template>
@@ -673,7 +705,7 @@ watch(
           </p>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 lg:min-w-[360px] lg:grid-cols-4">
+        <div class="grid grid-cols-2 gap-3 lg:min-w-[360px] lg:grid-cols-2">
           <div class="rounded-xl bg-slate-50 px-4 py-3">
             <div class="text-xs text-slate-500">
               {{ hasActiveFilters ? '筛选结果' : '当前名单' }}
@@ -691,13 +723,13 @@ watch(
               {{ summary.valid }}
             </div>
           </div>
-          <div class="rounded-xl bg-amber-50 px-4 py-3">
+          <div v-if="false" class="rounded-xl bg-amber-50 px-4 py-3">
             <div class="text-xs text-amber-700">待处理</div>
             <div class="mt-1 text-2xl font-semibold text-amber-700">
               {{ summary.invalid }}
             </div>
           </div>
-          <div class="rounded-xl bg-sky-50 px-4 py-3">
+          <div v-if="false" class="rounded-xl bg-sky-50 px-4 py-3">
             <div class="text-xs text-sky-700">可重提</div>
             <div class="mt-1 text-2xl font-semibold text-sky-700">
               {{ summary.retryable }}
@@ -859,29 +891,55 @@ watch(
 
         <div
           v-if="previewData.length === 0"
-          class="mt-4 rounded-2xl border border-dashed border-slate-300 bg-white py-16 text-center shadow-sm"
+          class="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 py-16 text-center"
         >
           <div class="text-base font-medium text-slate-700">
-            名单还没有开始准备
+            还没有导入任何达人
           </div>
-          <div class="mt-2 text-sm text-slate-400">
-            先上传模板文件，或者在右侧粘贴达人ID后立即校验。
+          <div class="mt-2 text-sm text-slate-500">
+            可以先上传 Excel 模板，或点击“添加行”手动补充达人信息后再校验。
           </div>
         </div>
       </Tabs.TabPane>
 
       <Tabs.TabPane key="records" tab="提交记录">
         <Card :bordered="false" class="rounded-2xl shadow-sm">
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">提交记录</h3>
+              <p class="mt-1 text-sm text-slate-500">
+                支持按审核状态筛选，并按分页查看当前任务的达人筹备记录。
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <Select
+                v-model:value="recordStatusFilter"
+                :options="recordStatusOptions"
+                class="min-w-[180px]"
+              />
+              <Button
+                v-if="recordStatusFilter !== 'all'"
+                @click="recordStatusFilter = 'all'"
+              >
+                清空筛选
+              </Button>
+            </div>
+          </div>
           <RecordGrid>
             <template #status="{ row }">
-              <Tag :color="reasonCodeColor(row.status)">
-                {{ reasonCodeText(row.status) }}
+              <Tag :color="auditStatusColor(row.status)">
+                {{ auditStatusText(row.status) }}
               </Tag>
             </template>
-            <template #auditStatus="{ row }">
-              <Tag :color="auditStatusColor(row.auditStatus)">
-                {{ auditStatusText(row.auditStatus) }}
-              </Tag>
+            <template #kol_link="{ row }">
+              <a
+                :href="row.kol_link"
+                target="_blank"
+                rel="noreferrer"
+                class="text-blue-500 hover:underline"
+              >
+                {{ row.kol_link }}
+              </a>
             </template>
           </RecordGrid>
         </Card>
