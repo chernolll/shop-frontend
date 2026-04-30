@@ -19,9 +19,51 @@
     "dashboard": "数据面板",
     "tasks": "任务中心",
     "taskProgress": "任务完成情况",
+    "my-task": {
+      "title": "我的任务"
+    },
     "sop": {
       "title": "SOP",
-      "list-title": "总览"
+      "list-title": "SOP 列表",
+      "detail-title": "SOP 详情",
+      "filters": {
+        "created-from": "创建时间",
+        "deadline-to": "截止时间",
+        "status": "SOP状态"
+      },
+      "placeholders": {
+        "all-status": "全部状态"
+      },
+      "columns": {
+        "id": "SOP ID",
+        "kol-id": "达人ID",
+        "status": "SOP状态",
+        "product-url": "商品链接",
+        "brief-url": "Brief链接",
+        "commission": "任务佣金",
+        "budget": "预算",
+        "task-type": "任务类型",
+        "created-at": "创建时间",
+        "deadline": "截止时间"
+      },
+      "status-text": {
+        "contact": "建联",
+        "sample": "送样",
+        "recover": "回收视频",
+        "completed": "结束"
+      },
+      "budget-text": {
+        "no": "无预算",
+        "yes": "有预算"
+      },
+      "task-type-text": {
+        "custom": "定制",
+        "public": "公开"
+      },
+      "detail": {
+        "heading": "SOP流程详情",
+        "description": "详情页入口已建立，后续可在这里补充建联、送样、回收视频等完整流程信息。"
+      }
     }
   }
 }

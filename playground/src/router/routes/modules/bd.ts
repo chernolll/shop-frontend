@@ -41,7 +41,7 @@ const routes: RouteRecordRaw[] = [
         path: '/bd/my-tasks',
         component: () => import('#/views/bd/my-tasks/index.vue'),
         meta: {
-          title: '我的任务',
+          title: $t('page.bd.my-task.title'),
           icon: 'lucide:inbox',
         },
       },
@@ -76,11 +76,11 @@ const routes: RouteRecordRaw[] = [
           },
           {
             name: 'BD-SOP-DETAIL',
-            path: '/bd/sop/detail/:id',
+            path: '/bd/sop/:sop_id',
             component: () => import('#/views/bd/sop/detail/index.vue'),
             meta: {
               hideInMenu: true,
-              title: $t('page.bd.sop.list-title'),
+              title: $t('page.bd.sop.detail-title'),
               activeMenu: '/bd/sop/list',
             },
           },

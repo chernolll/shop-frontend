@@ -19,9 +19,51 @@
     "dashboard": "Dashboard",
     "tasks": "Task Center",
     "taskProgress": "Task Progress",
+    "my-task": {
+      "title": "My Task"
+    },
     "sop": {
       "title": "SOP",
-      "list-title": "Table"
+      "list-title": "SOP List",
+      "detail-title": "SOP Detail",
+      "filters": {
+        "created-from": "Created At",
+        "deadline-to": "Deadline",
+        "status": "SOP Status"
+      },
+      "placeholders": {
+        "all-status": "All Statuses"
+      },
+      "columns": {
+        "id": "SOP ID",
+        "kol-id": "KOL ID",
+        "status": "SOP Status",
+        "product-url": "Product URL",
+        "brief-url": "Brief URL",
+        "commission": "Commission",
+        "budget": "Budget",
+        "task-type": "Task Type",
+        "created-at": "Created At",
+        "deadline": "Deadline"
+      },
+      "status-text": {
+        "contact": "Contact",
+        "sample": "Sample",
+        "recover": "Video Recovery",
+        "completed": "Completed"
+      },
+      "budget-text": {
+        "no": "No Budget",
+        "yes": "With Budget"
+      },
+      "task-type-text": {
+        "custom": "Custom",
+        "public": "Public"
+      },
+      "detail": {
+        "heading": "SOP Flow Detail",
+        "description": "The detail entry is ready. You can extend this page later with contact, sample, and video recovery stages."
+      }
     }
   }
 }
