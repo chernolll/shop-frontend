@@ -50,7 +50,9 @@
         "contact": "Contact",
         "sample": "Sample",
         "recover": "Video Recovery",
-        "completed": "Completed"
+        "completed": "Completed",
+        "remittance": "Remittance",
+        "terminated": "Terminated"
       },
       "budget-text": {
         "no": "No Budget",

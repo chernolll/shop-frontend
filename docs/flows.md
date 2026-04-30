@@ -53,7 +53,8 @@ BD 对已通过筹备的达人执行 SOP：
 
 ① 建联（status=0）
     └── 填写 sop_contact（联系方式 + 预算）
-        └── budget_status: 0-待审核 / 1-通过 / 2-驳回
+        └── 若任务有预算：budget_status 0-待审核 / 1-通过 / 2-驳回
+        └── 预算审核通过后，才可进入送样阶段
 
 ② 送样（status=1）
     └── 填写 sample_application（收样地址 + 商品链接 + 数量）
@@ -68,14 +69,26 @@ BD 对已通过筹备的达人执行 SOP：
         └── commission（佣金快照）
 
 ④ 结束（status=3）
+
+⑤ 汇款阶段（status=4，仅有预算任务）
+    └── 填写 sop_remittance
+        ├── amount（汇款金额）
+        ├── chat_screenshot_urls（聊天记录截图）
+        └── remittance_screenshot_urls（汇款截图）
+    └── 汇款审核通过后，才可进入结束阶段
+
+⑥ 终止（status=5）
+    └── 当 SOP 无法继续推进时，由 BD 主动终止
 ```
 
-**关键表**：`task_sop`, `sop_contact`, `sample_application`, `video`
+**关键表**：`task_sop`, `sop_contact`, `sop_budget_audit`, `sample_application`, `video`, `sop_remittance`, `sop_remittance_audit`
 
 **SOP 状态机**：
 
 ```
-0(建联) → 1(送样) → 2(回收视频) → 3(结束)
+无预算任务：0(建联) → 1(送样) → 2(回收视频) → 3(结束)
+有预算任务：0(建联/预算审核) → 1(送样) → 2(回收视频) → 4(汇款阶段) → 3(结束)
+异常终止：任一阶段 → 5(终止)
 ```
 
 ### 2.4 数据关系链
@@ -86,6 +99,7 @@ task_main ──┐
             │     └── task_sop (1:N, 每个 BD-达人一个 SOP)
             │           ├── sop_contact (1:1)
             │           ├── sample_application (1:1)
+            │           ├── sop_remittance (1:1)
             │           └── video (1:N, 一个达人可产出多个视频)
             │
             └── kol_bd_prepare (1:N, 筹备记录)

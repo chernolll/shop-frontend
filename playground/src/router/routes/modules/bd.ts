@@ -80,6 +80,7 @@ const routes: RouteRecordRaw[] = [
             component: () => import('#/views/bd/sop/detail/index.vue'),
             meta: {
               hideInMenu: true,
+              hideInTab: true,
               title: $t('page.bd.sop.detail-title'),
               activeMenu: '/bd/sop/list',
             },

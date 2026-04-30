@@ -50,7 +50,9 @@
         "contact": "建联",
         "sample": "送样",
         "recover": "回收视频",
-        "completed": "结束"
+        "completed": "结束",
+        "remittance": "汇款阶段",
+        "terminated": "终止"
       },
       "budget-text": {
         "no": "无预算",

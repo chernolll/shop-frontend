@@ -18,6 +18,8 @@ enum BDSOPStatus {
   SAMPLE = 1,
   RECOVER = 2,
   COMPLETED = 3,
+  REMITTANCE = 4,
+  TERMINATED = 5,
 }
 
 const router = useRouter();
@@ -26,14 +28,18 @@ const sopStatusTextMap: Record<number, string> = {
   [BDSOPStatus.COMPLETED]: $t('page.bd.sop.status-text.completed'),
   [BDSOPStatus.CONTACT]: $t('page.bd.sop.status-text.contact'),
   [BDSOPStatus.RECOVER]: $t('page.bd.sop.status-text.recover'),
+  [BDSOPStatus.REMITTANCE]: $t('page.bd.sop.status-text.remittance'),
   [BDSOPStatus.SAMPLE]: $t('page.bd.sop.status-text.sample'),
+  [BDSOPStatus.TERMINATED]: $t('page.bd.sop.status-text.terminated'),
 };
 
 const sopStatusColorMap: Record<number, string> = {
   [BDSOPStatus.COMPLETED]: 'success',
   [BDSOPStatus.CONTACT]: 'default',
   [BDSOPStatus.RECOVER]: 'warning',
+  [BDSOPStatus.REMITTANCE]: 'processing',
   [BDSOPStatus.SAMPLE]: 'processing',
+  [BDSOPStatus.TERMINATED]: 'error',
 };
 
 function getSopStatusText(status: number) {
@@ -103,6 +109,14 @@ const formOptions: VbenFormProps = {
           {
             label: getSopStatusText(BDSOPStatus.RECOVER),
             value: BDSOPStatus.RECOVER,
+          },
+          {
+            label: getSopStatusText(BDSOPStatus.REMITTANCE),
+            value: BDSOPStatus.REMITTANCE,
+          },
+          {
+            label: getSopStatusText(BDSOPStatus.TERMINATED),
+            value: BDSOPStatus.TERMINATED,
           },
           {
             label: getSopStatusText(BDSOPStatus.COMPLETED),

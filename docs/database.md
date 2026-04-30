@@ -26,15 +26,18 @@
 | `task_bd_relation` | 任务-BD关联 | task_id + bd_code(唯一), video_quantity |
 | `kol_bd_prepare` | 达人筹备表 | task_id + kol_id + bd_code(唯一), status(0-待审核/1-审核中/2-审核不通过/3-审核通过) |
 | `kol_bd_prepare_audit` | 筹备审核记录 | prepare_id, from_status → to_status, reviewer_id(→sys_user), reason |
-| `task_sop` | SOP进度表 | task_id + bd_code + kol_id(唯一), status(0-建联/1-送样/2-回收视频/3-结束) |
+| `task_sop` | SOP进度表 | task_id + bd_code + kol_id(唯一), status(0-建联/1-送样/2-回收视频/3-结束/4-汇款阶段/5-终止) |
 | `video` | 视频表 | kol_id, sop_id, video_url, score, play_count, gmv, commission |
 
-### 1.3 SOP 子表（2 张）
+### 1.3 SOP 子表（5 张）
 
 | 表名 | 说明 | 关键字段 |
 | --- | --- | --- |
 | `sop_contact` | 建联明细 | task_sop_id(1:1), budget, budget_status(0-待审/1-通过/2-驳回) |
+| `sop_budget_audit` | 预算审核记录 | contact_id, from_status → to_status, auditor_id(→sys_user), reason |
 | `sample_application` | 样品申请 | task_sop_id(1:1), product_listing_id, address, tracking_number |
+| `sop_remittance` | 汇款申请 | task_sop_id(1:1), amount, chat_screenshot_urls, remittance_screenshot_urls, status |
+| `sop_remittance_audit` | 汇款审核记录 | remittance_id, from_status → to_status, auditor_id(→sys_user), reason |
 
 ### 1.4 权限系统（5 张）
 
@@ -59,6 +62,7 @@ post ────────┼── employee ────── bd_person (1:
              │                          │     └── task_sop
              │                          │           ├── sop_contact (1:1)
              │                          │           ├── sample_application (1:1)
+             │                          │           ├── sop_remittance (1:1)
              │                          │           └── video (1:N)
              │                          └── kol_bd_prepare
              │                                ├── kol (kol_id)
@@ -89,9 +93,9 @@ shop ── product_listing ── task_main
                     (bd_code + kol_id)
                               │
                     ┌─────────┼─────────┐
-                    │         │         │
-              sop_contact  sample_    video
-              (建联)     application (回收视频)
+                    │         │         │          │
+              sop_contact  sample_    video   sop_remittance
+              (建联)     application (回收视频)   (汇款)
                          (送样)
 ```
 
