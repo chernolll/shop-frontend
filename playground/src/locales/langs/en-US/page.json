@@ -64,7 +64,19 @@
       },
       "detail": {
         "heading": "SOP Flow Detail",
-        "description": "The detail entry is ready. You can extend this page later with contact, sample, and video recovery stages."
+        "description": "Review the SOP flow and switch between stages from the step navigation.",
+        "steps-title": "Flow Steps",
+        "steps-subtitle": "Click any step to switch content. Completed and current steps are visually distinguished.",
+        "current-status": "Current Status",
+        "budget-tag": "Budget Flow",
+        "no-budget-tag": "No Budget Flow",
+        "terminate": "Terminate",
+        "terminate-confirm-title": "Confirm SOP Termination",
+        "terminate-confirm-content": "After termination, this SOP will no longer continue. Do you want to terminate it now?",
+        "terminated-banner": "This SOP has been terminated",
+        "terminated-description": "You are viewing the terminated state of this SOP.",
+        "terminated-tip": "This SOP is terminated. You can still click each step to inspect placeholder content.",
+        "terminated-entry": "View Termination"
       }
     }
   }

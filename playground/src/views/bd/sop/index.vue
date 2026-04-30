@@ -12,6 +12,7 @@ import { Tag } from 'ant-design-vue';
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getBDSopList } from '#/api/bd/sop';
 import { $t } from '#/locales';
+import { useBDSopStore } from '#/store';
 
 enum BDSOPStatus {
   CONTACT = 0,
@@ -23,6 +24,7 @@ enum BDSOPStatus {
 }
 
 const router = useRouter();
+const bdSopStore = useBDSopStore();
 
 const sopStatusTextMap: Record<number, string> = {
   [BDSOPStatus.COMPLETED]: $t('page.bd.sop.status-text.completed'),
@@ -67,6 +69,7 @@ function getTaskTypeText(value: number) {
 }
 
 function openDetail(row: BDSopApi.Item) {
+  bdSopStore.setCurrentSop(row);
   router.push(`/bd/sop/${row.id}`);
 }
 

@@ -64,7 +64,19 @@
       },
       "detail": {
         "heading": "SOP流程详情",
-        "description": "详情页入口已建立，后续可在这里补充建联、送样、回收视频等完整流程信息。"
+        "description": "查看当前 SOP 的流程步骤，并在不同阶段之间切换查看内容。",
+        "steps-title": "流程步骤",
+        "steps-subtitle": "点击步骤切换当前查看内容，已完成步骤和当前步骤会有清晰状态区分。",
+        "current-status": "当前状态",
+        "budget-tag": "预算流程",
+        "no-budget-tag": "无预算流程",
+        "terminate": "终止流程",
+        "terminate-confirm-title": "确认终止 SOP",
+        "terminate-confirm-content": "终止后该条 SOP 将不再继续推进。确认要执行终止吗？",
+        "terminated-banner": "当前 SOP 已终止",
+        "terminated-description": "你正在查看这条 SOP 的终止状态信息。",
+        "terminated-tip": "这条 SOP 已终止，你仍然可以点击步骤查看各阶段占位内容。",
+        "terminated-entry": "查看终止信息"
       }
     }
   }
