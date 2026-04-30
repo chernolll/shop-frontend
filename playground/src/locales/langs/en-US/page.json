@@ -76,7 +76,41 @@
         "terminated-banner": "This SOP has been terminated",
         "terminated-description": "You are viewing the terminated state of this SOP.",
         "terminated-tip": "This SOP is terminated. You can still click each step to inspect placeholder content.",
-        "terminated-entry": "View Termination"
+        "terminated-entry": "View Termination",
+        "contact": {
+          "bd-code-label": "BD Code",
+          "budget-helper": "An empty budget or 0 means no budget. Any value greater than 0 will trigger budget review.",
+          "budget-label": "Budget Amount",
+          "budget-placeholder": "Leave empty or use 0 for no budget",
+          "budget-status-approved": "Approved",
+          "budget-status-label": "Budget Review Status",
+          "budget-status-none": "No Budget",
+          "budget-status-pending": "Pending Review",
+          "budget-status-rejected": "Rejected",
+          "contact-created-at-label": "Contact Created At",
+          "contact-information": "Contact Information",
+          "contact-placeholder": "Example: wechat: xxx / email: xxx",
+          "contact-required": "Please enter contact information",
+          "editable-tag": "Editable",
+          "editable-tip": "During the contact stage, BD users can review and edit contact details and budget information here.",
+          "editing-hint": "This SOP is still in the contact stage. After saving, the latest backend state will be used.",
+          "empty-description": "No contact detail is available yet. Please retry or reopen this SOP from the list.",
+          "info-card-title": "Contact Detail",
+          "load-failed": "Failed to load contact detail",
+          "missing-sop-id": "Missing task_sop_id. Contact detail cannot be loaded.",
+          "no-contact-record": "No saved contact record yet",
+          "not-saved-yet": "Not saved yet",
+          "readonly-hint": "This SOP is no longer in the contact stage, so the page is now read-only and saving is disabled.",
+          "readonly-tag": "Read Only",
+          "readonly-tip": "BD users can still view contact information after the contact stage, but editing is disabled.",
+          "reset": "Reset",
+          "retry": "Reload",
+          "saved-at-label": "Last Saved At",
+          "submit": "Save Contact Detail",
+          "submit-success": "Contact detail saved successfully",
+          "summary-card-title": "Task Summary",
+          "task-created-at-label": "Task Created At"
+        }
       }
     }
   }

@@ -3,25 +3,28 @@ import { computed } from 'vue';
 
 import { Card, Col, Row, Space, Tag } from 'ant-design-vue';
 
+import { BDSopApi } from '#/api/bd/sop';
 import { $t } from '#/locales';
 
-enum BDSOPStatus {
-  CONTACT = 0,
-  SAMPLE = 1,
-  RECOVER = 2,
-  COMPLETED = 3,
-  REMITTANCE = 4,
-}
+import SopContactPanel from './SopContactPanel.vue';
 
 const props = defineProps<{
+  detail: BDSopApi.ContactDetail | null;
+  detailError: string;
+  detailLoaded: boolean;
+  detailLoading: boolean;
   hasBudget: boolean;
   isTerminated: boolean;
   showTerminatedContent: boolean;
-  sopId: string;
+  sopId: number;
   step: {
     status: number;
     title: string;
   };
+}>();
+
+const emit = defineEmits<{
+  refreshDetail: [];
 }>();
 
 const placeholderMeta = computed(() => {
@@ -37,35 +40,35 @@ const placeholderMeta = computed(() => {
   }
 
   const common = {
-    [BDSOPStatus.COMPLETED]: {
+    [BDSopApi.Status.COMPLETED]: {
       description: '这里后续可展示流程总结、完成时间和执行结果汇总。',
       leftBody: '已完成的流程摘要、关键结果和补充说明可以放在这里。',
       leftTitle: '完成结果占位',
       rightBody: '如需展示复盘信息、历史操作和附件，也可补充在这里。',
       rightTitle: '流程归档占位',
     },
-    [BDSOPStatus.CONTACT]: {
+    [BDSopApi.Status.CONTACT]: {
       description: '这里后续可展示联系方式、沟通记录、预算申请等建联信息。',
       leftBody: '可放建联表单、预算申请、审批状态和沟通备注。',
       leftTitle: '建联信息占位',
       rightBody: '可放沟通补充、渠道信息、截图或操作日志。',
       rightTitle: '补充资料占位',
     },
-    [BDSOPStatus.RECOVER]: {
+    [BDSopApi.Status.RECOVER]: {
       description: '这里后续可展示视频回收记录、分数、播放量、GMV 等结果数据。',
       leftBody: '可放视频链接列表、回收进度、质检评分和表现数据。',
       leftTitle: '视频回收占位',
       rightBody: '可放素材校验、数据备注和异常说明。',
       rightTitle: '数据说明占位',
     },
-    [BDSOPStatus.REMITTANCE]: {
+    [BDSopApi.Status.REMITTANCE]: {
       description: '这里后续可展示汇款金额、聊天截图、汇款截图和审核轨迹。',
       leftBody: '可放汇款申请表、聊天记录截图与转账凭证。',
       leftTitle: '汇款资料占位',
       rightBody: '可放审核状态、审批意见和驳回原因。',
       rightTitle: '审核轨迹占位',
     },
-    [BDSOPStatus.SAMPLE]: {
+    [BDSopApi.Status.SAMPLE]: {
       description: '这里后续可展示送样地址、样品数量、物流单号等送样阶段信息。',
       leftBody: '可放地址表单、商品信息、数量和物流状态。',
       leftTitle: '送样信息占位',
@@ -82,15 +85,24 @@ const placeholderMeta = computed(() => {
 
 const statusTagColor = computed(() => {
   if (props.isTerminated && props.showTerminatedContent) return 'error';
-  if (props.step.status === BDSOPStatus.COMPLETED) return 'success';
-  if (props.step.status === BDSOPStatus.REMITTANCE) return 'processing';
-  if (props.step.status === BDSOPStatus.RECOVER) return 'warning';
+  if (props.step.status === BDSopApi.Status.COMPLETED) return 'success';
+  if (props.step.status === BDSopApi.Status.REMITTANCE) return 'processing';
+  if (props.step.status === BDSopApi.Status.RECOVER) return 'warning';
   return 'default';
 });
 </script>
 
 <template>
-  <Card :bordered="false" class="min-h-[360px] rounded-2xl shadow-sm">
+  <SopContactPanel
+    v-if="!isTerminated && step.status === BDSopApi.Status.CONTACT"
+    :detail="detail"
+    :detail-error="detailError"
+    :detail-loaded="detailLoaded"
+    :detail-loading="detailLoading"
+    :sop-id="sopId"
+    @refresh-detail="emit('refreshDetail')"
+  />
+  <Card v-else :bordered="false" class="min-h-[360px] rounded-2xl shadow-sm">
     <Space direction="vertical" :size="20" class="w-full">
       <Space class="flex w-full items-start justify-between" wrap>
         <div>

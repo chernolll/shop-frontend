@@ -6,35 +6,42 @@ import { Page } from '@vben/common-ui';
 
 import { Modal, Space } from 'ant-design-vue';
 
+import { BDSopApi, getBDSopContactDetail } from '#/api/bd/sop';
 import { $t } from '#/locales';
 import { useBDSopStore } from '#/store';
 
 import SopStepContent from './SopStepContent.vue';
 import SopSteps from './SopSteps.vue';
 
-enum BDSOPStatus {
-  CONTACT = 0,
-  SAMPLE = 1,
-  RECOVER = 2,
-  COMPLETED = 3,
-  REMITTANCE = 4,
-  TERMINATED = 5,
-}
-
 const route = useRoute();
 const bdSopStore = useBDSopStore();
-const sopId = computed(() => String(route.params.sop_id ?? ''));
+const detailLoading = ref(false);
+const detailLoaded = ref(false);
+const detailError = ref('');
+const sopDetail = ref<BDSopApi.ContactDetail | null>(null);
+
+const sopId = computed(() => {
+  const routeSopId =
+    route.params.sop_id ?? route.params.id ?? route.query.task_sop_id;
+  return Number(routeSopId ?? route.query.sop_id ?? '-1');
+});
 const currentSopRecord = computed(() =>
   bdSopStore.getCurrentSopById(sopId.value),
 );
-const initialStatus = computed(() => {
+const resolvedStatus = computed(() => {
+  if (sopDetail.value) {
+    return sopDetail.value.sop_status;
+  }
   if (currentSopRecord.value) {
     return currentSopRecord.value.status;
   }
-  const status = Number(route.query.status);
-  return Number.isInteger(status) ? status : BDSOPStatus.CONTACT;
+  const status = Number(route.query.status ?? route.query.sop_status);
+  return Number.isInteger(status) ? status : BDSopApi.Status.CONTACT;
 });
 const hasBudget = computed(() => {
+  if (sopDetail.value) {
+    return Number(sopDetail.value.task_budget) === 1;
+  }
   if (currentSopRecord.value) {
     return Number(currentSopRecord.value.task_budget) === 1;
   }
@@ -44,28 +51,28 @@ const hasBudget = computed(() => {
 const workflowSteps = computed(() => {
   const steps = [
     {
-      status: BDSOPStatus.CONTACT,
+      status: BDSopApi.Status.CONTACT,
       title: $t('page.bd.sop.status-text.contact'),
     },
     {
-      status: BDSOPStatus.SAMPLE,
+      status: BDSopApi.Status.SAMPLE,
       title: $t('page.bd.sop.status-text.sample'),
     },
     {
-      status: BDSOPStatus.RECOVER,
+      status: BDSopApi.Status.RECOVER,
       title: $t('page.bd.sop.status-text.recover'),
     },
   ];
 
   if (hasBudget.value) {
     steps.push({
-      status: BDSOPStatus.REMITTANCE,
+      status: BDSopApi.Status.REMITTANCE,
       title: $t('page.bd.sop.status-text.remittance'),
     });
   }
 
   steps.push({
-    status: BDSOPStatus.COMPLETED,
+    status: BDSopApi.Status.COMPLETED,
     title: $t('page.bd.sop.status-text.completed'),
   });
 
@@ -74,23 +81,25 @@ const workflowSteps = computed(() => {
 
 function resolveDefaultStep() {
   const index = workflowSteps.value.findIndex(
-    (step) => step.status === initialStatus.value,
+    (step) => step.status === resolvedStatus.value,
   );
   return Math.max(index, 0);
 }
 
 const actualStepIndex = computed<null | number>(() =>
-  initialStatus.value === BDSOPStatus.TERMINATED ? null : resolveDefaultStep(),
+  resolvedStatus.value === BDSopApi.Status.TERMINATED
+    ? null
+    : resolveDefaultStep(),
 );
 const currentStep = ref(0);
-const isTerminated = ref(initialStatus.value === BDSOPStatus.TERMINATED);
+const isTerminated = ref(resolvedStatus.value === BDSopApi.Status.TERMINATED);
 const showTerminatedContent = ref(false);
 
 watch(
-  [workflowSteps, initialStatus],
+  [workflowSteps, resolvedStatus],
   () => {
     currentStep.value = actualStepIndex.value ?? 0;
-    isTerminated.value = initialStatus.value === BDSOPStatus.TERMINATED;
+    isTerminated.value = resolvedStatus.value === BDSopApi.Status.TERMINATED;
     showTerminatedContent.value = false;
   },
   { immediate: true },
@@ -117,7 +126,68 @@ const currentStatusLabel = computed(() => {
 });
 
 const canTerminate = computed(
-  () => !isTerminated.value && initialStatus.value !== BDSOPStatus.COMPLETED,
+  () =>
+    !isTerminated.value && resolvedStatus.value !== BDSopApi.Status.COMPLETED,
+);
+
+function extractErrorMessage(error: any) {
+  return (
+    error?.response?.data?.error ??
+    error?.response?.data?.message ??
+    error?.message ??
+    $t('page.bd.sop.detail.contact.load-failed')
+  );
+}
+
+function syncStoreDetail(detail: BDSopApi.ContactDetail) {
+  bdSopStore.setCurrentSop({
+    bd_code: detail.bd_code,
+    brief_url: detail.brief_url,
+    id: Number(detail.contact?.task_sop_id ?? sopId.value),
+    kol_id: detail.kol_id,
+    product_id: detail.product_id,
+    product_url: detail.product_url,
+    status: detail.sop_status,
+    task_bd_id: detail.task_bd_id,
+    task_budget: detail.task_budget,
+    task_commission: detail.task_commission,
+    task_created_at: detail.task_created_at,
+    task_deadline: detail.task_deadline,
+    task_id: detail.task_id,
+    task_type: detail.task_type,
+  });
+}
+
+async function loadSopDetail() {
+  if (!sopId.value) {
+    sopDetail.value = null;
+    detailLoaded.value = true;
+    detailError.value = $t('page.bd.sop.detail.contact.missing-sop-id');
+    return;
+  }
+
+  try {
+    detailLoading.value = true;
+    detailError.value = '';
+    const detail = await getBDSopContactDetail({ task_sop_id: sopId.value });
+    sopDetail.value = detail;
+    syncStoreDetail(detail);
+  } catch (error) {
+    detailError.value = extractErrorMessage(error);
+  } finally {
+    detailLoaded.value = true;
+    detailLoading.value = false;
+  }
+}
+
+watch(
+  sopId,
+  () => {
+    detailLoaded.value = false;
+    sopDetail.value = null;
+    loadSopDetail();
+  },
+  { immediate: true },
 );
 
 function handleStepChange(stepIndex: number) {
@@ -164,11 +234,16 @@ function confirmTerminate() {
       />
 
       <SopStepContent
+        :detail="sopDetail"
+        :detail-error="detailError"
+        :detail-loaded="detailLoaded"
+        :detail-loading="detailLoading"
         :has-budget="hasBudget"
         :is-terminated="isTerminated"
         :show-terminated-content="showTerminatedContent"
         :sop-id="sopId"
         :step="activeStep"
+        @refresh-detail="loadSopDetail"
       />
     </Space>
   </Page>

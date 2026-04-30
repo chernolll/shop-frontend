@@ -76,7 +76,41 @@
         "terminated-banner": "当前 SOP 已终止",
         "terminated-description": "你正在查看这条 SOP 的终止状态信息。",
         "terminated-tip": "这条 SOP 已终止，你仍然可以点击步骤查看各阶段占位内容。",
-        "terminated-entry": "查看终止信息"
+        "terminated-entry": "查看终止信息",
+        "contact": {
+          "bd-code-label": "BD编码",
+          "budget-helper": "预算为空或 0 都表示无预算；填写大于 0 的金额会触发预算申请。",
+          "budget-label": "预算金额",
+          "budget-placeholder": "不填或填 0 代表无预算",
+          "budget-status-approved": "审核通过",
+          "budget-status-label": "预算审核状态",
+          "budget-status-none": "无预算",
+          "budget-status-pending": "待审核",
+          "budget-status-rejected": "已驳回",
+          "contact-created-at-label": "建联创建时间",
+          "contact-information": "联系方式",
+          "contact-placeholder": "例如：wechat: xxx / email: xxx",
+          "contact-required": "请填写联系方式",
+          "editable-tag": "可编辑",
+          "editable-tip": "建联阶段可查看并编辑联系方式与预算信息，保存后会按后端最新状态刷新。",
+          "editing-hint": "当前 SOP 仍处于建联阶段，保存后会以后端返回结果为准。",
+          "empty-description": "暂时没有可展示的建联详情，请重试或返回 SOP 列表重新进入。",
+          "info-card-title": "建联信息",
+          "load-failed": "建联详情加载失败",
+          "missing-sop-id": "缺少 task_sop_id，无法加载建联详情。",
+          "no-contact-record": "当前还没有已保存的建联记录",
+          "not-saved-yet": "尚未保存",
+          "readonly-hint": "当前 SOP 已不在建联阶段，页面改为只读展示，保存入口已关闭。",
+          "readonly-tag": "只读",
+          "readonly-tip": "非建联阶段仍可查看建联信息，但不能继续编辑。",
+          "reset": "重置",
+          "retry": "重新加载",
+          "saved-at-label": "最近保存时间",
+          "submit": "保存建联信息",
+          "submit-success": "建联信息保存成功",
+          "summary-card-title": "任务摘要",
+          "task-created-at-label": "任务创建时间"
+        }
       }
     }
   }
