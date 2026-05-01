@@ -7,6 +7,13 @@ export namespace BDSopApi {
     REJECTED = 2,
   }
 
+  export enum SampleRequestStatus {
+    PENDING = 0,
+    APPROVED = 1,
+    REJECTED = 2,
+    ABANDONED = 3,
+  }
+
   export enum Status {
     CONTACT = 0,
     SAMPLE = 1,
@@ -83,6 +90,75 @@ export namespace BDSopApi {
     sop_status: Status;
   }
 
+  export interface SampleDetail {
+    address: string;
+    delivered_at: null | number;
+    package_received: 0 | 1;
+    product_url: null | string;
+    quantity: number;
+    sop_status: Status;
+    task_sop_id: number;
+    tracking_number: null | string;
+  }
+
+  export interface SampleDetailParams {
+    task_sop_id: number | string;
+  }
+
+  export interface SampleRequestItem {
+    address: string;
+    created_at: number;
+    product_listing_id: number;
+    quantity: number;
+    request_id: number;
+    review_reason: null | string;
+    reviewed_at: null | number;
+    status: SampleRequestStatus;
+    task_sop_id: number;
+    updated_at: number;
+  }
+
+  export interface SampleRequestListResult {
+    list: SampleRequestItem[];
+  }
+
+  export interface SampleRequestListParams {
+    task_sop_id: number | string;
+  }
+
+  export interface CreateSampleRequestParams {
+    address: string;
+    package_received?: 0 | 1;
+    quantity: number;
+    task_sop_id: number | string;
+  }
+
+  export interface CreateSampleRequestResult {
+    package_received: 0 | 1;
+    request_id: number;
+    sop_status: Status;
+  }
+
+  export interface AbandonSampleRequestParams {
+    request_id: number | string;
+    task_sop_id: number | string;
+  }
+
+  export interface AbandonSampleRequestResult {
+    request_id: number;
+    sop_status: Status;
+    status: SampleRequestStatus;
+  }
+
+  export interface ConfirmSampleReceivedParams {
+    task_sop_id: number | string;
+  }
+
+  export interface ConfirmSampleReceivedResult {
+    package_received?: 0 | 1;
+    sop_status: Status;
+  }
+
   export interface ListResult {
     list: Item[];
     page: number;
@@ -109,6 +185,57 @@ export async function getBDSopContactDetail(
 export async function updateBDSopContact(data: BDSopApi.UpdateContactParams) {
   return requestClient.put<BDSopApi.UpdateContactResult>(
     '/bd/sop/contact',
+    data,
+  );
+}
+
+/** BD 用户获取某条 SOP 的送样详情 */
+export async function getBDSopSampleDetail(
+  params: BDSopApi.SampleDetailParams,
+) {
+  return requestClient.get<BDSopApi.SampleDetail>('/bd/sop/sample', {
+    params,
+  });
+}
+
+/** BD 用户获取某条 SOP 的送样申请记录 */
+export async function getBDSopSampleRequests(
+  params: BDSopApi.SampleRequestListParams,
+) {
+  return requestClient.get<BDSopApi.SampleRequestListResult>(
+    '/bd/sop/sample/requests',
+    {
+      params,
+    },
+  );
+}
+
+/** BD 用户提交一条送样申请 */
+export async function createBDSopSampleRequest(
+  data: BDSopApi.CreateSampleRequestParams,
+) {
+  return requestClient.post<BDSopApi.CreateSampleRequestResult>(
+    '/bd/sop/sample/request',
+    data,
+  );
+}
+
+/** BD 用户废弃一条待审核送样申请 */
+export async function abandonBDSopSampleRequest(
+  data: BDSopApi.AbandonSampleRequestParams,
+) {
+  return requestClient.put<BDSopApi.AbandonSampleRequestResult>(
+    '/bd/sop/sample/request/abandon',
+    data,
+  );
+}
+
+/** BD 用户确认包裹已收到 */
+export async function confirmBDSopSampleReceived(
+  data: BDSopApi.ConfirmSampleReceivedParams,
+) {
+  return requestClient.put<BDSopApi.ConfirmSampleReceivedResult>(
+    '/bd/sop/sample/received',
     data,
   );
 }

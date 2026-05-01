@@ -7,6 +7,7 @@ import { BDSopApi } from '#/api/bd/sop';
 import { $t } from '#/locales';
 
 import SopContactPanel from './SopContactPanel.vue';
+import SopSamplePanel from './SopSamplePanel.vue';
 
 const props = defineProps<{
   detail: BDSopApi.ContactDetail | null;
@@ -99,6 +100,11 @@ const statusTagColor = computed(() => {
     :detail-error="detailError"
     :detail-loaded="detailLoaded"
     :detail-loading="detailLoading"
+    :sop-id="sopId"
+    @refresh-detail="emit('refreshDetail')"
+  />
+  <SopSamplePanel
+    v-else-if="!isTerminated && step.status === BDSopApi.Status.SAMPLE"
     :sop-id="sopId"
     @refresh-detail="emit('refreshDetail')"
   />
