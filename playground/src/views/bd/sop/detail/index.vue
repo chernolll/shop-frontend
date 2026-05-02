@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Modal, Space } from 'ant-design-vue';
+import { Input, message, Modal, Space } from 'ant-design-vue';
 
-import { BDSopApi, getBDSopContactDetail } from '#/api/bd/sop';
+import { BDSopApi, getBDSopContactDetail, terminateBDSop } from '#/api/bd/sop';
 import { $t } from '#/locales';
 import { useBDSopStore } from '#/store';
 
@@ -19,6 +19,11 @@ const detailLoading = ref(false);
 const detailLoaded = ref(false);
 const detailError = ref('');
 const sopDetail = ref<BDSopApi.ContactDetail | null>(null);
+const terminateModalOpen = ref(false);
+const terminateSubmitting = ref(false);
+const terminateForm = reactive({
+  remark: '',
+});
 
 const sopId = computed(() => {
   const routeSopId =
@@ -147,6 +152,7 @@ function syncStoreDetail(detail: BDSopApi.ContactDetail) {
     kol_id: detail.kol_id,
     product_id: detail.product_id,
     product_url: detail.product_url,
+    terminate_remark: detail.terminate_remark,
     status: detail.sop_status,
     task_bd_id: detail.task_bd_id,
     task_budget: detail.task_budget,
@@ -201,19 +207,40 @@ function showTerminatedView() {
   }
 }
 
-function confirmTerminate() {
-  Modal.confirm({
-    content: $t('page.bd.sop.detail.terminate-confirm-content'),
-    okButtonProps: {
-      danger: true,
-    },
-    okText: $t('page.bd.sop.detail.terminate'),
-    title: $t('page.bd.sop.detail.terminate-confirm-title'),
-    onOk() {
-      isTerminated.value = true;
-      showTerminatedContent.value = true;
-    },
-  });
+function openTerminateModal() {
+  if (!canTerminate.value) {
+    return;
+  }
+  terminateForm.remark = '';
+  terminateModalOpen.value = true;
+}
+
+function closeTerminateModal() {
+  if (terminateSubmitting.value) {
+    return;
+  }
+  terminateModalOpen.value = false;
+}
+
+async function handleTerminateSubmit() {
+  if (!canTerminate.value) {
+    terminateModalOpen.value = false;
+    return;
+  }
+
+  try {
+    terminateSubmitting.value = true;
+    await terminateBDSop({
+      remark: terminateForm.remark.trim() || undefined,
+      task_sop_id: sopId.value,
+    });
+    message.success($t('page.bd.sop.detail.terminate-success'));
+    terminateModalOpen.value = false;
+    await loadSopDetail();
+    showTerminatedContent.value = true;
+  } finally {
+    terminateSubmitting.value = false;
+  }
 }
 </script>
 
@@ -228,8 +255,9 @@ function confirmTerminate() {
         :is-terminated="isTerminated"
         :show-terminated-content="showTerminatedContent"
         :step-items="workflowSteps"
+        :terminated-remark="sopDetail?.terminate_remark ?? null"
         @show-terminated="showTerminatedView"
-        @terminate="confirmTerminate"
+        @terminate="openTerminateModal"
         @update:current-step="handleStepChange"
       />
 
@@ -243,8 +271,38 @@ function confirmTerminate() {
         :show-terminated-content="showTerminatedContent"
         :sop-id="sopId"
         :step="activeStep"
+        :terminated-remark="sopDetail?.terminate_remark ?? null"
         @refresh-detail="loadSopDetail"
       />
     </Space>
+
+    <Modal
+      :open="terminateModalOpen"
+      :confirm-loading="terminateSubmitting"
+      :ok-button-props="{ danger: true }"
+      :ok-text="$t('page.bd.sop.detail.terminate')"
+      :cancel-text="$t('page.bd.sop.detail.terminate-cancel')"
+      :title="$t('page.bd.sop.detail.terminate-form-title')"
+      @cancel="closeTerminateModal"
+      @ok="handleTerminateSubmit"
+    >
+      <Space direction="vertical" :size="16" class="w-full pt-2">
+        <div class="text-sm leading-6 text-muted-foreground">
+          {{ $t('page.bd.sop.detail.terminate-form-description') }}
+        </div>
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-foreground">
+            {{ $t('page.bd.sop.detail.terminate-remark-label') }}
+          </div>
+          <Input.TextArea
+            v-model:value="terminateForm.remark"
+            :auto-size="{ minRows: 4, maxRows: 8 }"
+            :maxlength="500"
+            :placeholder="$t('page.bd.sop.detail.terminate-remark-placeholder')"
+            show-count
+          />
+        </div>
+      </Space>
+    </Modal>
   </Page>
 </template>

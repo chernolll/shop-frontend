@@ -8,6 +8,7 @@ import { $t } from '#/locales';
 
 import SopContactPanel from './SopContactPanel.vue';
 import SopSamplePanel from './SopSamplePanel.vue';
+import SopVideoPanel from './SopVideoPanel.vue';
 
 const props = defineProps<{
   detail: BDSopApi.ContactDetail | null;
@@ -22,6 +23,7 @@ const props = defineProps<{
     status: number;
     title: string;
   };
+  terminatedRemark: null | string;
 }>();
 
 const emit = defineEmits<{
@@ -31,11 +33,11 @@ const emit = defineEmits<{
 const placeholderMeta = computed(() => {
   if (props.isTerminated && props.showTerminatedContent) {
     return {
-      description: '这里展示终止后的说明、操作记录和后续处理建议。',
-      leftBody: '终止原因、责任说明、补救动作等信息后续可以在这里扩展。',
-      leftTitle: '终止信息占位',
-      rightBody: '如果后续需要恢复、复盘或交接，也可以把记录沉淀在这个区域。',
-      rightTitle: '后续处理占位',
+      description: $t('page.bd.sop.detail.terminated-info-description'),
+      leftBody: '',
+      leftTitle: $t('page.bd.sop.detail.terminated-reason-title'),
+      rightBody: '',
+      rightTitle: '',
       title: $t('page.bd.sop.status-text.terminated'),
     };
   }
@@ -91,11 +93,16 @@ const statusTagColor = computed(() => {
   if (props.step.status === BDSopApi.Status.RECOVER) return 'warning';
   return 'default';
 });
+
+const normalizedTerminatedRemark = computed(() => {
+  const remark = props.terminatedRemark;
+  return typeof remark === 'string' && remark.trim() ? remark.trim() : null;
+});
 </script>
 
 <template>
   <SopContactPanel
-    v-if="!isTerminated && step.status === BDSopApi.Status.CONTACT"
+    v-if="step.status === BDSopApi.Status.CONTACT && !showTerminatedContent"
     :detail="detail"
     :detail-error="detailError"
     :detail-loaded="detailLoaded"
@@ -104,7 +111,14 @@ const statusTagColor = computed(() => {
     @refresh-detail="emit('refreshDetail')"
   />
   <SopSamplePanel
-    v-else-if="!isTerminated && step.status === BDSopApi.Status.SAMPLE"
+    v-else-if="step.status === BDSopApi.Status.SAMPLE && !showTerminatedContent"
+    :sop-id="sopId"
+    @refresh-detail="emit('refreshDetail')"
+  />
+  <SopVideoPanel
+    v-else-if="
+      step.status === BDSopApi.Status.RECOVER && !showTerminatedContent
+    "
     :sop-id="sopId"
     @refresh-detail="emit('refreshDetail')"
   />
@@ -131,7 +145,24 @@ const statusTagColor = computed(() => {
         </Space>
       </Space>
 
-      <Row :gutter="[16, 16]">
+      <template v-if="isTerminated && showTerminatedContent">
+        <Card size="small" class="rounded-2xl border border-border">
+          <template #title>
+            <span class="text-sm font-semibold text-foreground">
+              {{ $t('page.bd.sop.detail.terminated-reason-title') }}
+            </span>
+          </template>
+          <div class="min-h-[160px] text-sm leading-7 text-muted-foreground">
+            {{
+              normalizedTerminatedRemark
+                ? normalizedTerminatedRemark
+                : $t('page.bd.sop.detail.terminated-no-remark')
+            }}
+          </div>
+        </Card>
+      </template>
+
+      <Row v-else :gutter="[16, 16]">
         <Col :lg="14" :span="24">
           <Card size="small" class="h-full rounded-2xl border border-border">
             <template #title>

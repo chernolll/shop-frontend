@@ -46,6 +46,7 @@ export namespace BDSopApi {
     task_deadline: null | number;
     task_id: number;
     task_type: number;
+    terminate_remark: null | string;
   }
 
   export interface ContactRecord {
@@ -74,6 +75,7 @@ export namespace BDSopApi {
     task_deadline: null | number;
     task_id: number;
     task_type: number;
+    terminate_remark: null | string;
   }
 
   export interface ContactDetailParams {
@@ -98,6 +100,7 @@ export namespace BDSopApi {
     quantity: number;
     sop_status: Status;
     task_sop_id: number;
+    terminate_remark: null | string;
     tracking_number: null | string;
   }
 
@@ -156,6 +159,42 @@ export namespace BDSopApi {
 
   export interface ConfirmSampleReceivedResult {
     package_received?: 0 | 1;
+    sop_status: Status;
+  }
+
+  export interface VideoDetail {
+    ads_code: null | string;
+    sop_status: Status;
+    task_sop_id: number;
+    terminate_remark: null | string;
+    upload_time: null | number;
+    video_url: string;
+  }
+
+  export interface VideoDetailParams {
+    task_sop_id: number | string;
+  }
+
+  export interface UpdateVideoParams {
+    ads_code?: null | string;
+    task_sop_id: number | string;
+    upload_time: number;
+    video_url: string;
+  }
+
+  export interface UpdateVideoResult {
+    ads_code: null | string;
+    sop_status: Status;
+    upload_time: number;
+    video_url: string;
+  }
+
+  export interface TerminateSopParams {
+    remark?: string;
+    task_sop_id: number | string;
+  }
+
+  export interface TerminateSopResult {
     sop_status: Status;
   }
 
@@ -236,6 +275,26 @@ export async function confirmBDSopSampleReceived(
 ) {
   return requestClient.put<BDSopApi.ConfirmSampleReceivedResult>(
     '/bd/sop/sample/received',
+    data,
+  );
+}
+
+/** BD 用户获取某条 SOP 的视频阶段详情 */
+export async function getBDSopVideoDetail(params: BDSopApi.VideoDetailParams) {
+  return requestClient.get<BDSopApi.VideoDetail>('/bd/sop/video', {
+    params,
+  });
+}
+
+/** BD 用户提交某条 SOP 的视频信息 */
+export async function updateBDSopVideo(data: BDSopApi.UpdateVideoParams) {
+  return requestClient.put<BDSopApi.UpdateVideoResult>('/bd/sop/video', data);
+}
+
+/** BD 用户终止一条 SOP */
+export async function terminateBDSop(data: BDSopApi.TerminateSopParams) {
+  return requestClient.put<BDSopApi.TerminateSopResult>(
+    '/bd/sop/terminate',
     data,
   );
 }

@@ -11,6 +11,7 @@ defineProps<{
   stepItems: Array<{
     title: string;
   }>;
+  terminatedRemark?: null | string;
 }>();
 
 const emit = defineEmits<{
@@ -94,7 +95,11 @@ function getStepState(
         :message="$t('page.bd.sop.detail.terminated-banner')"
         :description="
           showTerminatedContent
-            ? $t('page.bd.sop.detail.terminated-description')
+            ? terminatedRemark
+              ? $t('page.bd.sop.detail.terminated-description-with-remark', [
+                  terminatedRemark,
+                ])
+              : $t('page.bd.sop.detail.terminated-description')
             : $t('page.bd.sop.detail.terminated-tip')
         "
         class="rounded-xl"
