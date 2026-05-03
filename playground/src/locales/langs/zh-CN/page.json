@@ -25,6 +25,10 @@
     "sop": {
       "title": "SOP",
       "list-title": "SOP 列表",
+      "list-complete-action": "完成SOP",
+      "list-complete-confirm-content": "确认直接完成这条 SOP 吗？后端会根据当前流程状态进行校验。",
+      "list-complete-confirm-title": "确认完成 SOP",
+      "list-complete-success": "SOP 完成操作已提交",
       "detail-title": "SOP 详情",
       "filters": {
         "created-from": "创建时间",
@@ -44,7 +48,8 @@
         "budget": "预算",
         "task-type": "任务类型",
         "created-at": "创建时间",
-        "deadline": "截止时间"
+        "deadline": "截止时间",
+        "operation": "操作"
       },
       "status-text": {
         "contact": "建联",
@@ -68,6 +73,8 @@
         "steps-title": "流程步骤",
         "steps-subtitle": "点击步骤切换当前查看内容，已完成步骤和当前步骤会有清晰状态区分。",
         "current-status": "当前状态",
+        "completed-description": "这条 SOP 已完成，当前流程不再需要额外操作。",
+        "completed-content": "流程已结束。",
         "budget-tag": "预算流程",
         "no-budget-tag": "无预算流程",
         "terminate": "终止流程",
@@ -193,6 +200,13 @@
         "video": {
           "ads-code-label": "Ads Code",
           "ads-code-placeholder": "无值可留空",
+          "complete": "完成这条SOP",
+          "complete-card-title": "手动完成流程",
+          "complete-confirm-content": "当前是无预算流程。确认完成后，这条 SOP 将进入结束阶段，确认继续吗？",
+          "complete-confirm-title": "确认完成 SOP",
+          "complete-disabled-tip": "无预算流程下，只有在视频链接和上传时间都已提交后，才能手动完成这条 SOP。",
+          "complete-ready-tip": "当前是无预算流程，且视频信息已提交，可以手动完成这条 SOP。",
+          "complete-success": "SOP 已完成",
           "editable-tip": "回收视频阶段可填写视频链接、上传时间和可选的 Ads Code，提交后 BD 侧将自动切换为只读。",
           "empty-description": "暂时没有可展示的视频阶段详情，请重试或返回 SOP 列表重新进入。",
           "info-card-title": "视频信息",

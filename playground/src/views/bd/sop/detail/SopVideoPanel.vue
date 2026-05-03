@@ -19,7 +19,12 @@ import {
   Tag,
 } from 'ant-design-vue';
 
-import { BDSopApi, getBDSopVideoDetail, updateBDSopVideo } from '#/api/bd/sop';
+import {
+  BDSopApi,
+  completeBDSop,
+  getBDSopVideoDetail,
+  updateBDSopVideo,
+} from '#/api/bd/sop';
 import { $t } from '#/locales';
 
 const props = defineProps<{
@@ -34,6 +39,7 @@ const detailLoading = ref(false);
 const detailLoaded = ref(false);
 const detailError = ref('');
 const videoDetail = ref<BDSopApi.VideoDetail | null>(null);
+const completing = ref(false);
 const submitting = ref(false);
 
 const formState = reactive<{
@@ -59,6 +65,13 @@ const canSubmit = computed(
     Boolean(videoDetail.value) &&
     isRecoverStage.value &&
     !hasSubmittedVideo.value,
+);
+const canCompleteSop = computed(
+  () =>
+    Boolean(videoDetail.value) &&
+    Number(videoDetail.value?.has_budget ?? 0) !== 1 &&
+    isRecoverStage.value &&
+    hasSubmittedVideo.value,
 );
 
 watch(
@@ -174,6 +187,29 @@ async function loadVideoDetail() {
     detailLoaded.value = true;
     detailLoading.value = false;
   }
+}
+
+function confirmCompleteSop() {
+  if (!canCompleteSop.value) {
+    return;
+  }
+
+  Modal.confirm({
+    content: $t('page.bd.sop.detail.video.complete-confirm-content'),
+    okText: $t('page.bd.sop.detail.video.complete'),
+    title: $t('page.bd.sop.detail.video.complete-confirm-title'),
+    async onOk() {
+      try {
+        completing.value = true;
+        await completeBDSop({ task_sop_id: props.sopId });
+        message.success($t('page.bd.sop.detail.video.complete-success'));
+        await loadVideoDetail();
+        emit('refreshDetail');
+      } finally {
+        completing.value = false;
+      }
+    },
+  });
 }
 
 function confirmSubmit() {
@@ -416,6 +452,30 @@ watch(
                     <div class="mt-2 text-sm leading-6 text-muted-foreground">
                       {{ $t('page.bd.sop.detail.video.readonly-rule-tip') }}
                     </div>
+                  </div>
+
+                  <div class="rounded-xl border border-border bg-muted/40 p-4">
+                    <div
+                      class="text-xs uppercase tracking-wide text-muted-foreground"
+                    >
+                      {{ $t('page.bd.sop.detail.video.complete-card-title') }}
+                    </div>
+                    <div class="mt-2 text-sm leading-6 text-muted-foreground">
+                      {{
+                        canCompleteSop
+                          ? $t('page.bd.sop.detail.video.complete-ready-tip')
+                          : $t('page.bd.sop.detail.video.complete-disabled-tip')
+                      }}
+                    </div>
+                    <Button
+                      class="mt-4"
+                      type="primary"
+                      :disabled="!canCompleteSop"
+                      :loading="completing"
+                      @click="confirmCompleteSop"
+                    >
+                      {{ $t('page.bd.sop.detail.video.complete') }}
+                    </Button>
                   </div>
                 </div>
               </Card>

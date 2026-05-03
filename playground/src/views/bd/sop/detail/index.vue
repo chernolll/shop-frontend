@@ -45,7 +45,7 @@ const resolvedStatus = computed(() => {
 });
 const hasBudget = computed(() => {
   if (sopDetail.value) {
-    return Number(sopDetail.value.task_budget) === 1;
+    return Number(sopDetail.value.has_budget) === 1;
   }
   if (currentSopRecord.value) {
     return Number(currentSopRecord.value.task_budget) === 1;
@@ -67,19 +67,15 @@ const workflowSteps = computed(() => {
       status: BDSopApi.Status.RECOVER,
       title: $t('page.bd.sop.status-text.recover'),
     },
-  ];
-
-  if (hasBudget.value) {
-    steps.push({
+    {
       status: BDSopApi.Status.REMITTANCE,
       title: $t('page.bd.sop.status-text.remittance'),
-    });
-  }
-
-  steps.push({
-    status: BDSopApi.Status.COMPLETED,
-    title: $t('page.bd.sop.status-text.completed'),
-  });
+    },
+    {
+      status: BDSopApi.Status.COMPLETED,
+      title: $t('page.bd.sop.status-text.completed'),
+    },
+  ];
 
   return steps;
 });

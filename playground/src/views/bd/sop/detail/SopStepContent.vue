@@ -122,6 +122,38 @@ const normalizedTerminatedRemark = computed(() => {
     :sop-id="sopId"
     @refresh-detail="emit('refreshDetail')"
   />
+  <Card
+    v-else-if="
+      step.status === BDSopApi.Status.COMPLETED && !showTerminatedContent
+    "
+    :bordered="false"
+    class="min-h-[280px] rounded-2xl shadow-sm"
+  >
+    <Space direction="vertical" :size="20" class="w-full">
+      <Space class="flex w-full items-start justify-between" wrap>
+        <div>
+          <div class="text-xl font-semibold text-foreground">
+            {{ $t('page.bd.sop.status-text.completed') }}
+          </div>
+          <div class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground">
+            {{ $t('page.bd.sop.detail.completed-description') }}
+          </div>
+        </div>
+        <Space wrap>
+          <Tag color="success"> SOP #{{ sopId }} </Tag>
+          <Tag color="success">
+            {{ $t('page.bd.sop.status-text.completed') }}
+          </Tag>
+        </Space>
+      </Space>
+
+      <Card size="small" class="rounded-2xl border border-border">
+        <div class="text-sm leading-7 text-muted-foreground">
+          {{ $t('page.bd.sop.detail.completed-content') }}
+        </div>
+      </Card>
+    </Space>
+  </Card>
   <Card v-else :bordered="false" class="min-h-[360px] rounded-2xl shadow-sm">
     <Space direction="vertical" :size="20" class="w-full">
       <Space class="flex w-full items-start justify-between" wrap>

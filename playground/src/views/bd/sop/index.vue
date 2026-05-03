@@ -7,10 +7,10 @@ import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Tag } from 'ant-design-vue';
+import { Button, message, Modal, Tag } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getBDSopList } from '#/api/bd/sop';
+import { completeBDSop, getBDSopList } from '#/api/bd/sop';
 import { $t } from '#/locales';
 import { useBDSopStore } from '#/store';
 
@@ -71,6 +71,19 @@ function getTaskTypeText(value: number) {
 function openDetail(row: BDSopApi.Item) {
   bdSopStore.setCurrentSop(row);
   router.push(`/bd/sop/${row.id}`);
+}
+
+async function confirmCompleteSop(row: BDSopApi.Item) {
+  Modal.confirm({
+    content: $t('page.bd.sop.list-complete-confirm-content'),
+    okText: $t('page.bd.sop.list-complete-action'),
+    title: $t('page.bd.sop.list-complete-confirm-title'),
+    async onOk() {
+      await completeBDSop({ task_sop_id: row.id });
+      message.success($t('page.bd.sop.list-complete-success'));
+      gridApi.query();
+    },
+  });
 }
 
 const formOptions: VbenFormProps = {
@@ -190,6 +203,13 @@ const gridOptions: VxeTableGridOptions<BDSopApi.Item> = {
       title: $t('page.bd.sop.columns.deadline'),
       width: 180,
     },
+    {
+      field: 'operation',
+      fixed: 'right',
+      slots: { default: 'operation' },
+      title: $t('page.bd.sop.columns.operation'),
+      width: 140,
+    },
   ],
   height: 'auto',
   keepSource: true,
@@ -228,7 +248,7 @@ const gridOptions: VxeTableGridOptions<BDSopApi.Item> = {
   },
 };
 
-const [Grid] = useVbenVxeGrid({
+const [Grid, gridApi] = useVbenVxeGrid({
   formOptions,
   gridOptions,
 });
@@ -279,6 +299,11 @@ const [Grid] = useVbenVxeGrid({
         <Tag>
           {{ getTaskTypeText(row.task_type) }}
         </Tag>
+      </template>
+      <template #operation="{ row }">
+        <Button type="link" @click="confirmCompleteSop(row)">
+          {{ $t('page.bd.sop.list-complete-action') }}
+        </Button>
       </template>
     </Grid>
   </Page>

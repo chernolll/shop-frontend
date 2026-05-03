@@ -63,6 +63,7 @@ export namespace BDSopApi {
     bd_code: string;
     brief_url: null | string;
     contact: ContactRecord | null;
+    has_budget: 0 | 1;
     kol_id: string;
     product_id: number;
     product_url: null | string;
@@ -95,6 +96,7 @@ export namespace BDSopApi {
   export interface SampleDetail {
     address: string;
     delivered_at: null | number;
+    has_budget: 0 | 1;
     package_received: 0 | 1;
     product_url: null | string;
     quantity: number;
@@ -164,6 +166,7 @@ export namespace BDSopApi {
 
   export interface VideoDetail {
     ads_code: null | string;
+    has_budget: 0 | 1;
     sop_status: Status;
     task_sop_id: number;
     terminate_remark: null | string;
@@ -187,6 +190,14 @@ export namespace BDSopApi {
     sop_status: Status;
     upload_time: number;
     video_url: string;
+  }
+
+  export interface CompleteSopParams {
+    task_sop_id: number | string;
+  }
+
+  export interface CompleteSopResult {
+    sop_status: Status;
   }
 
   export interface TerminateSopParams {
@@ -289,6 +300,14 @@ export async function getBDSopVideoDetail(params: BDSopApi.VideoDetailParams) {
 /** BD 用户提交某条 SOP 的视频信息 */
 export async function updateBDSopVideo(data: BDSopApi.UpdateVideoParams) {
   return requestClient.put<BDSopApi.UpdateVideoResult>('/bd/sop/video', data);
+}
+
+/** BD 用户在无预算流程下手动完成一条 SOP */
+export async function completeBDSop(data: BDSopApi.CompleteSopParams) {
+  return requestClient.put<BDSopApi.CompleteSopResult>(
+    '/bd/sop/complete',
+    data,
+  );
 }
 
 /** BD 用户终止一条 SOP */

@@ -25,6 +25,10 @@
     "sop": {
       "title": "SOP",
       "list-title": "SOP List",
+      "list-complete-action": "Complete SOP",
+      "list-complete-confirm-content": "Confirm completing this SOP directly? The backend will validate the current workflow state.",
+      "list-complete-confirm-title": "Confirm SOP Completion",
+      "list-complete-success": "SOP completion request submitted",
       "detail-title": "SOP Detail",
       "filters": {
         "created-from": "Created At",
@@ -44,7 +48,8 @@
         "budget": "Budget",
         "task-type": "Task Type",
         "created-at": "Created At",
-        "deadline": "Deadline"
+        "deadline": "Deadline",
+        "operation": "Action"
       },
       "status-text": {
         "contact": "Contact",
@@ -68,6 +73,8 @@
         "steps-title": "Flow Steps",
         "steps-subtitle": "Click any step to switch content. Completed and current steps are visually distinguished.",
         "current-status": "Current Status",
+        "completed-description": "This SOP has been completed. No further action is required for this workflow.",
+        "completed-content": "The workflow is finished.",
         "budget-tag": "Budget Flow",
         "no-budget-tag": "No Budget Flow",
         "terminate": "Terminate",
@@ -193,6 +200,13 @@
         "video": {
           "ads-code-label": "Ads Code",
           "ads-code-placeholder": "Leave blank when unavailable",
+          "complete": "Complete SOP",
+          "complete-card-title": "Manual Completion",
+          "complete-confirm-content": "This is a no-budget flow. After confirmation, this SOP will move to the completed stage. Continue?",
+          "complete-confirm-title": "Confirm SOP Completion",
+          "complete-disabled-tip": "For no-budget flows, you can complete this SOP only after the video URL and upload time have both been submitted.",
+          "complete-ready-tip": "This is a no-budget flow and the video detail has been submitted, so the SOP can now be completed manually.",
+          "complete-success": "SOP completed successfully",
           "editable-tip": "During the video recovery stage, BD users can submit the video URL, upload time, and optional Ads Code. After submission, this section becomes read-only.",
           "empty-description": "No video-stage detail is available yet. Please retry or reopen this SOP from the list.",
           "info-card-title": "Video Detail",
