@@ -104,6 +104,112 @@
       "detail-description": "This page is reserved for KOL prepare review detail. Real data, review actions, and history will be added after the API is available.",
       "detail-card-title": "Detail Access Ready",
       "detail-card-description": "This page currently verifies that the independent review route, route params, and active-menu behavior are working."
+    },
+    "remittance": {
+      "list-title": "Remittance Review",
+      "selected-count": "{0} selected",
+      "filters": {
+        "all-status": "All Statuses",
+        "bd-code": "BD Code",
+        "kol-id": "KOL ID",
+        "product-listing-id": "Product Listing ID",
+        "status": "Remittance Status",
+        "submit-time-end": "Submitted To",
+        "submit-time-start": "Submitted From",
+        "task-bd-id": "Task Relation ID",
+        "task-id": "Task ID",
+        "task-sop-id": "SOP ID"
+      },
+      "columns": {
+        "amount": "Amount",
+        "audit-time": "Audit Time",
+        "bank-name": "Bank Name",
+        "bd-code": "BD Code",
+        "chat-attachment-count": "Chat Images",
+        "default-amount": "Default Amount",
+        "has-budget": "Budget",
+        "kol-id": "KOL ID",
+        "operation": "Action",
+        "payee-name": "Payee",
+        "payment-attachment-count": "Payment Images",
+        "product-url": "Product URL",
+        "review-remark": "Review Remark",
+        "reviewed-at": "Reviewed At",
+        "reviewer-name": "Reviewer",
+        "sop-status": "SOP Status",
+        "status": "Remittance Status",
+        "submit-at": "Submitted At",
+        "submitter-name": "Submitter"
+      },
+      "budget": {
+        "no": "No Budget",
+        "yes": "With Budget"
+      },
+      "status": {
+        "abandoned": "Abandoned",
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "sop-status": {
+        "completed": "Completed",
+        "contact": "Contact",
+        "recover": "Video Recovery",
+        "remittance": "Remittance",
+        "sample": "Sample",
+        "terminated": "Terminated"
+      },
+      "actions": {
+        "batch-review": "Batch Review",
+        "confirm-submit": "Confirm Submit",
+        "review": "Review",
+        "update-payment": "Add Payment Proof",
+        "view": "View Detail"
+      },
+      "detail": {
+        "attachment-tip-content": "Attachment links expire. If an image fails to load, the page will automatically refetch the detail once.",
+        "attachment-tip-title": "Attachment Notice",
+        "bank-card-no": "Bank Card Number",
+        "chat-attachments": "Chat Screenshots",
+        "chat-empty": "No chat screenshots yet",
+        "payment-attachments": "Payment Screenshots",
+        "payment-empty": "No payment screenshots yet",
+        "review-remark": "Review Remark",
+        "terminate-remark": "Termination Remark",
+        "title": "Remittance Detail"
+      },
+      "review-modal": {
+        "amount-placeholder": "Optionally update the remittance amount",
+        "batch-title": "Batch Review Remittance Requests",
+        "description": "This action will process {0} selected remittance request(s).",
+        "review-remark-label": "Review Remark",
+        "review-remark-placeholder": "Enter the review remark. Sending an empty string will clear it.",
+        "single-title": "Review Remittance Request",
+        "status-label": "Target Status"
+      },
+      "payment-modal": {
+        "attachments-label": "Payment Screenshots",
+        "description": "Add payment screenshots for {0} selected remittance request(s).",
+        "title": "Add Payment Screenshots",
+        "upload-button": "Upload Image",
+        "upload-helper": "Only jpg / jpeg / png are allowed. Submitting will replace the previous payment screenshots."
+      },
+      "messages": {
+        "amount-required": "Amount must be greater than 0",
+        "detail-empty": "There is no detail available for this request yet",
+        "detail-load-failed": "Failed to load remittance detail",
+        "partial-failed-title": "Some Records Failed",
+        "review-all-failed": "All processed records failed, total {0}",
+        "review-partial-success": "Processing finished: {0} succeeded, {1} failed",
+        "review-success": "Processed successfully: {0} record(s)",
+        "select-records-first": "Select at least one record first",
+        "status-required": "Please select a target status",
+        "unknown-failure": "Unknown failure reason",
+        "upload-failed": "Failed to upload the payment screenshot",
+        "upload-file-invalid": "Invalid upload file",
+        "upload-required": "Please upload at least one payment screenshot",
+        "upload-type-invalid": "Only jpg / jpeg / png images are allowed"
+      }
     }
   },
   "bd": {

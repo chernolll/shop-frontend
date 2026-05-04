@@ -36,6 +36,16 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
+      {
+        name: 'Review-Remittance',
+        path: '/review/remittance',
+        component: () => import('#/views/review/remittance/index.vue'),
+        meta: {
+          icon: 'lucide:wallet-cards',
+          title: $t('page.review.remittance.list-title'),
+          authority: [RoleEnum.ADMIN],
+        },
+      },
     ],
   },
 ];

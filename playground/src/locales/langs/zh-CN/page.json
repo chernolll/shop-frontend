@@ -104,6 +104,112 @@
       "detail-description": "这里预留给达人筹备表审核详情，后续接到接口后补充真实数据、审核动作和历史记录。",
       "detail-card-title": "详情访问已打通",
       "detail-card-description": "当前页面主要用于确认 review 独立路由、参数解析和菜单激活逻辑已生效。"
+    },
+    "remittance": {
+      "list-title": "汇款审核",
+      "selected-count": "已选 {0} 条",
+      "filters": {
+        "all-status": "全部状态",
+        "bd-code": "BD 编码",
+        "kol-id": "达人 ID",
+        "product-listing-id": "商品链接 ID",
+        "status": "汇款状态",
+        "submit-time-end": "提交结束时间",
+        "submit-time-start": "提交开始时间",
+        "task-bd-id": "任务分配 ID",
+        "task-id": "任务 ID",
+        "task-sop-id": "SOP ID"
+      },
+      "columns": {
+        "amount": "汇款金额",
+        "audit-time": "审核时间",
+        "bank-name": "银行名称",
+        "bd-code": "BD 编码",
+        "chat-attachment-count": "聊天截图数",
+        "default-amount": "默认金额",
+        "has-budget": "预算",
+        "kol-id": "达人 ID",
+        "operation": "操作",
+        "payee-name": "收款人",
+        "payment-attachment-count": "付款截图数",
+        "product-url": "商品链接",
+        "review-remark": "审核备注",
+        "reviewed-at": "审核时间",
+        "reviewer-name": "审核人",
+        "sop-status": "SOP 状态",
+        "status": "汇款状态",
+        "submit-at": "提交时间",
+        "submitter-name": "提交人"
+      },
+      "budget": {
+        "no": "无预算",
+        "yes": "有预算"
+      },
+      "status": {
+        "abandoned": "已废弃",
+        "approved": "审核通过",
+        "pending": "待审核",
+        "rejected": "已驳回"
+      },
+      "sop-status": {
+        "completed": "结束",
+        "contact": "建联",
+        "recover": "回收视频",
+        "remittance": "汇款阶段",
+        "sample": "送样",
+        "terminated": "终止"
+      },
+      "actions": {
+        "batch-review": "批量审核",
+        "confirm-submit": "确认提交",
+        "review": "审核",
+        "update-payment": "补付款截图",
+        "view": "查看详情"
+      },
+      "detail": {
+        "attachment-tip-content": "附件访问链接有时效；如果图片显示失败，页面会自动重新请求一次详情。",
+        "attachment-tip-title": "附件说明",
+        "bank-card-no": "银行卡号",
+        "chat-attachments": "聊天截图",
+        "chat-empty": "暂无聊天截图",
+        "payment-attachments": "付款截图",
+        "payment-empty": "暂无付款截图",
+        "review-remark": "审核备注",
+        "terminate-remark": "终止原因",
+        "title": "汇款申请详情"
+      },
+      "review-modal": {
+        "amount-placeholder": "可选修改汇款金额",
+        "batch-title": "批量审核汇款申请",
+        "description": "将对选中的 {0} 条汇款申请执行审核。",
+        "review-remark-label": "审核备注",
+        "review-remark-placeholder": "请输入审核备注；传空字符串会清空",
+        "single-title": "审核汇款申请",
+        "status-label": "目标状态"
+      },
+      "payment-modal": {
+        "attachments-label": "付款截图",
+        "description": "为选中的 {0} 条汇款申请补充付款截图。",
+        "title": "补付款截图",
+        "upload-button": "上传截图",
+        "upload-helper": "仅支持 jpg / jpeg / png，提交后会覆盖旧的付款截图。"
+      },
+      "messages": {
+        "amount-required": "金额必须大于 0",
+        "detail-empty": "当前申请暂无可展示的详情数据",
+        "detail-load-failed": "汇款申请详情加载失败",
+        "partial-failed-title": "部分记录处理失败",
+        "review-all-failed": "本次处理全部失败，共 {0} 条",
+        "review-partial-success": "处理完成，成功 {0} 条，失败 {1} 条",
+        "review-success": "处理成功，共 {0} 条",
+        "select-records-first": "请先选择至少 1 条记录",
+        "status-required": "请选择目标状态",
+        "unknown-failure": "未知失败原因",
+        "upload-failed": "付款截图上传失败",
+        "upload-file-invalid": "无效的上传文件",
+        "upload-required": "请至少上传 1 张付款截图",
+        "upload-type-invalid": "仅支持上传 jpg / jpeg / png 图片"
+      }
     }
   },
   "bd": {
