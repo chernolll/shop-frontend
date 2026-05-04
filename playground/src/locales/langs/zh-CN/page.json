@@ -210,6 +210,74 @@
         "upload-required": "请至少上传 1 张付款截图",
         "upload-type-invalid": "仅支持上传 jpg / jpeg / png 图片"
       }
+    },
+    "budget": {
+      "list-title": "预算审核",
+      "selected-count": "已选 {0} 条",
+      "filters": {
+        "all-status": "全部状态",
+        "bd-code": "BD 编码",
+        "kol-id": "达人 ID",
+        "status": "预算状态",
+        "submit-time-end": "提交结束时间",
+        "submit-time-start": "提交开始时间"
+      },
+      "columns": {
+        "amount": "申请预算金额",
+        "bd-code": "BD 编码",
+        "budget-status": "预算状态",
+        "contact-information": "建联信息",
+        "kol-id": "达人 ID",
+        "operation": "操作",
+        "product-url": "商品链接",
+        "reason": "审核原因",
+        "reviewed-at": "审核时间",
+        "reviewer-name": "审核人",
+        "sop-status": "SOP 状态",
+        "submit-at": "提交时间",
+        "submitter-name": "提交人",
+        "terminate-remark": "终止原因"
+      },
+      "status": {
+        "approved": "审核通过",
+        "pending": "待审核",
+        "rejected": "审核驳回"
+      },
+      "sop-status": {
+        "completed": "结束",
+        "contact": "建联",
+        "recover": "回收视频",
+        "remittance": "汇款阶段",
+        "sample": "寄样",
+        "terminated": "终止"
+      },
+      "actions": {
+        "approve": "通过",
+        "batch-approve": "批量通过",
+        "batch-reject": "批量驳回",
+        "confirm-approve": "确认通过",
+        "confirm-reject": "确认驳回",
+        "reject": "驳回"
+      },
+      "review-modal": {
+        "approve-reason-placeholder": "可选填写通过备注或补充说明",
+        "batch-title": "批量审核预算申请",
+        "description": "将对选中的 {0} 条预算申请执行审核。",
+        "reason-label": "审核原因",
+        "reject-reason-placeholder": "请输入驳回原因",
+        "single-amount": "申请金额：{0}",
+        "single-kol": "达人 ID：{0}",
+        "single-title": "审核预算申请"
+      },
+      "messages": {
+        "partial-failed-title": "部分记录处理失败",
+        "reject-reason-required": "预算驳回时必须填写原因",
+        "review-all-failed": "本次审核全部失败，共 {0} 条",
+        "review-partial-success": "审核已完成，成功 {0} 条，失败 {1} 条",
+        "review-success": "审核成功，共处理 {0} 条",
+        "select-records-first": "请先选择至少 1 条记录",
+        "unknown-failure": "未知失败原因"
+      }
     }
   },
   "bd": {
@@ -235,6 +303,127 @@
       },
       "messages": {
         "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF"
+      },
+      "kol-prepare": {
+        "actions": {
+          "add-row": "添加行",
+          "clear-list": "清空名单",
+          "delete": "删除",
+          "download-template": "下载模板",
+          "edit": "编辑",
+          "reset-filters": "清空筛选",
+          "submit": "提交筹备",
+          "upload-excel": "上传 Excel"
+        },
+        "audit-status": {
+          "pass": "已通过",
+          "pending": "审核中",
+          "reject": "不通过",
+          "waiting": "待审核"
+        },
+        "availability": {
+          "available": "可筹备",
+          "retryable": "可重新提交"
+        },
+        "breadcrumb-current": "达人筹备",
+        "columns": {
+          "action": "操作",
+          "audit-reason": "审核原因",
+          "audit-time": "审核时间",
+          "belong-bd-code": "所属BD",
+          "detail": "结果说明",
+          "entry-time": "录入时间",
+          "kol-id": "达人ID",
+          "kol-link": "达人链接",
+          "kol-status": "达人状态",
+          "prepare-status": "历史审核",
+          "prepared-bd-code": "筹备BD",
+          "reason": "校验结果",
+          "record-status": "审核状态",
+          "reviewer-name": "审核人"
+        },
+        "detail": {
+          "has-bd": "该达人已有归属 BD，当前不可重复筹备。",
+          "has-bd-with-code": "该达人已归属 {0}，当前不可重复筹备。",
+          "kol-abnormal": "达人状态不是正常可合作状态，请先确认达人情况。",
+          "kol-deleted": "达人资料已删除，不能继续进入筹备流程。",
+          "normal": "当前达人状态正常，可进入筹备提交流程。",
+          "prepared-by-other": "该达人已被其他 BD 筹备，请更换达人。",
+          "prepared-by-other-with-code": "该达人当前由 {0} 筹备，请更换达人。",
+          "retryable": "该达人此前申请被驳回，本次可重新提交。",
+          "task-duplicate": "当前任务下已存在你的有效筹备记录，请勿重复提交。"
+        },
+        "editor": {
+          "cancel": "取消",
+          "confirm": "保存并校验",
+          "create-title": "添加达人",
+          "edit-title": "编辑达人",
+          "kol-id-label": "达人ID",
+          "kol-id-placeholder": "请输入达人ID",
+          "kol-link-label": "达人链接",
+          "kol-link-placeholder": "请输入达人链接"
+        },
+        "empty-description": "可以先上传 Excel 模板，或点击“添加行”手动补充达人信息后再校验。",
+        "empty-title": "还没有导入任何达人",
+        "filters": {
+          "all-audit-status": "全部审核状态",
+          "all-kol-status": "全部达人状态",
+          "all-reason": "全部校验结果"
+        },
+        "invalid-alert-description": "请删除异常行，或调整达人后再提交；处于“可重新提交”的达人可以直接保留。",
+        "invalid-alert-title": "当前名单中存在不可筹备达人",
+        "kol-status": {
+          "blacklist": "黑名单",
+          "lost": "流失",
+          "normal": "正常",
+          "unrecorded": "未录入"
+        },
+        "messages": {
+          "duplicate-refreshed": "，其中 {0} 条已存在并已刷新状态",
+          "file-empty": "文件为空",
+          "has-invalid-data": "存在状态异常的达人数据，请先删除后再提交",
+          "input-kol-id": "请输入达人ID",
+          "input-kol-link": "请输入达人链接",
+          "input-valid-kol-id": "请输入至少一个有效的达人ID",
+          "missing-kol-id-column": "未检测到 kol_id 列",
+          "missing-kol-link": "达人 {0} 缺少达人链接，请补充后再提交",
+          "no-submittable-data": "当前没有可提交的达人筹备数据",
+          "no-valid-kol-id-in-excel": "未在 Excel 中检测到有效的达人ID数据",
+          "parse-failed": "Excel 文件解析失败，请检查文件格式",
+          "save-failed": "保存失败，请稍后重试",
+          "submit-failed": "提交失败，请重试",
+          "submit-success": "成功提交 {0} 条达人筹备记录",
+          "validation-success": "已校验 {0} 条达人ID，新增 {1} 条，更新 {2} 条{3}"
+        },
+        "page-description": "上传 Excel 或手动补充达人ID，系统会按当前任务分配和达人占用状态做预校验；你可以先整理名单，再统一提交筹备记录。",
+        "page-title": "任务分配 #{0} 达人筹备表",
+        "reason-code": {
+          "can-prepare": "可筹备",
+          "has-bd": "已有所属BD",
+          "kol-abnormal": "状态异常",
+          "kol-deleted": "达人已删除",
+          "prepared-by-other": "被其他BD筹备",
+          "task-duplicate": "任务内重复"
+        },
+        "records-description": "支持按审核状态筛选，并按分页查看当前任务的达人筹备记录。",
+        "records-title": "提交记录",
+        "result-description": "当前共 {0} 条，其中 {1} 条可筹备，{2} 条需处理。",
+        "result-filtered-tip": "当前为筛选视图，全部名单共 {0} 条。",
+        "result-title": "解析结果",
+        "summary": {
+          "all-count": "全部 {0} 条",
+          "available": "可筹备",
+          "current": "当前名单",
+          "filtered": "筛选结果",
+          "pending": "待处理",
+          "retryable": "可重提"
+        },
+        "tabs": {
+          "records": "提交记录",
+          "upload": "上传筹备"
+        },
+        "upload-card-description": "模板首行需要包含 `kol_id` 与 `kol_link` 列。导入后可在结果表格里继续编辑或补充达人。",
+        "upload-card-title": "Excel 导入与名单维护"
       },
       "budget-text": {
         "no": "无",
@@ -328,6 +517,7 @@
           "budget-label": "预算金额",
           "budget-placeholder": "不填或填 0 代表无预算",
           "budget-status-approved": "审核通过",
+          "budget-review-reason-title": "预算驳回原因",
           "budget-status-label": "预算审核状态",
           "budget-status-none": "无预算",
           "budget-status-pending": "待审核",

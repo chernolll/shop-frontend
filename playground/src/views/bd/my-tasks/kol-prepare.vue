@@ -29,34 +29,60 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { queryKolPrepareData, uploadKolPrepareData } from '#/api/bd/bd-my-task';
 import { queryKolPrepareState } from '#/api/bd/kol';
 import { KoaPrepareAuditStatus, KolPrepareReasonCode } from '#/consts/bd-sop';
+import { $t } from '#/locales';
 
 const route = useRoute();
 const taskRelationId = Number(route.params.task_id);
 
 function reasonCodeText(code: number): string {
   const map: Record<number, string> = {
-    [KolPrepareReasonCode.CAN_PREPARE]: '可筹备',
-    [KolPrepareReasonCode.TASK_DUPLICATE]: '任务内重复',
-    [KolPrepareReasonCode.HAS_BD]: '已有所属BD',
-    [KolPrepareReasonCode.PREPARED_BY_OTHER]: '被其他BD筹备',
-    [KolPrepareReasonCode.KOL_DELETED]: '达人已删除',
-    [KolPrepareReasonCode.KOL_ABNORMAL]: '状态异常',
+    [KolPrepareReasonCode.CAN_PREPARE]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.can-prepare',
+    ),
+    [KolPrepareReasonCode.TASK_DUPLICATE]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.task-duplicate',
+    ),
+    [KolPrepareReasonCode.HAS_BD]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.has-bd',
+    ),
+    [KolPrepareReasonCode.PREPARED_BY_OTHER]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.prepared-by-other',
+    ),
+    [KolPrepareReasonCode.KOL_DELETED]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.kol-deleted',
+    ),
+    [KolPrepareReasonCode.KOL_ABNORMAL]: $t(
+      'page.bd.my-task.kol-prepare.reason-code.kol-abnormal',
+    ),
   };
   return map[code] ?? String(code);
 }
 
 function kolStatusLabel(kolStatus: null | number): string {
-  if (kolStatus === null) return '未录入';
-  const map: Record<number, string> = { 1: '正常', 2: '流失', 3: '黑名单' };
+  if (kolStatus === null)
+    return $t('page.bd.my-task.kol-prepare.kol-status.unrecorded');
+  const map: Record<number, string> = {
+    1: $t('page.bd.my-task.kol-prepare.kol-status.normal'),
+    2: $t('page.bd.my-task.kol-prepare.kol-status.lost'),
+    3: $t('page.bd.my-task.kol-prepare.kol-status.blacklist'),
+  };
   return map[kolStatus] ?? '-';
 }
 
 function auditStatusText(status: KoaPrepareAuditStatus): string {
   const map: Record<number, string> = {
-    [KoaPrepareAuditStatus.PASS]: '已通过',
-    [KoaPrepareAuditStatus.WAITING]: '待审核',
-    [KoaPrepareAuditStatus.PENDING]: '审核中',
-    [KoaPrepareAuditStatus.REJECT]: '不通过',
+    [KoaPrepareAuditStatus.PASS]: $t(
+      'page.bd.my-task.kol-prepare.audit-status.pass',
+    ),
+    [KoaPrepareAuditStatus.WAITING]: $t(
+      'page.bd.my-task.kol-prepare.audit-status.waiting',
+    ),
+    [KoaPrepareAuditStatus.PENDING]: $t(
+      'page.bd.my-task.kol-prepare.audit-status.pending',
+    ),
+    [KoaPrepareAuditStatus.REJECT]: $t(
+      'page.bd.my-task.kol-prepare.audit-status.reject',
+    ),
   };
   return map[status] ?? String(status);
 }
@@ -144,10 +170,12 @@ const hasActiveFilters = computed(
   () => selectedReasonCode.value !== 'all' || selectedKolStatus.value !== 'all',
 );
 const editorTitle = computed(() =>
-  editorMode.value === 'create' ? '添加达人' : '编辑达人',
+  editorMode.value === 'create'
+    ? $t('page.bd.my-task.kol-prepare.editor.create-title')
+    : $t('page.bd.my-task.kol-prepare.editor.edit-title'),
 );
 const reasonCodeOptions = computed(() => [
-  { label: '全部校验结果', value: 'all' },
+  { label: $t('page.bd.my-task.kol-prepare.filters.all-reason'), value: 'all' },
   ...Object.values(KolPrepareReasonCode)
     .filter((value): value is number => typeof value === 'number')
     .map((value) => ({
@@ -156,14 +184,20 @@ const reasonCodeOptions = computed(() => [
     })),
 ]);
 const kolStatusOptions = computed(() => [
-  { label: '全部达人状态', value: 'all' },
+  {
+    label: $t('page.bd.my-task.kol-prepare.filters.all-kol-status'),
+    value: 'all',
+  },
   { label: kolStatusLabel(1), value: 1 },
   { label: kolStatusLabel(2), value: 2 },
   { label: kolStatusLabel(3), value: 3 },
   { label: kolStatusLabel(null), value: -1 },
 ]);
 const recordStatusOptions = computed(() => [
-  { label: '全部审核状态', value: 'all' },
+  {
+    label: $t('page.bd.my-task.kol-prepare.filters.all-audit-status'),
+    value: 'all',
+  },
   // { label: auditStatusText(KoaPrepareAuditStatus.WAITING), value: KoaPrepareAuditStatus.WAITING },
   {
     label: auditStatusText(KoaPrepareAuditStatus.PENDING),
@@ -225,30 +259,34 @@ function mergePrepareRows(
 function prepareDetailText(row: PrepareRow) {
   if (row.can_prepare) {
     if (row.prepare_status === KoaPrepareAuditStatus.REJECT) {
-      return '该达人此前申请被驳回，本次可重新提交。';
+      return $t('page.bd.my-task.kol-prepare.detail.retryable');
     }
-    return row.reason_msg || '当前达人状态正常，可进入筹备提交流程。';
+    return row.reason_msg || $t('page.bd.my-task.kol-prepare.detail.normal');
   }
 
   switch (row.reason_code) {
     case KolPrepareReasonCode.HAS_BD: {
       return row.belong_bd_code
-        ? `该达人已归属 ${row.belong_bd_code}，当前不可重复筹备。`
-        : '该达人已有归属 BD，当前不可重复筹备。';
+        ? $t('page.bd.my-task.kol-prepare.detail.has-bd-with-code', [
+            row.belong_bd_code,
+          ])
+        : $t('page.bd.my-task.kol-prepare.detail.has-bd');
     }
     case KolPrepareReasonCode.KOL_ABNORMAL: {
-      return '达人状态不是正常可合作状态，请先确认达人情况。';
+      return $t('page.bd.my-task.kol-prepare.detail.kol-abnormal');
     }
     case KolPrepareReasonCode.KOL_DELETED: {
-      return '达人资料已删除，不能继续进入筹备流程。';
+      return $t('page.bd.my-task.kol-prepare.detail.kol-deleted');
     }
     case KolPrepareReasonCode.PREPARED_BY_OTHER: {
       return row.prepared_bd_code
-        ? `该达人当前由 ${row.prepared_bd_code} 筹备，请更换达人。`
-        : '该达人已被其他 BD 筹备，请更换达人。';
+        ? $t('page.bd.my-task.kol-prepare.detail.prepared-by-other-with-code', [
+            row.prepared_bd_code,
+          ])
+        : $t('page.bd.my-task.kol-prepare.detail.prepared-by-other');
     }
     case KolPrepareReasonCode.TASK_DUPLICATE: {
-      return '当前任务下已存在你的有效筹备记录，请勿重复提交。';
+      return $t('page.bd.my-task.kol-prepare.detail.task-duplicate');
     }
     default: {
       return row.reason_msg || '-';
@@ -264,9 +302,11 @@ function availabilityTagColor(row: PrepareRow) {
 
 function availabilityTagText(row: PrepareRow) {
   if (row.can_prepare && row.prepare_status === KoaPrepareAuditStatus.REJECT) {
-    return '可重新提交';
+    return $t('page.bd.my-task.kol-prepare.availability.retryable');
   }
-  return row.can_prepare ? '可筹备' : reasonCodeText(row.reason_code);
+  return row.can_prepare
+    ? $t('page.bd.my-task.kol-prepare.availability.available')
+    : reasonCodeText(row.reason_code);
 }
 
 function syncUploadGrid() {
@@ -313,7 +353,9 @@ async function appendValidatedRows(items: ParsedKolRow[]) {
       },
   );
   if (normalizedItems.length === 0) {
-    message.warning('请输入至少一个有效的达人ID');
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.input-valid-kol-id'),
+    );
     return;
   }
 
@@ -331,10 +373,19 @@ async function appendValidatedRows(items: ParsedKolRow[]) {
   ).length;
   const updatedCount = validatedRows.length - appendedCount;
   const duplicateMessage =
-    duplicateCount > 0 ? `，其中 ${duplicateCount} 条已存在并已刷新状态` : '';
+    duplicateCount > 0
+      ? $t('page.bd.my-task.kol-prepare.messages.duplicate-refreshed', [
+          duplicateCount,
+        ])
+      : '';
 
   message.success(
-    `已校验 ${validatedRows.length} 条达人ID，新增 ${appendedCount} 条，更新 ${updatedCount} 条${duplicateMessage}`,
+    $t('page.bd.my-task.kol-prepare.messages.validation-success', [
+      validatedRows.length,
+      appendedCount,
+      updatedCount,
+      duplicateMessage,
+    ]),
   );
 }
 
@@ -388,13 +439,17 @@ async function handleFileChange(e: Event) {
   try {
     const rows = await parseExcelFile(file);
     if (rows.length === 0) {
-      message.warning('未在 Excel 中检测到有效的达人ID数据');
+      message.warning(
+        $t('page.bd.my-task.kol-prepare.messages.no-valid-kol-id-in-excel'),
+      );
       return;
     }
     uploadGridApi.setLoading(true);
     await appendValidatedRows(rows);
   } catch (error: any) {
-    message.error(error?.message || 'Excel 文件解析失败，请检查文件格式');
+    message.error(
+      error?.message || $t('page.bd.my-task.kol-prepare.messages.parse-failed'),
+    );
   } finally {
     uploadGridApi.setLoading(false);
     input.value = '';
@@ -411,7 +466,9 @@ function parseExcelFile(file: File): Promise<ParsedKolRow[]> {
         const ws = wb.Sheets[wb.SheetNames[0]!];
         const rows = XLSX.utils.sheet_to_json<string[]>(ws!, { header: 1 });
         if (rows.length === 0) {
-          reject(new Error('文件为空'));
+          reject(
+            new Error($t('page.bd.my-task.kol-prepare.messages.file-empty')),
+          );
           return;
         }
 
@@ -419,7 +476,11 @@ function parseExcelFile(file: File): Promise<ParsedKolRow[]> {
         const kolIdIndex = header.indexOf('kol_id');
         const kolLinkIndex = header.indexOf('kol_link');
         if (kolIdIndex === -1) {
-          reject(new Error('未检测到 kol_id 列'));
+          reject(
+            new Error(
+              $t('page.bd.my-task.kol-prepare.messages.missing-kol-id-column'),
+            ),
+          );
           return;
         }
 
@@ -451,11 +512,11 @@ async function handleEditorSubmit() {
   const kolId = normalizeKolId(editorForm.value.kol_id);
   const kolLink = normalizeKolLink(editorForm.value.kol_link);
   if (!kolId) {
-    message.warning('请输入达人ID');
+    message.warning($t('page.bd.my-task.kol-prepare.messages.input-kol-id'));
     return;
   }
   if (!kolLink) {
-    message.warning('请输入达人链接');
+    message.warning($t('page.bd.my-task.kol-prepare.messages.input-kol-link'));
     return;
   }
 
@@ -478,7 +539,9 @@ async function handleEditorSubmit() {
   } catch (error: any) {
     previewData.value = previousRows;
     syncUploadGrid();
-    message.error(error?.message || '保存失败，请稍后重试');
+    message.error(
+      error?.message || $t('page.bd.my-task.kol-prepare.messages.save-failed'),
+    );
   } finally {
     editorSubmitting.value = false;
   }
@@ -486,11 +549,15 @@ async function handleEditorSubmit() {
 
 async function handleSubmit() {
   if (previewData.value.length === 0) {
-    message.warning('当前没有可提交的达人筹备数据');
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.no-submittable-data'),
+    );
     return;
   }
   if (hasNonNormal.value) {
-    message.warning('存在状态异常的达人数据，请先删除后再提交');
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.has-invalid-data'),
+    );
     return;
   }
 
@@ -499,7 +566,9 @@ async function handleSubmit() {
   );
   if (missingLinkRow) {
     message.warning(
-      `达人 ${missingLinkRow.kol_id} 缺少达人链接，请补充后再提交`,
+      $t('page.bd.my-task.kol-prepare.messages.missing-kol-link', [
+        missingLinkRow.kol_id,
+      ]),
     );
     return;
   }
@@ -514,12 +583,19 @@ async function handleSubmit() {
       task_id: taskRelationId,
     };
     await uploadKolPrepareData(payload);
-    message.success(`成功提交 ${previewData.value.length} 条达人筹备记录`);
+    message.success(
+      $t('page.bd.my-task.kol-prepare.messages.submit-success', [
+        previewData.value.length,
+      ]),
+    );
     clearPreviewData();
     activeTab.value = 'records';
     recordGridApi.reload();
   } catch (error: any) {
-    message.error(error?.message || '提交失败，请重试');
+    message.error(
+      error?.message ||
+        $t('page.bd.my-task.kol-prepare.messages.submit-failed'),
+    );
   } finally {
     submitting.value = false;
   }
@@ -533,59 +609,63 @@ watch(activeTab, (tab) => {
 
 const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
   { type: 'seq', width: 60, title: ' ' },
-  { field: 'kol_id', title: '达人ID', width: 180 },
+  {
+    field: 'kol_id',
+    title: $t('page.bd.my-task.kol-prepare.columns.kol-id'),
+    width: 180,
+  },
   {
     field: 'kol_link',
     minWidth: 220,
     slots: { default: 'kol_link' },
-    title: '达人链接',
+    title: $t('page.bd.my-task.kol-prepare.columns.kol-link'),
   },
   {
     field: 'reason_msg',
     minWidth: 160,
     slots: { default: 'reason' },
-    title: '校验结果',
+    title: $t('page.bd.my-task.kol-prepare.columns.reason'),
   },
   {
     field: 'detail',
     minWidth: 320,
     slots: { default: 'detail' },
-    title: '结果说明',
+    title: $t('page.bd.my-task.kol-prepare.columns.detail'),
   },
   {
     field: 'kol_status',
     slots: { default: 'kol_status' },
-    title: '达人状态',
+    title: $t('page.bd.my-task.kol-prepare.columns.kol-status'),
     width: 120,
   },
   {
     field: 'prepare_status',
     slots: { default: 'prepare_status' },
-    title: '历史审核',
+    title: $t('page.bd.my-task.kol-prepare.columns.prepare-status'),
     width: 120,
   },
   {
     field: 'belong_bd_code',
     slots: { default: 'belong_bd_code' },
-    title: '所属BD',
+    title: $t('page.bd.my-task.kol-prepare.columns.belong-bd-code'),
     width: 120,
   },
   {
     field: 'prepared_bd_code',
     slots: { default: 'prepared_bd_code' },
-    title: '筹备BD',
+    title: $t('page.bd.my-task.kol-prepare.columns.prepared-bd-code'),
     width: 120,
   },
   {
     field: 'entry_time',
     formatter: 'formatDateTime',
-    title: '录入时间',
+    title: $t('page.bd.my-task.kol-prepare.columns.entry-time'),
     width: 180,
   },
   {
     field: 'action',
     slots: { default: 'action' },
-    title: '操作',
+    title: $t('page.bd.my-task.kol-prepare.columns.action'),
     width: 150,
   },
 ];
@@ -593,37 +673,45 @@ const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
 const recordColumns: VxeGridProps<BdTaskApi.PrepareDataRow>['columns'] = [
   // 序号
   { type: 'seq', width: 60, title: ' ' },
-  { field: 'kol_id', title: '达人ID', width: 180 },
+  {
+    field: 'kol_id',
+    title: $t('page.bd.my-task.kol-prepare.columns.kol-id'),
+    width: 180,
+  },
   {
     field: 'kol_link',
     minWidth: 220,
     slots: { default: 'kol_link' },
-    title: '达人链接',
+    title: $t('page.bd.my-task.kol-prepare.columns.kol-link'),
   },
   {
     field: 'entry_time',
     formatter: 'formatDateTime',
-    title: '录入时间',
+    title: $t('page.bd.my-task.kol-prepare.columns.entry-time'),
     width: 180,
   },
   {
     field: 'status',
     slots: { default: 'status' },
-    title: '审核状态',
+    title: $t('page.bd.my-task.kol-prepare.columns.record-status'),
     width: 150,
   },
   {
     field: 'reviewer_name',
-    title: '审核人',
+    title: $t('page.bd.my-task.kol-prepare.columns.reviewer-name'),
     width: 140,
   },
   {
     field: 'audit_time',
     formatter: 'formatDateTime',
-    title: '审核时间',
+    title: $t('page.bd.my-task.kol-prepare.columns.audit-time'),
     width: 180,
   },
-  { field: 'reason', minWidth: 180, title: '审核原因' },
+  {
+    field: 'reason',
+    minWidth: 180,
+    title: $t('page.bd.my-task.kol-prepare.columns.audit-reason'),
+  },
 ];
 
 const [UploadGrid, uploadGridApi] = useVbenVxeGrid<PrepareRow>({
@@ -705,47 +793,61 @@ watch(recordStatusFilter, () => {
               to="/bd/my-tasks"
               class="transition-colors hover:text-blue-500"
             >
-              我的任务
+              {{ $t('page.bd.my-task.title') }}
             </router-link>
             <span class="mx-2 text-slate-300">/</span>
-            <span>达人筹备</span>
+            <span>{{
+              $t('page.bd.my-task.kol-prepare.breadcrumb-current')
+            }}</span>
           </div>
           <h1 class="text-xl font-semibold text-slate-900">
-            任务分配 #{{ taskRelationId }} 达人筹备表
+            {{ $t('page.bd.my-task.kol-prepare.page-title', [taskRelationId]) }}
           </h1>
           <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-            上传 Excel
-            或手动补充达人ID，系统会按当前任务分配和达人占用状态做预校验；
-            你可以先整理名单，再统一提交筹备记录。
+            {{ $t('page.bd.my-task.kol-prepare.page-description') }}
           </p>
         </div>
 
         <div class="grid grid-cols-2 gap-3 lg:min-w-[360px] lg:grid-cols-2">
           <div class="rounded-xl bg-slate-50 px-4 py-3">
             <div class="text-xs text-slate-500">
-              {{ hasActiveFilters ? '筛选结果' : '当前名单' }}
+              {{
+                hasActiveFilters
+                  ? $t('page.bd.my-task.kol-prepare.summary.filtered')
+                  : $t('page.bd.my-task.kol-prepare.summary.current')
+              }}
             </div>
             <div class="mt-1 text-2xl font-semibold text-slate-900">
               {{ summary.total }}
             </div>
             <div v-if="hasActiveFilters" class="mt-1 text-xs text-slate-400">
-              全部 {{ previewData.length }} 条
+              {{
+                $t('page.bd.my-task.kol-prepare.summary.all-count', [
+                  previewData.length,
+                ])
+              }}
             </div>
           </div>
           <div class="rounded-xl bg-emerald-50 px-4 py-3">
-            <div class="text-xs text-emerald-700">可筹备</div>
+            <div class="text-xs text-emerald-700">
+              {{ $t('page.bd.my-task.kol-prepare.summary.available') }}
+            </div>
             <div class="mt-1 text-2xl font-semibold text-emerald-700">
               {{ summary.valid }}
             </div>
           </div>
           <div v-if="false" class="rounded-xl bg-amber-50 px-4 py-3">
-            <div class="text-xs text-amber-700">待处理</div>
+            <div class="text-xs text-amber-700">
+              {{ $t('page.bd.my-task.kol-prepare.summary.pending') }}
+            </div>
             <div class="mt-1 text-2xl font-semibold text-amber-700">
               {{ summary.invalid }}
             </div>
           </div>
           <div v-if="false" class="rounded-xl bg-sky-50 px-4 py-3">
-            <div class="text-xs text-sky-700">可重提</div>
+            <div class="text-xs text-sky-700">
+              {{ $t('page.bd.my-task.kol-prepare.summary.retryable') }}
+            </div>
             <div class="mt-1 text-2xl font-semibold text-sky-700">
               {{ summary.retryable }}
             </div>
@@ -755,31 +857,41 @@ watch(recordStatusFilter, () => {
     </div>
 
     <Tabs v-model:active-key="activeTab">
-      <Tabs.TabPane key="upload" tab="上传筹备">
+      <Tabs.TabPane
+        key="upload"
+        :tab="$t('page.bd.my-task.kol-prepare.tabs.upload')"
+      >
         <Card :bordered="false" class="rounded-2xl shadow-sm">
           <div
             class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
           >
             <div>
-              <h3 class="text-base font-semibold text-slate-900">
-                Excel 导入与名单维护
+              <h3 class="text-base font-semibold text-slate-500">
+                {{ $t('page.bd.my-task.kol-prepare.upload-card-title') }}
               </h3>
               <p class="mt-1 text-sm text-slate-500">
-                模板首行需要包含 `kol_id` 与 `kol_link`
-                列。导入后可在结果表格里继续编辑或补充达人。
+                {{ $t('page.bd.my-task.kol-prepare.upload-card-description') }}
               </p>
             </div>
             <div class="flex flex-wrap gap-2">
-              <Button @click="downloadTemplate">下载模板</Button>
-              <Button type="primary" @click="triggerUpload">上传 Excel</Button>
-              <Button @click="openCreateEditor">添加行</Button>
+              <Button @click="downloadTemplate">
+                {{
+                  $t('page.bd.my-task.kol-prepare.actions.download-template')
+                }}
+              </Button>
+              <Button type="primary" @click="triggerUpload">
+                {{ $t('page.bd.my-task.kol-prepare.actions.upload-excel') }}
+              </Button>
+              <Button @click="openCreateEditor">
+                {{ $t('page.bd.my-task.kol-prepare.actions.add-row') }}
+              </Button>
               <Button
                 v-if="previewData.length > 0"
                 danger
                 ghost
                 @click="clearPreviewData"
               >
-                清空名单
+                {{ $t('page.bd.my-task.kol-prepare.actions.clear-list') }}
               </Button>
             </div>
           </div>
@@ -798,8 +910,10 @@ watch(recordStatusFilter, () => {
             v-if="hasNonNormal"
             type="warning"
             show-icon
-            message="当前名单中存在不可筹备达人"
-            description="请删除异常行，或调整达人后再提交；处于“可重新提交”的达人可以直接保留。"
+            :message="$t('page.bd.my-task.kol-prepare.invalid-alert-title')"
+            :description="
+              $t('page.bd.my-task.kol-prepare.invalid-alert-description')
+            "
           />
 
           <Card :bordered="false" class="rounded-2xl shadow-sm">
@@ -807,13 +921,23 @@ watch(recordStatusFilter, () => {
               class="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"
             >
               <div>
-                <h3 class="text-base font-semibold text-blue-900">解析结果</h3>
+                <h3 class="text-base font-semibold text-blue-900">
+                  {{ $t('page.bd.my-task.kol-prepare.result-title') }}
+                </h3>
                 <p class="mt-1 text-sm text-slate-500">
-                  当前共 {{ summary.total }} 条，其中
-                  {{ summary.valid }} 条可筹备，
-                  {{ summary.invalid }} 条需处理。
+                  {{
+                    $t('page.bd.my-task.kol-prepare.result-description', [
+                      summary.total,
+                      summary.valid,
+                      summary.invalid,
+                    ])
+                  }}
                   <template v-if="hasActiveFilters">
-                    当前为筛选视图，全部名单共 {{ previewData.length }} 条。
+                    {{
+                      $t('page.bd.my-task.kol-prepare.result-filtered-tip', [
+                        previewData.length,
+                      ])
+                    }}
                   </template>
                 </p>
               </div>
@@ -829,7 +953,7 @@ watch(recordStatusFilter, () => {
                   class="min-w-[160px]"
                 />
                 <Button v-if="hasActiveFilters" @click="resetFilters">
-                  清空筛选
+                  {{ $t('page.bd.my-task.kol-prepare.actions.reset-filters') }}
                 </Button>
                 <Button
                   type="primary"
@@ -837,7 +961,7 @@ watch(recordStatusFilter, () => {
                   :disabled="!canSubmit"
                   @click="handleSubmit"
                 >
-                  提交筹备
+                  {{ $t('page.bd.my-task.kol-prepare.actions.submit') }}
                 </Button>
               </div>
             </div>
@@ -900,7 +1024,7 @@ watch(recordStatusFilter, () => {
 
               <template #action="{ row }">
                 <Button size="small" type="link" @click="openEditEditor(row)">
-                  编辑
+                  {{ $t('page.bd.my-task.kol-prepare.actions.edit') }}
                 </Button>
                 <Button
                   danger
@@ -908,7 +1032,7 @@ watch(recordStatusFilter, () => {
                   type="link"
                   @click="removePrepareRow(row.kol_id)"
                 >
-                  删除
+                  {{ $t('page.bd.my-task.kol-prepare.actions.delete') }}
                 </Button>
               </template>
             </UploadGrid>
@@ -920,21 +1044,26 @@ watch(recordStatusFilter, () => {
           class="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50/70 py-16 text-center"
         >
           <div class="text-base font-medium text-slate-700">
-            还没有导入任何达人
+            {{ $t('page.bd.my-task.kol-prepare.empty-title') }}
           </div>
           <div class="mt-2 text-sm text-slate-500">
-            可以先上传 Excel 模板，或点击“添加行”手动补充达人信息后再校验。
+            {{ $t('page.bd.my-task.kol-prepare.empty-description') }}
           </div>
         </div>
       </Tabs.TabPane>
 
-      <Tabs.TabPane key="records" tab="提交记录">
+      <Tabs.TabPane
+        key="records"
+        :tab="$t('page.bd.my-task.kol-prepare.tabs.records')"
+      >
         <Card :bordered="false" class="rounded-2xl shadow-sm">
           <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 class="text-base font-semibold text-slate-900">提交记录</h3>
+              <h3 class="text-base font-semibold text-slate-900">
+                {{ $t('page.bd.my-task.kol-prepare.records-title') }}
+              </h3>
               <p class="mt-1 text-sm text-slate-500">
-                支持按审核状态筛选，并按分页查看当前任务的达人筹备记录。
+                {{ $t('page.bd.my-task.kol-prepare.records-description') }}
               </p>
             </div>
             <div class="flex items-center gap-2">
@@ -947,7 +1076,7 @@ watch(recordStatusFilter, () => {
                 v-if="recordStatusFilter !== 'all'"
                 @click="recordStatusFilter = 'all'"
               >
-                清空筛选
+                {{ $t('page.bd.my-task.kol-prepare.actions.reset-filters') }}
               </Button>
             </div>
           </div>
@@ -976,25 +1105,33 @@ watch(recordStatusFilter, () => {
       :open="editorVisible"
       :title="editorTitle"
       :confirm-loading="editorSubmitting"
-      ok-text="保存并校验"
-      cancel-text="取消"
+      :ok-text="$t('page.bd.my-task.kol-prepare.editor.confirm')"
+      :cancel-text="$t('page.bd.my-task.kol-prepare.editor.cancel')"
       @cancel="closeEditor"
       @ok="handleEditorSubmit"
     >
       <div class="space-y-4 pt-2">
         <div>
-          <div class="mb-2 text-sm font-medium text-slate-700">达人ID</div>
+          <div class="mb-2 text-sm font-medium text-slate-700">
+            {{ $t('page.bd.my-task.kol-prepare.editor.kol-id-label') }}
+          </div>
           <Input
             v-model:value="editorForm.kol_id"
-            placeholder="请输入达人ID"
+            :placeholder="
+              $t('page.bd.my-task.kol-prepare.editor.kol-id-placeholder')
+            "
             :maxlength="100"
           />
         </div>
         <div>
-          <div class="mb-2 text-sm font-medium text-slate-700">达人链接</div>
+          <div class="mb-2 text-sm font-medium text-slate-700">
+            {{ $t('page.bd.my-task.kol-prepare.editor.kol-link-label') }}
+          </div>
           <Input
             v-model:value="editorForm.kol_link"
-            placeholder="请输入达人链接"
+            :placeholder="
+              $t('page.bd.my-task.kol-prepare.editor.kol-link-placeholder')
+            "
           />
         </div>
       </div>

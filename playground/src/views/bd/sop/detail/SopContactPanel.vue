@@ -89,6 +89,22 @@ const budgetReviewMeta = computed(() => {
   }
 });
 
+const normalizedBudgetReviewReason = computed(() => {
+  const reason = props.detail?.budget_review_reason;
+  return typeof reason === 'string' && reason.trim() ? reason.trim() : null;
+});
+
+const showBudgetReviewReason = computed(() => {
+  const reviewStatus =
+    props.detail?.remittance_status ??
+    props.detail?.contact?.budget_status ??
+    BDSopApi.BudgetReviewStatus.PENDING;
+  return (
+    reviewStatus === BDSopApi.BudgetReviewStatus.REJECTED &&
+    Boolean(normalizedBudgetReviewReason.value)
+  );
+});
+
 watch(
   () => props.detail,
   (detail) => {
@@ -297,6 +313,19 @@ async function handleSubmit() {
                       </div>
                     </div>
                   </div>
+
+                  <Alert
+                    v-if="showBudgetReviewReason"
+                    show-icon
+                    type="error"
+                    :message="
+                      $t(
+                        'page.bd.sop.detail.contact.budget-review-reason-title',
+                      )
+                    "
+                    :description="normalizedBudgetReviewReason ?? ''"
+                    class="rounded-xl"
+                  />
 
                   <div
                     v-if="!hasContactContent && !canEdit"

@@ -210,6 +210,74 @@
         "upload-required": "Please upload at least one payment screenshot",
         "upload-type-invalid": "Only jpg / jpeg / png images are allowed"
       }
+    },
+    "budget": {
+      "list-title": "Budget Review",
+      "selected-count": "{0} selected",
+      "filters": {
+        "all-status": "All Statuses",
+        "bd-code": "BD Code",
+        "kol-id": "KOL ID",
+        "status": "Budget Status",
+        "submit-time-end": "Submitted To",
+        "submit-time-start": "Submitted From"
+      },
+      "columns": {
+        "amount": "Requested Budget",
+        "bd-code": "BD Code",
+        "budget-status": "Budget Status",
+        "contact-information": "Contact Information",
+        "kol-id": "KOL ID",
+        "operation": "Action",
+        "product-url": "Product URL",
+        "reason": "Review Reason",
+        "reviewed-at": "Reviewed At",
+        "reviewer-name": "Reviewer",
+        "sop-status": "SOP Status",
+        "submit-at": "Submitted At",
+        "submitter-name": "Submitter",
+        "terminate-remark": "Termination Remark"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "sop-status": {
+        "completed": "Completed",
+        "contact": "Contact",
+        "recover": "Video Recovery",
+        "remittance": "Remittance",
+        "sample": "Sample",
+        "terminated": "Terminated"
+      },
+      "actions": {
+        "approve": "Approve",
+        "batch-approve": "Approve Selected",
+        "batch-reject": "Reject Selected",
+        "confirm-approve": "Confirm Approve",
+        "confirm-reject": "Confirm Reject",
+        "reject": "Reject"
+      },
+      "review-modal": {
+        "approve-reason-placeholder": "Optionally add an approval note or extra context",
+        "batch-title": "Batch Review Budget Requests",
+        "description": "This action will process {0} selected budget request(s).",
+        "reason-label": "Review Reason",
+        "reject-reason-placeholder": "Enter the rejection reason",
+        "single-amount": "Requested Amount: {0}",
+        "single-kol": "KOL ID: {0}",
+        "single-title": "Review Budget Request"
+      },
+      "messages": {
+        "partial-failed-title": "Some Records Failed",
+        "reject-reason-required": "A rejection reason is required",
+        "review-all-failed": "All reviewed records failed, total {0}",
+        "review-partial-success": "Review finished: {0} succeeded, {1} failed",
+        "review-success": "Review completed successfully for {0} record(s)",
+        "select-records-first": "Select at least one record first",
+        "unknown-failure": "Unknown failure reason"
+      }
     }
   },
   "bd": {
@@ -235,6 +303,127 @@
       },
       "messages": {
         "preview-pdf-unavailable": "Product information is missing, so the PDF is unavailable"
+      },
+      "kol-prepare": {
+        "actions": {
+          "add-row": "Add Row",
+          "clear-list": "Clear List",
+          "delete": "Delete",
+          "download-template": "Download Template",
+          "edit": "Edit",
+          "reset-filters": "Reset Filters",
+          "submit": "Submit Prepare",
+          "upload-excel": "Upload Excel"
+        },
+        "audit-status": {
+          "pass": "Approved",
+          "pending": "In Review",
+          "reject": "Rejected",
+          "waiting": "Waiting"
+        },
+        "availability": {
+          "available": "Available",
+          "retryable": "Retry Available"
+        },
+        "breadcrumb-current": "KOL Prepare",
+        "columns": {
+          "action": "Action",
+          "audit-reason": "Audit Reason",
+          "audit-time": "Audit Time",
+          "belong-bd-code": "Owner BD",
+          "detail": "Detail",
+          "entry-time": "Entry Time",
+          "kol-id": "KOL ID",
+          "kol-link": "KOL Link",
+          "kol-status": "KOL Status",
+          "prepare-status": "Review History",
+          "prepared-bd-code": "Prepared By",
+          "reason": "Validation Result",
+          "record-status": "Review Status",
+          "reviewer-name": "Reviewer"
+        },
+        "detail": {
+          "has-bd": "This KOL already belongs to a BD and cannot be prepared again.",
+          "has-bd-with-code": "This KOL already belongs to {0} and cannot be prepared again.",
+          "kol-abnormal": "This KOL is not in a normal collaborative state. Please verify the status first.",
+          "kol-deleted": "This KOL record has been deleted and cannot continue in the prepare flow.",
+          "normal": "This KOL is in a normal state and can be submitted for prepare.",
+          "prepared-by-other": "This KOL is already being prepared by another BD. Please use a different KOL.",
+          "prepared-by-other-with-code": "This KOL is currently being prepared by {0}. Please use a different KOL.",
+          "retryable": "This KOL was previously rejected and can be resubmitted now.",
+          "task-duplicate": "There is already an active prepare record for this KOL under the current task. Do not submit duplicates."
+        },
+        "editor": {
+          "cancel": "Cancel",
+          "confirm": "Save and Validate",
+          "create-title": "Add KOL",
+          "edit-title": "Edit KOL",
+          "kol-id-label": "KOL ID",
+          "kol-id-placeholder": "Enter KOL ID",
+          "kol-link-label": "KOL Link",
+          "kol-link-placeholder": "Enter KOL link"
+        },
+        "empty-description": "Upload an Excel template first, or click \"Add Row\" to enter KOL information manually before validation.",
+        "empty-title": "No KOLs imported yet",
+        "filters": {
+          "all-audit-status": "All Review Statuses",
+          "all-kol-status": "All KOL Statuses",
+          "all-reason": "All Validation Results"
+        },
+        "invalid-alert-description": "Please remove invalid rows or replace the KOLs before submitting. Rows marked as retryable can be kept.",
+        "invalid-alert-title": "There are unavailable KOLs in the current list",
+        "kol-status": {
+          "blacklist": "Blacklist",
+          "lost": "Lost",
+          "normal": "Normal",
+          "unrecorded": "Unrecorded"
+        },
+        "messages": {
+          "duplicate-refreshed": ", including {0} existing row(s) refreshed",
+          "file-empty": "The file is empty",
+          "has-invalid-data": "There are invalid KOL rows. Please remove them before submitting.",
+          "input-kol-id": "Please enter the KOL ID",
+          "input-kol-link": "Please enter the KOL link",
+          "input-valid-kol-id": "Please enter at least one valid KOL ID",
+          "missing-kol-id-column": "The kol_id column was not found",
+          "missing-kol-link": "KOL {0} is missing the KOL link. Please complete it before submitting.",
+          "no-submittable-data": "There is no KOL prepare data to submit",
+          "no-valid-kol-id-in-excel": "No valid KOL IDs were found in the Excel file",
+          "parse-failed": "Failed to parse the Excel file. Please check the format.",
+          "save-failed": "Save failed. Please try again later.",
+          "submit-failed": "Submission failed. Please retry.",
+          "submit-success": "Successfully submitted {0} KOL prepare record(s)",
+          "validation-success": "Validated {0} KOL ID(s), added {1}, updated {2}{3}"
+        },
+        "page-description": "Upload Excel files or add KOL IDs manually. The system will pre-validate them against the current task assignment and KOL occupancy status, so you can organize the list before submitting prepare records.",
+        "page-title": "Task Relation #{0} KOL Prepare Sheet",
+        "reason-code": {
+          "can-prepare": "Available",
+          "has-bd": "Already Assigned",
+          "kol-abnormal": "Abnormal Status",
+          "kol-deleted": "KOL Deleted",
+          "prepared-by-other": "Prepared by Other BD",
+          "task-duplicate": "Duplicate in Task"
+        },
+        "records-description": "Filter by review status and browse paginated KOL prepare records for the current task.",
+        "records-title": "Submission Records",
+        "result-description": "There are {0} row(s) in total, including {1} available and {2} requiring action.",
+        "result-filtered-tip": "This is a filtered view. The full list contains {0} row(s).",
+        "result-title": "Validation Result",
+        "summary": {
+          "all-count": "All {0}",
+          "available": "Available",
+          "current": "Current List",
+          "filtered": "Filtered Result",
+          "pending": "Pending Action",
+          "retryable": "Retry Available"
+        },
+        "tabs": {
+          "records": "Submission Records",
+          "upload": "Upload Prepare"
+        },
+        "upload-card-description": "The first row of the template must contain `kol_id` and `kol_link` columns. After import, you can continue editing or adding KOLs in the result table.",
+        "upload-card-title": "Excel Import and List Management"
       },
       "budget-text": {
         "no": "No",
@@ -328,6 +517,7 @@
           "budget-label": "Budget Amount",
           "budget-placeholder": "Leave empty or use 0 for no budget",
           "budget-status-approved": "Approved",
+          "budget-review-reason-title": "Budget Rejection Reason",
           "budget-status-label": "Budget Review Status",
           "budget-status-none": "No Budget",
           "budget-status-pending": "Pending Review",

@@ -69,6 +69,7 @@ export namespace BDSopApi {
   export interface ContactDetail {
     bd_code: string;
     brief_url: null | string;
+    budget_review_reason: null | string;
     contact: ContactRecord | null;
     has_budget: 0 | 1;
     kol_id: string;
