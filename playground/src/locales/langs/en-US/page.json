@@ -14,13 +14,134 @@
     "analytics": "Analytics",
     "workspace": "Workspace"
   },
+  "review": {
+    "title": "Review Center",
+    "badge": {
+      "admin-only": "Admin Only"
+    },
+    "actions": {
+      "approve": "Approve",
+      "back-to-list": "Back to Review List",
+      "batch-approve": "Approve Selected",
+      "batch-reject": "Reject Selected",
+      "confirm-approve": "Confirm Approve",
+      "confirm-reject": "Confirm Reject",
+      "preview-pdf": "View",
+      "reject": "Reject",
+      "view": "View"
+    },
+    "fields": {
+      "detail-route": "Detail Route",
+      "module": "Review Module",
+      "route": "Route",
+      "status": "Current Status",
+      "task-id": "Task ID"
+    },
+    "status": {
+      "approved": "Approved",
+      "pending": "In Review",
+      "ready": "Route Ready",
+      "rejected": "Rejected",
+      "waiting": "Pending",
+      "waiting-api": "Waiting for API Integration"
+    },
+    "kolPrepare": {
+      "title": "KOL Prepare Review",
+      "list-title": "KOL Prepare Review",
+      "list-description": "This is the admin review-center entry for KOL prepare review. It will later host the real review list, filters, and detail navigation.",
+      "selected-count": "{0} selected",
+      "access-card-title": "Route Module Created",
+      "access-card-description": "The review module routing is now wired, and the KOL prepare review detail path is reserved for upcoming API and list integration.",
+      "open-detail-placeholder": "Open Detail Placeholder",
+      "filters": {
+        "all-status": "All Statuses",
+        "bd-code": "BD Code",
+        "entry-time-end": "Entry Time To",
+        "entry-time-start": "Entry Time From",
+        "kol-id": "KOL ID",
+        "status": "Review Status",
+        "task-bd-id": "Task Relation ID",
+        "task-id": "Task ID"
+      },
+      "columns": {
+        "audit-time": "Reviewed At",
+        "bd-code": "BD Code",
+        "brief-url": "brief-url",
+        "entry-time": "Entry Time",
+        "kol-id": "KOL ID",
+        "kol-link": "KOL Link",
+        "operation": "Action",
+        "prepare-id": "Prepare Record ID",
+        "product-url": "Product URL",
+        "reason": "Review Reason",
+        "reviewer-name": "Reviewer",
+        "sop-id": "SOP ID",
+        "status": "Review Status",
+        "task-bd-id": "Task Relation ID",
+        "task-id": "Task ID"
+      },
+      "review-modal": {
+        "approve-reason-placeholder": "Optionally add an approval note or extra context",
+        "approve-title": "Approve KOL Prepare Records",
+        "description": "This action will review {0} selected record(s).",
+        "reason-label": "Review Note",
+        "reject-reason-placeholder": "Enter the rejection reason or extra context",
+        "reject-title": "Reject KOL Prepare Records",
+        "single-kol": "KOL ID: {0}",
+        "single-record": "Prepare Record ID: {0}"
+      },
+      "messages": {
+        "partial-failed-title": "Some Records Failed",
+        "preview-pdf-failed": "Failed to fetch the PDF access URL",
+        "preview-pdf-unavailable": "Product information is missing, so the PDF is unavailable",
+        "review-all-failed": "All reviewed records failed, total {0}",
+        "review-partial-success": "Review finished: {0} succeeded, {1} failed",
+        "review-success": "Review completed successfully for {0} record(s)",
+        "select-records-first": "Select at least one record first",
+        "unknown-failure": "Unknown failure reason"
+      },
+      "detail-title": "KOL Prepare Review Detail",
+      "detail-description": "This page is reserved for KOL prepare review detail. Real data, review actions, and history will be added after the API is available.",
+      "detail-card-title": "Detail Access Ready",
+      "detail-card-description": "This page currently verifies that the independent review route, route params, and active-menu behavior are working."
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "Dashboard",
     "tasks": "Task Center",
     "taskProgress": "Task Progress",
     "my-task": {
-      "title": "My Task"
+      "title": "My Task",
+      "columns": {
+        "action": "Action",
+        "brief-url": "Brief PDF URL",
+        "commission": "Commission",
+        "deadline": "Deadline",
+        "has-budget": "Budget",
+        "prepare-summary": "Prepare Review",
+        "product-url": "Product URL",
+        "video-progress": "Video(completed/total)"
+      },
+      "actions": {
+        "preview-pdf": "View",
+        "upload-prepare": "Upload Prepare Sheet"
+      },
+      "messages": {
+        "preview-pdf-unavailable": "Product information is missing, so the PDF is unavailable"
+      },
+      "budget-text": {
+        "no": "No",
+        "yes": "Yes"
+      },
+      "prepare-status": {
+        "approved-short": "Approved {0}",
+        "not-submitted": "Not Submitted",
+        "pending-short": "Pending {0}",
+        "rejected-short": "Rejected {0}",
+        "summary": "Total {0} Pending {1} Approved {2} Rejected {3}",
+        "total-short": "Total {0}"
+      }
     },
     "sop": {
       "title": "SOP",

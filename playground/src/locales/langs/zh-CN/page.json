@@ -14,13 +14,134 @@
     "analytics": "分析页",
     "workspace": "工作台"
   },
+  "review": {
+    "title": "审核中心",
+    "badge": {
+      "admin-only": "仅 Admin 可见"
+    },
+    "actions": {
+      "approve": "通过",
+      "back-to-list": "返回审核列表",
+      "batch-approve": "批量通过",
+      "batch-reject": "批量驳回",
+      "confirm-approve": "确认通过",
+      "confirm-reject": "确认驳回",
+      "preview-pdf": "查看",
+      "reject": "驳回",
+      "view": "查看"
+    },
+    "fields": {
+      "detail-route": "详情路由",
+      "module": "审核模块",
+      "route": "路由",
+      "status": "当前状态",
+      "task-id": "任务 ID"
+    },
+    "status": {
+      "approved": "审核通过",
+      "pending": "审核中",
+      "ready": "路由已就绪",
+      "rejected": "审核不通过",
+      "waiting": "待审核",
+      "waiting-api": "等待接入接口"
+    },
+    "kolPrepare": {
+      "title": "达人筹备表审核",
+      "list-title": "达人筹备表审核",
+      "list-description": "这里作为 admin 审核中心下的达人筹备表审核入口，后续会承接审核列表、筛选和跳转详情。",
+      "selected-count": "已选 {0} 条",
+      "access-card-title": "路由模块已建立",
+      "access-card-description": "当前已完成 review 模块路由接入，并预留达人筹备表审核详情页路径，后续可直接接接口与真实列表。",
+      "open-detail-placeholder": "打开详情占位页",
+      "filters": {
+        "all-status": "全部状态",
+        "bd-code": "BD 编码",
+        "entry-time-end": "录入结束时间",
+        "entry-time-start": "录入开始时间",
+        "kol-id": "达人 ID",
+        "status": "审核状态",
+        "task-bd-id": "任务分配 ID",
+        "task-id": "任务 ID"
+      },
+      "columns": {
+        "audit-time": "审核时间",
+        "bd-code": "BD 编码",
+        "brief-url": "Brief",
+        "entry-time": "录入时间",
+        "kol-id": "达人 ID",
+        "kol-link": "达人链接",
+        "operation": "操作",
+        "prepare-id": "筹备记录 ID",
+        "product-url": "商品链接",
+        "reason": "审核原因",
+        "reviewer-name": "审核人",
+        "sop-id": "SOP ID",
+        "status": "审核状态",
+        "task-bd-id": "任务分配 ID",
+        "task-id": "任务 ID"
+      },
+      "review-modal": {
+        "approve-reason-placeholder": "可选填写通过备注或补充说明",
+        "approve-title": "批量通过达人筹备",
+        "description": "将对选中的 {0} 条记录执行审核操作。",
+        "reason-label": "审核备注",
+        "reject-reason-placeholder": "请输入驳回原因或补充说明",
+        "reject-title": "批量驳回达人筹备",
+        "single-kol": "达人 ID：{0}",
+        "single-record": "筹备记录 ID：{0}"
+      },
+      "messages": {
+        "partial-failed-title": "部分记录处理失败",
+        "preview-pdf-failed": "获取 PDF 访问链接失败",
+        "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF",
+        "review-all-failed": "本次审核全部失败，共 {0} 条",
+        "review-partial-success": "审核已完成，成功 {0} 条，失败 {1} 条",
+        "review-success": "审核成功，共处理 {0} 条",
+        "select-records-first": "请先选择至少 1 条记录",
+        "unknown-failure": "未知失败原因"
+      },
+      "detail-title": "达人筹备表审核详情",
+      "detail-description": "这里预留给达人筹备表审核详情，后续接到接口后补充真实数据、审核动作和历史记录。",
+      "detail-card-title": "详情访问已打通",
+      "detail-card-description": "当前页面主要用于确认 review 独立路由、参数解析和菜单激活逻辑已生效。"
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "数据面板",
     "tasks": "任务中心",
     "taskProgress": "任务完成情况",
     "my-task": {
-      "title": "我的任务"
+      "title": "我的任务",
+      "columns": {
+        "action": "操作",
+        "brief-url": "产品PDF链接",
+        "commission": "佣金",
+        "deadline": "截止日期",
+        "has-budget": "是否有预算",
+        "prepare-summary": "达人审核",
+        "product-url": "商品链接",
+        "video-progress": "视频进度 (已完成/总数)"
+      },
+      "actions": {
+        "preview-pdf": "查看",
+        "upload-prepare": "上传达人筹备表"
+      },
+      "messages": {
+        "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF"
+      },
+      "budget-text": {
+        "no": "无",
+        "yes": "有"
+      },
+      "prepare-status": {
+        "approved-short": "通过{0}",
+        "not-submitted": "未提交",
+        "pending-short": "待审{0}",
+        "rejected-short": "驳回{0}",
+        "summary": "总{0} 待审{1} 通过{2} 驳回{3}",
+        "total-short": "总{0}"
+      }
     },
     "sop": {
       "title": "SOP",

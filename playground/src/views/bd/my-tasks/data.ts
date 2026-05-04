@@ -1,11 +1,20 @@
 import type { VxeTableGridColumns } from '#/adapter/vxe-table';
 
+import { $t } from '#/locales';
+
 export interface MyTaskItem {
   briefUrl: string;
   commission: number;
   completedVideos: number;
   deadline: number;
   hasBudget: number;
+  hasPrepareRecords: number;
+  prepareApprovedCount: number;
+  preparePendingCount: number;
+  prepareRejectedCount: number;
+  prepareTotalCount: number;
+  product_listing_id?: number;
+  productListingId?: number;
   productUrl: string;
   relationId: number;
   taskId: number;
@@ -18,35 +27,43 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       field: 'productUrl',
       minWidth: 220,
       slots: { default: 'productUrl' },
-      title: '商品链接',
+      title: $t('page.bd.my-task.columns.product-url'),
     },
     {
       field: 'briefUrl',
       minWidth: 220,
       slots: { default: 'briefUrl' },
-      title: '产品PDF链接',
+      title: $t('page.bd.my-task.columns.brief-url'),
     },
     {
       field: 'commission',
-      title: '佣金',
+      title: $t('page.bd.my-task.columns.commission'),
       width: 100,
     },
     {
       field: 'videoProgress',
+      showOverflow: false,
       slots: { default: 'videoProgress' },
-      title: '任务视频数',
-      width: 100,
+      title: $t('page.bd.my-task.columns.video-progress'),
+      width: 170,
+    },
+    {
+      field: 'prepareSummary',
+      minWidth: 260,
+      showOverflow: false,
+      slots: { default: 'prepareSummary' },
+      title: $t('page.bd.my-task.columns.prepare-summary'),
     },
     {
       field: 'hasBudget',
       slots: { default: 'hasBudget' },
-      title: '是否有预算',
+      title: $t('page.bd.my-task.columns.has-budget'),
       width: 110,
     },
     {
       field: 'deadline',
       formatter: 'formatDate',
-      title: '截止日期',
+      title: $t('page.bd.my-task.columns.deadline'),
       width: 140,
     },
     {
@@ -54,7 +71,7 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       field: 'action',
       fixed: 'right',
       slots: { default: 'action' },
-      title: '操作',
+      title: $t('page.bd.my-task.columns.action'),
       width: 160,
     },
   ];

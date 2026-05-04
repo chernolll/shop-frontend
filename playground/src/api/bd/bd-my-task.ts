@@ -10,8 +10,16 @@ export namespace BdTaskApi {
   export interface BDTaskRow {
     briefUrl: string;
     commission: number; // 佣金
+    completedVideos: number; // 已完成视频数
     deadline: number; // 截止日期 单位毫秒
     hasBudget: 0 | 1; // 是否有预算 1:有
+    hasPrepareRecords: number; // 是否提交过达人审核记录
+    prepareApprovedCount: number; // 达人审核通过数量
+    preparePendingCount: number; // 达人审核中/待审核数量
+    prepareRejectedCount: number; // 达人审核驳回数量
+    prepareTotalCount: number; // 达人审核提交总数
+    product_listing_id?: number;
+    productListingId?: number;
     productUrl: string;
     relationId: number; // task_bd_relation.id
     taskId: number; // task_main.id

@@ -21,7 +21,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           icon: 'lucide:area-chart',
           title: $t('page.bd.dashboard'),
-          authority: [RoleEnum.ADMIN, RoleEnum.BD],
+          authority: [RoleEnum.BD],
         },
       },
       // 任务管理 admin 使用
@@ -41,8 +41,9 @@ const routes: RouteRecordRaw[] = [
         path: '/bd/my-tasks',
         component: () => import('#/views/bd/my-tasks/index.vue'),
         meta: {
-          title: $t('page.bd.my-task.title'),
           icon: 'lucide:inbox',
+          title: $t('page.bd.my-task.title'),
+          authority: [RoleEnum.BD],
         },
       },
       // 达人筹备详情（隐藏路由，不在菜单显示）
@@ -55,6 +56,7 @@ const routes: RouteRecordRaw[] = [
           hideInTab: true,
           title: '达人筹备表',
           activeMenu: '/bd/my-tasks',
+          authority: [RoleEnum.BD],
         },
       },
       {
@@ -63,6 +65,7 @@ const routes: RouteRecordRaw[] = [
         meta: {
           icon: 'lucide:workflow',
           title: $t('page.bd.sop.title'),
+          authority: [RoleEnum.BD],
         },
         children: [
           {
@@ -70,6 +73,7 @@ const routes: RouteRecordRaw[] = [
             path: '/bd/sop/list',
             component: () => import('#/views/bd/sop/index.vue'),
             meta: {
+              authority: [RoleEnum.BD],
               icon: 'lucide:list-check',
               title: $t('page.bd.sop.list-title'),
             },
@@ -83,6 +87,7 @@ const routes: RouteRecordRaw[] = [
               hideInTab: true,
               title: $t('page.bd.sop.detail-title'),
               activeMenu: '/bd/sop/list',
+              authority: [RoleEnum.BD],
             },
           },
         ],
