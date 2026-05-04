@@ -7,6 +7,7 @@ import { BDSopApi } from '#/api/bd/sop';
 import { $t } from '#/locales';
 
 import SopContactPanel from './SopContactPanel.vue';
+import SopRemittancePanel from './SopRemittancePanel.vue';
 import SopSamplePanel from './SopSamplePanel.vue';
 import SopVideoPanel from './SopVideoPanel.vue';
 
@@ -118,6 +119,13 @@ const normalizedTerminatedRemark = computed(() => {
   <SopVideoPanel
     v-else-if="
       step.status === BDSopApi.Status.RECOVER && !showTerminatedContent
+    "
+    :sop-id="sopId"
+    @refresh-detail="emit('refreshDetail')"
+  />
+  <SopRemittancePanel
+    v-else-if="
+      step.status === BDSopApi.Status.REMITTANCE && !showTerminatedContent
     "
     :sop-id="sopId"
     @refresh-detail="emit('refreshDetail')"

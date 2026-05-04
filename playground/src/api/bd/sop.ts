@@ -14,6 +14,13 @@ export namespace BDSopApi {
     ABANDONED = 3,
   }
 
+  export enum RemittanceStatus {
+    PENDING = 0,
+    APPROVED = 1,
+    REJECTED = 2,
+    ABANDONED = 3,
+  }
+
   export enum Status {
     CONTACT = 0,
     SAMPLE = 1,
@@ -192,6 +199,85 @@ export namespace BDSopApi {
     video_url: string;
   }
 
+  export interface RemittanceListParams {
+    task_sop_id: number | string;
+  }
+
+  export interface RemittanceItem {
+    amount: number;
+    bank_name: string;
+    id: number;
+    payee_name: string;
+    reviewed_at: null | number;
+    status: RemittanceStatus;
+    submit_at: number;
+  }
+
+  export interface RemittanceListResult {
+    default_amount: null | number;
+    has_budget: 0 | 1;
+    list: RemittanceItem[];
+    sop_status: Status;
+    task_sop_id: number;
+    terminate_remark: null | string;
+  }
+
+  export interface RemittanceDetailParams {
+    id: number | string;
+  }
+
+  export interface RemittanceAttachment {
+    access_url: string;
+    access_url_expired_at: number;
+    file_key: string;
+    file_name: string;
+    r2_file_id: number;
+    sort: number;
+  }
+
+  export interface RemittanceDetail {
+    amount: number;
+    bank_card_no: string;
+    bank_name: string;
+    chat_attachments: RemittanceAttachment[];
+    default_amount: null | number;
+    has_budget: 0 | 1;
+    id: number;
+    payee_name: string;
+    payment_attachments: RemittanceAttachment[];
+    review_remark: null | string;
+    reviewed_at: null | number;
+    sop_status: Status;
+    status: RemittanceStatus;
+    submit_at: number;
+    task_sop_id: number;
+    terminate_remark: null | string;
+  }
+
+  export interface CreateRemittanceParams {
+    amount: number;
+    bank_card_no: string;
+    bank_name: string;
+    chat_attachment_file_ids: number[];
+    payee_name: string;
+    task_sop_id: number | string;
+  }
+
+  export interface CreateRemittanceResult {
+    id: number;
+    status: RemittanceStatus;
+  }
+
+  export interface AbandonRemittanceParams {
+    remittance_id: number | string;
+    task_sop_id: number | string;
+  }
+
+  export interface AbandonRemittanceResult {
+    id: number;
+    status: RemittanceStatus;
+  }
+
   export interface CompleteSopParams {
     task_sop_id: number | string;
   }
@@ -300,6 +386,50 @@ export async function getBDSopVideoDetail(params: BDSopApi.VideoDetailParams) {
 /** BD 用户提交某条 SOP 的视频信息 */
 export async function updateBDSopVideo(data: BDSopApi.UpdateVideoParams) {
   return requestClient.put<BDSopApi.UpdateVideoResult>('/bd/sop/video', data);
+}
+
+/** BD 用户获取某条 SOP 的汇款申请记录列表 */
+export async function getBDSopRemittanceList(
+  params: BDSopApi.RemittanceListParams,
+) {
+  return requestClient.get<BDSopApi.RemittanceListResult>(
+    '/bd/sop/remittance/list',
+    {
+      params,
+    },
+  );
+}
+
+/** BD 用户获取一条汇款申请详情 */
+export async function getBDSopRemittanceDetail(
+  params: BDSopApi.RemittanceDetailParams,
+) {
+  return requestClient.get<BDSopApi.RemittanceDetail>(
+    '/bd/sop/remittance/detail',
+    {
+      params,
+    },
+  );
+}
+
+/** BD 用户提交一条汇款申请 */
+export async function createBDSopRemittance(
+  data: BDSopApi.CreateRemittanceParams,
+) {
+  return requestClient.post<BDSopApi.CreateRemittanceResult>(
+    '/bd/sop/remittance',
+    data,
+  );
+}
+
+/** BD 用户废弃一条待审核汇款申请 */
+export async function abandonBDSopRemittance(
+  data: BDSopApi.AbandonRemittanceParams,
+) {
+  return requestClient.put<BDSopApi.AbandonRemittanceResult>(
+    '/bd/sop/remittance/abandon',
+    data,
+  );
 }
 
 /** BD 用户在无预算流程下手动完成一条 SOP */
