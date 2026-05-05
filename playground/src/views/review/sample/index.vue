@@ -27,10 +27,12 @@ import {
   ReviewSampleApi,
 } from '#/api/review/sample';
 import { $t } from '#/locales';
+import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 type ReviewModalMode = 'review' | 'update';
 
 const briefLoadingIds = ref<number[]>([]);
+const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 const selectedRows = ref<ReviewSampleApi.ListItem[]>([]);
 const reviewModalOpen = ref(false);
 const reviewSubmitting = ref(false);
@@ -451,7 +453,8 @@ const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
     {
-      component: 'Input',
+      component: 'Select',
+      componentProps: () => bdCodeSelectProps.value,
       fieldName: 'bd_code',
       label: $t('page.review.sample.filters.bd-code'),
     },

@@ -112,7 +112,7 @@
         "all-status": "All Statuses",
         "bd-code": "BD Code",
         "kol-id": "KOL ID",
-        "product-listing-id": "Product Listing ID",
+        "product-listing-id": "Product Listing",
         "status": "Remittance Status",
         "submit-time-end": "Submitted To",
         "submit-time-start": "Submitted From",
@@ -378,6 +378,96 @@
     "title": "BD",
     "dashboard": "Dashboard",
     "tasks": "Task Center",
+    "task-center": {
+      "list-title": "Task Center",
+      "filters": {
+        "all-budget": "All Budget Types",
+        "all-status": "All Statuses",
+        "all-type": "All Task Types",
+        "budget": "Budget",
+        "deadline-range": "Deadline",
+        "product-placeholder": "Select a product listing",
+        "product-listing-id": "Product Listing",
+        "status": "Task Status",
+        "task-id": "Task ID",
+        "type": "Task Type"
+      },
+      "columns": {
+        "bd-count": "BD Count",
+        "budget": "Budget",
+        "commission": "Commission",
+        "created-at": "Created At",
+        "deadline": "Deadline",
+        "operation": "Action",
+        "product-url": "Product URL",
+        "status": "Task Status",
+        "task-id": "Task ID",
+        "type": "Task Type",
+        "updated-at": "Updated At",
+        "video-num": "Total Videos"
+      },
+      "status-text": {
+        "abandoned": "Abandoned",
+        "normal": "Normal"
+      },
+      "bd-status": {
+        "active": "Active",
+        "left": "Left"
+      },
+      "product-status": {
+        "off-shelf": "Off Shelf",
+        "on-sale": "On Sale"
+      },
+      "task-type-text": {
+        "custom": "Custom",
+        "public": "Public"
+      },
+      "budget-text": {
+        "no": "No Budget",
+        "yes": "With Budget"
+      },
+      "actions": {
+        "abandon": "Abandon",
+        "confirm-create": "Confirm Create",
+        "create": "Create Task",
+        "view-relations": "View BD Relations"
+      },
+      "create-modal": {
+        "bd-codes": "BD Codes",
+        "bd-codes-placeholder": "Select multiple BD codes. Left employees cannot be selected",
+        "budget": "Budget",
+        "commission": "Commission",
+        "deadline": "Deadline",
+        "product-placeholder": "Select an on-sale product",
+        "product-listing-id": "Product Listing",
+        "title": "Create Task",
+        "type": "Task Type",
+        "video-num": "Total Videos"
+      },
+      "relations": {
+        "title": "BD Relations",
+        "task-id": "Task #{0}",
+        "video-num": "Total Videos {0}",
+        "columns": {
+          "bd-code": "BD Code",
+          "follow-entry-time": "Assigned At",
+          "video-quantity": "Assigned Videos"
+        }
+      },
+      "abandon": {
+        "confirm-content": "Are you sure you want to abandon task #{0}? The system will automatically terminate SOPs that are still in the contact stage under this task.",
+        "confirm-ok": "Confirm Abandon",
+        "confirm-title": "Confirm Task Abandonment"
+      },
+      "messages": {
+        "abandon-success": "Task #{0} has been abandoned. {1} SOP(s) were terminated automatically.",
+        "bd-codes-required": "Please enter at least one BD code",
+        "commission-required": "Commission must be greater than 0",
+        "create-success": "Task created successfully. Task ID: {0}",
+        "product-listing-id-required": "Product listing must not be empty",
+        "video-num-required": "Total videos must be greater than 0"
+      }
+    },
     "taskProgress": "Task Progress",
     "my-task": {
       "title": "My Task",

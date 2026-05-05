@@ -37,10 +37,12 @@ import {
   ReviewRemittanceApi,
 } from '#/api/review/remittance';
 import { $t } from '#/locales';
+import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 type ReviewModalMode = 'payment' | 'review';
 
 const selectedRows = ref<ReviewRemittanceApi.ListItem[]>([]);
+const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 const detailLoading = ref(false);
 const detailLoaded = ref(false);
 const detailError = ref('');
@@ -551,7 +553,8 @@ const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
     {
-      component: 'Input',
+      component: 'Select',
+      componentProps: () => bdCodeSelectProps.value,
       fieldName: 'bd_code',
       label: $t('page.review.remittance.filters.bd-code'),
     },

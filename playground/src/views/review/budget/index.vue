@@ -16,8 +16,10 @@ import {
   ReviewBudgetApi,
 } from '#/api/review/budget';
 import { $t } from '#/locales';
+import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 const selectedRows = ref<ReviewBudgetApi.ListItem[]>([]);
+const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 const reviewSubmitting = ref(false);
 const reviewTargetRows = ref<ReviewBudgetApi.ListItem[]>([]);
 const reviewModalOpen = ref(false);
@@ -257,7 +259,8 @@ const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
     {
-      component: 'Input',
+      component: 'Select',
+      componentProps: () => bdCodeSelectProps.value,
       fieldName: 'bd_code',
       label: $t('page.review.budget.filters.bd-code'),
     },

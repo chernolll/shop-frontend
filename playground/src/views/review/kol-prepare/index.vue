@@ -17,8 +17,10 @@ import {
   reviewKolPrepare,
 } from '#/api/review/kol-prepare';
 import { $t } from '#/locales';
+import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 const router = useRouter();
+const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 
 const briefLoadingIds = ref<number[]>([]);
 const selectedRows = ref<ReviewKolPrepareApi.ListItem[]>([]);
@@ -249,7 +251,8 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.kolPrepare.filters.task-id'),
     },
     {
-      component: 'Input',
+      component: 'Select',
+      componentProps: () => bdCodeSelectProps.value,
       fieldName: 'bd_code',
       label: $t('page.review.kolPrepare.filters.bd-code'),
     },

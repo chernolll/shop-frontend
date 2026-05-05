@@ -112,7 +112,7 @@
         "all-status": "全部状态",
         "bd-code": "BD 编码",
         "kol-id": "达人 ID",
-        "product-listing-id": "商品链接 ID",
+        "product-listing-id": "商品链接",
         "status": "汇款状态",
         "submit-time-end": "提交结束时间",
         "submit-time-start": "提交开始时间",
@@ -378,6 +378,96 @@
     "title": "BD",
     "dashboard": "数据面板",
     "tasks": "任务中心",
+    "task-center": {
+      "list-title": "任务中心",
+      "filters": {
+        "all-budget": "全部预算状态",
+        "all-status": "全部任务状态",
+        "all-type": "全部任务类型",
+        "budget": "预算",
+        "deadline-range": "截止时间",
+        "product-placeholder": "请选择商品链接",
+        "product-listing-id": "商品链接",
+        "status": "任务状态",
+        "task-id": "总任务 ID",
+        "type": "任务类型"
+      },
+      "columns": {
+        "bd-count": "BD 数量",
+        "budget": "预算",
+        "commission": "佣金",
+        "created-at": "创建时间",
+        "deadline": "截止时间",
+        "operation": "操作",
+        "product-url": "商品链接",
+        "status": "任务状态",
+        "task-id": "总任务 ID",
+        "type": "任务类型",
+        "updated-at": "更新时间",
+        "video-num": "视频总数"
+      },
+      "status-text": {
+        "abandoned": "已废弃",
+        "normal": "正常"
+      },
+      "bd-status": {
+        "active": "在职",
+        "left": "离职"
+      },
+      "product-status": {
+        "off-shelf": "下架",
+        "on-sale": "在售"
+      },
+      "task-type-text": {
+        "custom": "定制",
+        "public": "公开"
+      },
+      "budget-text": {
+        "no": "无预算",
+        "yes": "有预算"
+      },
+      "actions": {
+        "abandon": "废弃",
+        "confirm-create": "确认创建",
+        "create": "新建总任务",
+        "view-relations": "查看 BD 分配"
+      },
+      "create-modal": {
+        "bd-codes": "BD 编码",
+        "bd-codes-placeholder": "请选择多个 BD 编码，离职 BD 不可选",
+        "budget": "预算",
+        "commission": "佣金",
+        "deadline": "截止时间",
+        "product-placeholder": "请选择在售商品",
+        "product-listing-id": "商品链接",
+        "title": "新建总任务",
+        "type": "任务类型",
+        "video-num": "视频总数"
+      },
+      "relations": {
+        "title": "BD 分配列表",
+        "task-id": "总任务 #{0}",
+        "video-num": "视频总数 {0}",
+        "columns": {
+          "bd-code": "BD 编码",
+          "follow-entry-time": "分配时间",
+          "video-quantity": "分配视频数"
+        }
+      },
+      "abandon": {
+        "confirm-content": "确认废弃总任务 #{0} 吗？系统会自动终止该任务下仍处于建联阶段的 SOP。",
+        "confirm-ok": "确认废弃",
+        "confirm-title": "确认废弃总任务"
+      },
+      "messages": {
+        "abandon-success": "总任务 #{0} 已废弃，本次自动终止 {1} 条 SOP",
+        "bd-codes-required": "请至少填写 1 个 BD 编码",
+        "commission-required": "佣金必须大于 0",
+        "create-success": "总任务创建成功，任务 ID：{0}",
+        "product-listing-id-required": "商品链接不能为空",
+        "video-num-required": "视频总数必须大于 0"
+      }
+    },
     "taskProgress": "任务完成情况",
     "my-task": {
       "title": "我的任务",

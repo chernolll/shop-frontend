@@ -22,7 +22,7 @@
 
 | 字段 | 类型 | 必填 | 说明 |
 | --- | --- | --- | --- |
-| `product_listing_id` | int64 | 是 | 商品链接 ID，对应 `product_listing.id` |
+| `product_listing_id` | int64 | 是 | 商品链接，对应 `product_listing.id` |
 | `commission` | number | 是 | 总任务固定佣金 |
 | `video_num` | int | 是 | 总任务视频总数，对应 `task_main.video_num` |
 | `deadline` | int64 | 否 | 截止日期，UTC 毫秒时间戳 |
@@ -86,7 +86,7 @@
 | 参数                 | 类型  | 必填 | 说明                               |
 | -------------------- | ----- | ---- | ---------------------------------- |
 | `task_id`            | int64 | 否   | 总任务 ID                          |
-| `product_listing_id` | int64 | 否   | 商品链接 ID                        |
+| `product_listing_id` | int64 | 否   | 商品链接                           |
 | `status`             | int   | 否   | 任务状态：`0=正常`，`1=废弃`       |
 | `type`               | int   | 否   | 任务类型：`0=定制`，`1=公开`       |
 | `budget`             | int   | 否   | 是否有预算：`0=无预算`，`1=有预算` |
@@ -140,7 +140,7 @@
 | 字段                 | 类型           | 说明                               |
 | -------------------- | -------------- | ---------------------------------- |
 | `task_id`            | int64          | 总任务 ID                          |
-| `product_listing_id` | int64          | 商品链接 ID                        |
+| `product_listing_id` | int64          | 商品链接                           |
 | `product_url`        | string \| null | 商品链接                           |
 | `commission`         | number         | 总任务固定佣金                     |
 | `video_num`          | int            | 总任务视频总数                     |
