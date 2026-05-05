@@ -1,11 +1,19 @@
 import { requestClient } from '../request';
 
 export namespace BdTaskApi {
+  export enum TaskStatus {
+    NORMAL = 0,
+    ABANDONED = 1,
+  }
+
   // 查看BD任务参数
   export interface BdTaskListParams {
-    hasBudget?: boolean; // 是否有预算
+    deadlineEnd?: number; // 截止时间结束
+    deadlineStart?: number; // 截止时间开始
+    hasBudget?: 0 | 1; // 是否有预算
     page: number;
     pageSize: number;
+    taskStatus?: TaskStatus; // 任务状态
   }
   export interface BDTaskRow {
     briefUrl: string;
@@ -22,7 +30,9 @@ export namespace BdTaskApi {
     productListingId?: number;
     productUrl: string;
     relationId: number; // task_bd_relation.id
+    task_status?: TaskStatus;
     taskId: number; // task_main.id
+    taskStatus?: TaskStatus;
     totalVideos: number; // 总视频数 task_bd_relation.video_quantity
   }
 

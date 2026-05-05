@@ -389,14 +389,35 @@
         "has-budget": "是否有预算",
         "prepare-summary": "达人审核",
         "product-url": "商品链接",
+        "task-status": "任务状态",
         "video-progress": "视频进度 (已完成/总数)"
+      },
+      "filters": {
+        "deadline-end": "截止时间止",
+        "deadline-range": "截止时间",
+        "deadline-start": "截止时间起",
+        "has-budget": "是否有预算",
+        "task-status": "任务状态"
       },
       "actions": {
         "preview-pdf": "查看",
         "upload-prepare": "上传达人筹备表"
       },
       "messages": {
-        "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF"
+        "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF",
+        "task-abandoned-blocked": "当前总任务已废弃，不能进入上传达人筹备表"
+      },
+      "empty": {
+        "description": "当前没有可展示的任务数据。你可以调整筛选条件后再试。",
+        "title": "暂无任务数据"
+      },
+      "placeholders": {
+        "all-budget": "全部预算",
+        "all-task-status": "全部任务状态"
+      },
+      "task-status": {
+        "abandoned": "已废弃",
+        "normal": "正常"
       },
       "kol-prepare": {
         "actions": {
@@ -485,12 +506,18 @@
           "no-valid-kol-id-in-excel": "未在 Excel 中检测到有效的达人ID数据",
           "parse-failed": "Excel 文件解析失败，请检查文件格式",
           "save-failed": "保存失败，请稍后重试",
+          "task-abandoned-readonly": "当前总任务已废弃，不能继续新增、编辑或导入达人筹备数据",
+          "task-abandoned-submit-blocked": "当前总任务已废弃，不能继续提交达人筹备表",
           "submit-failed": "提交失败，请重试",
           "submit-success": "成功提交 {0} 条达人筹备记录",
           "validation-success": "已校验 {0} 条达人ID，新增 {1} 条，更新 {2} 条{3}"
         },
         "page-description": "上传 Excel 或手动补充达人ID，系统会按当前任务分配和达人占用状态做预校验；你可以先整理名单，再统一提交筹备记录。",
         "page-title": "任务分配 #{0} 达人筹备表",
+        "task-status": {
+          "abandoned-description": "该总任务已废弃。你仍可查看历史提交记录，但不能继续新增、编辑、导入或提交达人筹备数据。",
+          "abandoned-title": "当前总任务已废弃"
+        },
         "reason-code": {
           "can-prepare": "可筹备",
           "has-bd": "已有所属BD",

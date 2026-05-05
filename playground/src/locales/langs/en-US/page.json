@@ -389,14 +389,35 @@
         "has-budget": "Budget",
         "prepare-summary": "Prepare Review",
         "product-url": "Product URL",
+        "task-status": "Task Status",
         "video-progress": "Video(completed/total)"
+      },
+      "filters": {
+        "deadline-end": "Deadline To",
+        "deadline-range": "Deadline",
+        "deadline-start": "Deadline From",
+        "has-budget": "Budget",
+        "task-status": "Task Status"
       },
       "actions": {
         "preview-pdf": "View",
         "upload-prepare": "Upload Prepare Sheet"
       },
       "messages": {
-        "preview-pdf-unavailable": "Product information is missing, so the PDF is unavailable"
+        "preview-pdf-unavailable": "Product information is missing, so the PDF is unavailable",
+        "task-abandoned-blocked": "This parent task has been abandoned, so you cannot open the KOL prepare upload page."
+      },
+      "empty": {
+        "description": "There is no task data to display right now. Try adjusting the filters and check again.",
+        "title": "No Tasks Found"
+      },
+      "placeholders": {
+        "all-budget": "All Budgets",
+        "all-task-status": "All Task Statuses"
+      },
+      "task-status": {
+        "abandoned": "Abandoned",
+        "normal": "Normal"
       },
       "kol-prepare": {
         "actions": {
@@ -485,12 +506,18 @@
           "no-valid-kol-id-in-excel": "No valid KOL IDs were found in the Excel file",
           "parse-failed": "Failed to parse the Excel file. Please check the format.",
           "save-failed": "Save failed. Please try again later.",
+          "task-abandoned-readonly": "This task has been abandoned. You can no longer add, edit, or import KOL prepare data.",
+          "task-abandoned-submit-blocked": "This task has been abandoned. You can no longer submit the KOL prepare sheet.",
           "submit-failed": "Submission failed. Please retry.",
           "submit-success": "Successfully submitted {0} KOL prepare record(s)",
           "validation-success": "Validated {0} KOL ID(s), added {1}, updated {2}{3}"
         },
         "page-description": "Upload Excel files or add KOL IDs manually. The system will pre-validate them against the current task assignment and KOL occupancy status, so you can organize the list before submitting prepare records.",
         "page-title": "Task Relation #{0} KOL Prepare Sheet",
+        "task-status": {
+          "abandoned-description": "This parent task has been abandoned. You can still view historical submission records, but you can no longer add, edit, import, or submit KOL prepare data.",
+          "abandoned-title": "This parent task has been abandoned"
+        },
         "reason-code": {
           "can-prepare": "Available",
           "has-bd": "Already Assigned",

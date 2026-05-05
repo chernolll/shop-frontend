@@ -17,7 +17,9 @@ export interface MyTaskItem {
   productListingId?: number;
   productUrl: string;
   relationId: number;
+  task_status?: number;
   taskId: number;
+  taskStatus?: number;
   totalVideos: number;
 }
 
@@ -61,6 +63,12 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       width: 110,
     },
     {
+      field: 'taskStatus',
+      slots: { default: 'taskStatus' },
+      title: $t('page.bd.my-task.columns.task-status'),
+      width: 120,
+    },
+    {
       field: 'deadline',
       formatter: 'formatDate',
       title: $t('page.bd.my-task.columns.deadline'),
@@ -72,7 +80,7 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       fixed: 'right',
       slots: { default: 'action' },
       title: $t('page.bd.my-task.columns.action'),
-      width: 160,
+      width: 220,
     },
   ];
 }

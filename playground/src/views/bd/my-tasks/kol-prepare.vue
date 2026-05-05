@@ -33,6 +33,9 @@ import { $t } from '#/locales';
 
 const route = useRoute();
 const taskRelationId = Number(route.params.task_id);
+const taskStatus = Number(route.query.task_status ?? 0);
+const isTaskAbandoned = computed(() => taskStatus === 1);
+const canModifyPrepareData = computed(() => !isTaskAbandoned.value);
 
 function reasonCodeText(code: number): string {
   const map: Record<number, string> = {
@@ -314,6 +317,12 @@ function syncUploadGrid() {
 }
 
 function triggerUpload() {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   fileInputRef.value?.click();
 }
 
@@ -346,6 +355,12 @@ async function validateKolIds(items: ParsedKolRow[]) {
 }
 
 async function appendValidatedRows(items: ParsedKolRow[]) {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   const normalizedItems = dedupeKolIds(items.map((item) => item.kol_id)).map(
     (kolId) =>
       items.find((item) => item.kol_id === kolId) ?? {
@@ -390,11 +405,17 @@ async function appendValidatedRows(items: ParsedKolRow[]) {
 }
 
 function removePrepareRow(kolId: string) {
+  if (!canModifyPrepareData.value) {
+    return;
+  }
   previewData.value = previewData.value.filter((row) => row.kol_id !== kolId);
   syncUploadGrid();
 }
 
 function clearPreviewData() {
+  if (!canModifyPrepareData.value) {
+    return;
+  }
   previewData.value = [];
   selectedReasonCode.value = 'all';
   selectedKolStatus.value = 'all';
@@ -407,6 +428,12 @@ function resetFilters() {
 }
 
 function openCreateEditor() {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   editorMode.value = 'create';
   editingOriginalKolId.value = '';
   editorForm.value = {
@@ -417,6 +444,12 @@ function openCreateEditor() {
 }
 
 function openEditEditor(row: PrepareRow) {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   editorMode.value = 'edit';
   editingOriginalKolId.value = row.kol_id;
   editorForm.value = {
@@ -432,6 +465,12 @@ function closeEditor() {
 }
 
 async function handleFileChange(e: Event) {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
@@ -509,6 +548,12 @@ function parseExcelFile(file: File): Promise<ParsedKolRow[]> {
 }
 
 async function handleEditorSubmit() {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-readonly'),
+    );
+    return;
+  }
   const kolId = normalizeKolId(editorForm.value.kol_id);
   const kolLink = normalizeKolLink(editorForm.value.kol_link);
   if (!kolId) {
@@ -548,6 +593,12 @@ async function handleEditorSubmit() {
 }
 
 async function handleSubmit() {
+  if (!canModifyPrepareData.value) {
+    message.warning(
+      $t('page.bd.my-task.kol-prepare.messages.task-abandoned-submit-blocked'),
+    );
+    return;
+  }
   if (previewData.value.length === 0) {
     message.warning(
       $t('page.bd.my-task.kol-prepare.messages.no-submittable-data'),
@@ -862,6 +913,20 @@ watch(recordStatusFilter, () => {
         :tab="$t('page.bd.my-task.kol-prepare.tabs.upload')"
       >
         <Card :bordered="false" class="rounded-2xl shadow-sm">
+          <Alert
+            v-if="isTaskAbandoned"
+            class="mb-4"
+            type="warning"
+            show-icon
+            :message="
+              $t('page.bd.my-task.kol-prepare.task-status.abandoned-title')
+            "
+            :description="
+              $t(
+                'page.bd.my-task.kol-prepare.task-status.abandoned-description',
+              )
+            "
+          />
           <div
             class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
           >
@@ -879,16 +944,21 @@ watch(recordStatusFilter, () => {
                   $t('page.bd.my-task.kol-prepare.actions.download-template')
                 }}
               </Button>
-              <Button type="primary" @click="triggerUpload">
+              <Button
+                type="primary"
+                :disabled="isTaskAbandoned"
+                @click="triggerUpload"
+              >
                 {{ $t('page.bd.my-task.kol-prepare.actions.upload-excel') }}
               </Button>
-              <Button @click="openCreateEditor">
+              <Button :disabled="isTaskAbandoned" @click="openCreateEditor">
                 {{ $t('page.bd.my-task.kol-prepare.actions.add-row') }}
               </Button>
               <Button
                 v-if="previewData.length > 0"
                 danger
                 ghost
+                :disabled="isTaskAbandoned"
                 @click="clearPreviewData"
               >
                 {{ $t('page.bd.my-task.kol-prepare.actions.clear-list') }}
@@ -958,7 +1028,7 @@ watch(recordStatusFilter, () => {
                 <Button
                   type="primary"
                   :loading="submitting"
-                  :disabled="!canSubmit"
+                  :disabled="!canSubmit || isTaskAbandoned"
                   @click="handleSubmit"
                 >
                   {{ $t('page.bd.my-task.kol-prepare.actions.submit') }}
@@ -1023,13 +1093,19 @@ watch(recordStatusFilter, () => {
               </template>
 
               <template #action="{ row }">
-                <Button size="small" type="link" @click="openEditEditor(row)">
+                <Button
+                  size="small"
+                  type="link"
+                  :disabled="isTaskAbandoned"
+                  @click="openEditEditor(row)"
+                >
                   {{ $t('page.bd.my-task.kol-prepare.actions.edit') }}
                 </Button>
                 <Button
                   danger
                   size="small"
                   type="link"
+                  :disabled="isTaskAbandoned"
                   @click="removePrepareRow(row.kol_id)"
                 >
                   {{ $t('page.bd.my-task.kol-prepare.actions.delete') }}

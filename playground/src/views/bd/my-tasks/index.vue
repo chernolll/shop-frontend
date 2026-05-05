@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import type { BdTaskApi } from '#/api';
+import type { VbenFormProps } from '#/adapter/form';
 
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Button, message, Progress, Space, Tag } from 'ant-design-vue';
+import { Button, Empty, message, Progress, Space, Tag } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getBdTaskList } from '#/api';
+import { BdTaskApi, getBdTaskList } from '#/api';
 import { getBriefAccessUrl } from '#/api/core';
 import { $t } from '#/locales';
 
@@ -20,8 +20,10 @@ const briefLoadingRowIds = ref<number[]>([]);
 
 // TODO: 替换为真实 API 调用 - getMyTaskList()
 async function fetchMyTaskList({
+  formValues,
   page,
 }: {
+  formValues?: Record<string, any>;
   page: { currentPage: number; pageSize: number };
 }) {
   // const mockData: MyTaskItem[] = [
@@ -65,7 +67,25 @@ async function fetchMyTaskList({
   let result: BdTaskApi.BdTasListResult = { total: 0, list: [] };
   try {
     const { currentPage, pageSize } = page;
-    result = await getBdTaskList({ page: currentPage, pageSize });
+    const deadlineRange = Array.isArray(formValues?.deadlineRange)
+      ? formValues?.deadlineRange
+      : [];
+    result = await getBdTaskList({
+      deadlineEnd: deadlineRange[1] ? Number(deadlineRange[1]) : undefined,
+      deadlineStart: deadlineRange[0] ? Number(deadlineRange[0]) : undefined,
+      hasBudget:
+        formValues?.hasBudget === undefined
+          ? undefined
+          : (Number(formValues.hasBudget) === 1
+            ? 1
+            : 0),
+      page: currentPage,
+      pageSize,
+      taskStatus:
+        formValues?.taskStatus === undefined
+          ? undefined
+          : Number(formValues.taskStatus),
+    });
   } catch {}
   // 模拟分页
 
@@ -75,18 +95,83 @@ async function fetchMyTaskList({
   };
 }
 
+const formOptions: VbenFormProps = {
+  collapsed: false,
+  schema: [
+    {
+      component: 'RangePicker',
+      componentProps: {
+        valueFormat: 'x',
+      },
+      fieldName: 'deadlineRange',
+      label: $t('page.bd.my-task.filters.deadline-range'),
+    },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          {
+            label: $t('page.bd.my-task.placeholders.all-task-status'),
+            value: undefined,
+          },
+          {
+            label: $t('page.bd.my-task.task-status.normal'),
+            value: BdTaskApi.TaskStatus.NORMAL,
+          },
+          {
+            label: $t('page.bd.my-task.task-status.abandoned'),
+            value: BdTaskApi.TaskStatus.ABANDONED,
+          },
+        ],
+      },
+      fieldName: 'taskStatus',
+      label: $t('page.bd.my-task.filters.task-status'),
+    },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          {
+            label: $t('page.bd.my-task.placeholders.all-budget'),
+            value: undefined,
+          },
+          {
+            label: $t('page.bd.my-task.budget-text.yes'),
+            value: 1,
+          },
+          {
+            label: $t('page.bd.my-task.budget-text.no'),
+            value: 0,
+          },
+        ],
+      },
+      fieldName: 'hasBudget',
+      label: $t('page.bd.my-task.filters.has-budget'),
+    },
+  ],
+  submitOnChange: true,
+  submitOnEnter: false,
+};
+
 const [Grid] = useVbenVxeGrid<BdTaskApi.BDTaskRow>({
+  formOptions,
   gridOptions: {
     columns: useColumns(),
     maxHeight: 560,
     proxyConfig: {
       ajax: {
-        query: async ({
-          page,
-        }: {
-          page: { currentPage: number; pageSize: number };
-        }) => {
-          return await fetchMyTaskList({ page });
+        query: async (
+          {
+            page,
+          }: {
+            formValues?: Record<string, any>;
+            page: { currentPage: number; pageSize: number };
+          },
+          formValues: Record<string, any> = {},
+        ) => {
+          return await fetchMyTaskList({ formValues, page });
         },
       },
     },
@@ -136,7 +221,34 @@ async function openBriefPreview(row: BdTaskApi.BDTaskRow) {
 }
 
 function goPrepare(row: BdTaskApi.BDTaskRow) {
-  router.push(`/bd/my-task/${row.relationId}`);
+  if (isTaskAbandoned(row)) {
+    message.warning($t('page.bd.my-task.messages.task-abandoned-blocked'));
+    return;
+  }
+  router.push({
+    path: `/bd/my-task/${row.relationId}`,
+    query: {
+      task_status: String(resolveTaskStatus(row)),
+    },
+  });
+}
+
+function resolveTaskStatus(row: BdTaskApi.BDTaskRow) {
+  return Number(row.taskStatus ?? row.task_status ?? 0);
+}
+
+function isTaskAbandoned(row: BdTaskApi.BDTaskRow) {
+  return resolveTaskStatus(row) === 1;
+}
+
+function getTaskStatusText(row: BdTaskApi.BDTaskRow) {
+  return isTaskAbandoned(row)
+    ? $t('page.bd.my-task.task-status.abandoned')
+    : $t('page.bd.my-task.task-status.normal');
+}
+
+function getTaskStatusColor(row: BdTaskApi.BDTaskRow) {
+  return isTaskAbandoned(row) ? 'error' : 'success';
 }
 
 function getVideoProgressPercent(row: BdTaskApi.BDTaskRow) {
@@ -169,6 +281,20 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('page.bd.my-task.title')">
+      <template #empty>
+        <div class="flex min-h-[220px] items-center justify-center px-6 py-10">
+          <Empty
+            :description="$t('page.bd.my-task.empty.description')"
+            class="max-w-[360px]"
+          >
+            <template #image>
+              <div class="mb-4 text-base font-medium text-foreground">
+                {{ $t('page.bd.my-task.empty.title') }}
+              </div>
+            </template>
+          </Empty>
+        </div>
+      </template>
       <template #productUrl="{ row }">
         <a
           :href="row.productUrl"
@@ -264,10 +390,21 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
           }}
         </Tag>
       </template>
+      <template #taskStatus="{ row }">
+        <Tag :color="getTaskStatusColor(row)">
+          {{ getTaskStatusText(row) }}
+        </Tag>
+      </template>
       <template #action="{ row }">
-        <Button type="link" @click="goPrepare(row)">
-          {{ $t('page.bd.my-task.actions.upload-prepare') }}
-        </Button>
+        <Space :size="[4, 4]" wrap>
+          <Button
+            type="link"
+            :disabled="isTaskAbandoned(row)"
+            @click="goPrepare(row)"
+          >
+            {{ $t('page.bd.my-task.actions.upload-prepare') }}
+          </Button>
+        </Space>
       </template>
     </Grid>
   </Page>
