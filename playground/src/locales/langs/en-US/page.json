@@ -370,6 +370,100 @@
       }
     }
   },
+  "kol": {
+    "title": "KOL",
+    "list-title": "KOL List",
+    "detail-title": "KOL Detail",
+    "detail-description": "View the KOL profile, ownership, and summary metrics.",
+    "filters": {
+      "all-paid": "All Paid Types",
+      "all-status": "All KOL Statuses",
+      "belong-bd-code": "Owner BD",
+      "current-prepare-bd-code": "Current Prepare BD",
+      "entry-time-range": "Entry Date",
+      "followers-max": "Followers Max",
+      "followers-min": "Followers Min",
+      "is-paid": "Paid",
+      "kol-id": "KOL ID",
+      "range-end": "End",
+      "range-start": "Start",
+      "score-range": "Score Range",
+      "status": "KOL Status"
+    },
+    "columns": {
+      "belong-bd-code": "Owner BD",
+      "contact-info": "Contact Info",
+      "cooperation-fee": "Cooperation Fee",
+      "created-at": "Created At",
+      "current-prepare-bd-code": "Current Prepare BD",
+      "entry-time": "Entry Time",
+      "followers": "Followers",
+      "is-paid": "Paid",
+      "kol-id": "KOL ID",
+      "kol-link": "KOL Link",
+      "notes": "Notes",
+      "operation": "Action",
+      "score": "Score",
+      "status": "KOL Status",
+      "updated-at": "Updated At"
+    },
+    "actions": {
+      "back-to-list": "Back to List",
+      "delete": "Delete",
+      "edit": "Edit",
+      "save": "Save",
+      "view": "View"
+    },
+    "status": {
+      "blacklist": "Blacklist",
+      "lost": "Lost",
+      "normal": "Normal"
+    },
+    "paid": {
+      "no": "No",
+      "yes": "Yes"
+    },
+    "bd-status": {
+      "active": "Active",
+      "left": "Left"
+    },
+    "edit": {
+      "belong-bd-code": "Owner BD",
+      "belong-bd-placeholder": "Select a BD or leave empty to clear",
+      "contact-info": "Contact Info",
+      "contact-info-placeholder": "Leave empty to clear",
+      "cooperation-fee": "Cooperation Fee",
+      "hint": "Saving will submit all editable fields in the current form. Leave text fields empty if you want to clear them.",
+      "is-paid": "Paid",
+      "kol-link": "KOL Link",
+      "kol-link-placeholder": "Leave empty to clear",
+      "notes": "Notes",
+      "notes-placeholder": "Leave empty to clear",
+      "score": "Score",
+      "status": "KOL Status",
+      "title": "Edit KOL"
+    },
+    "delete": {
+      "confirm-content": "Are you sure you want to delete KOL {0}? ",
+      "confirm-title": "Confirm Delete KOL"
+    },
+    "detail-summary": {
+      "description": "These metrics are returned by the backend in real time and can help evaluate the current prepare and SOP usage of this KOL.",
+      "prepare-pending-count": "Pending Prepare Count",
+      "sop-active-count": "Active SOP Count",
+      "sop-total-count": "Total SOP Count",
+      "title": "KOL Summary",
+      "video-count": "Video Count"
+    },
+    "messages": {
+      "cooperation-fee-invalid": "Cooperation fee cannot be less than 0",
+      "delete-success": "KOL {0} deleted successfully",
+      "detail-empty": "No KOL detail found",
+      "followers-invalid": "Followers cannot be less than 0",
+      "score-invalid": "Score cannot be less than 0",
+      "update-success": "KOL saved successfully"
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "Dashboard",

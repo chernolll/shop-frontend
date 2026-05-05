@@ -1,135 +1,56 @@
-# Admin 总任务接口
+# Admin KOL 达人模块需求文档
 
-## 1. 创建总任务
-
-`POST /api/v1/admin/tasks`
-
-### 请求体
-
-```json
-{
-  "product_listing_id": 123,
-  "commission": 50.5,
-  "video_num": 6,
-  "deadline": 1778112000000,
-  "type": 0,
-  "budget": 1,
-  "bd_codes": ["BD001", "BD002", "BD003"]
-}
-```
-
-### 请求参数说明
-
-| 字段 | 类型 | 必填 | 说明 |
-| --- | --- | --- | --- |
-| `product_listing_id` | int64 | 是 | 商品链接，对应 `product_listing.id` |
-| `commission` | number | 是 | 总任务固定佣金 |
-| `video_num` | int | 是 | 总任务视频总数，对应 `task_main.video_num` |
-| `deadline` | int64 | 否 | 截止日期，UTC 毫秒时间戳 |
-| `type` | int | 是 | 任务类型：`0=定制`，`1=公开` |
-| `budget` | int | 是 | 是否有预算：`0=无预算`，`1=有预算` |
-| `bd_codes` | string[] | 是 | 需要分配该任务的 BD 编码列表，至少 1 个，不能重复 |
-
-### 业务说明
-
-1. 创建 `task_main` 时，`status` 固定为 `0=正常`。
-2. 同时创建 `task_bd_relation`。
-3. `task_main.video_num` 为总视频数，按 `video_num / BD数量` 平均分配到各 BD。
-4. 若不能整除，余数按顺序补到前面的 BD，保证各 BD `video_quantity` 之和等于 `task_main.video_num`。
-5. 整个创建过程使用事务，任一步失败全部回滚。
-
-### 成功响应
-
-```json
-{
-  "task_id": 1001,
-  "status": 0,
-  "product_listing_id": 123,
-  "commission": 50.5,
-  "video_num": 6,
-  "deadline": 1778112000000,
-  "type": 0,
-  "budget": 1,
-  "bd_relations": [
-    {
-      "relation_id": 2001,
-      "bd_code": "BD001",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    },
-    {
-      "relation_id": 2002,
-      "bd_code": "BD002",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    },
-    {
-      "relation_id": 2003,
-      "bd_code": "BD003",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    }
-  ],
-  "created_at": 1775000000000,
-  "updated_at": 1775000000000
-}
-```
+本文档仅描述当前后端已实现的 admin 达人模块接口，供前端使用。
 
 ---
 
-## 2. 总任务列表
+## 1. 达人列表
 
-`GET /api/v1/admin/tasks`
+`GET /api/v1/admin/kols`
 
 ### 查询参数
 
-| 参数                 | 类型  | 必填 | 说明                               |
-| -------------------- | ----- | ---- | ---------------------------------- |
-| `task_id`            | int64 | 否   | 总任务 ID                          |
-| `product_listing_id` | int64 | 否   | 商品链接                           |
-| `status`             | int   | 否   | 任务状态：`0=正常`，`1=废弃`       |
-| `type`               | int   | 否   | 任务类型：`0=定制`，`1=公开`       |
-| `budget`             | int   | 否   | 是否有预算：`0=无预算`，`1=有预算` |
-| `deadline_start`     | int64 | 否   | 截止日期开始时间，UTC 毫秒时间戳   |
-| `deadline_end`       | int64 | 否   | 截止日期结束时间，UTC 毫秒时间戳   |
-| `page`               | int   | 是   | 页码，从 1 开始                    |
-| `page_size`          | int   | 是   | 每页条数                           |
+| 参数 | 类型 | 必填 | 说明 |
+| --- | --- | --- | --- |
+| `kol_id` | string | 否 | 达人 ID，前缀匹配 |
+| `status` | int | 否 | 达人状态：`1=正常`，`2=流失`，`3=黑名单` |
+| `belong_bd_code` | string | 否 | 所属 BD 编码，精确匹配 |
+| `current_prepare_bd_code` | string | 否 | 当前筹备占用 BD 编码，精确匹配 |
+| `is_paid` | int | 否 | 是否付费：`0=否`，`1=是` |
+| `followers_min` | int64 | 否 | 粉丝数下限 |
+| `followers_max` | int64 | 否 | 粉丝数上限 |
+| `score_min` | number | 否 | 权重分下限 |
+| `score_max` | number | 否 | 权重分上限 |
+| `entry_time_start` | int64 | 否 | 录入时间起，UTC 毫秒时间戳 |
+| `entry_time_end` | int64 | 否 | 录入时间止，UTC 毫秒时间戳 |
+| `page` | int | 是 | 页码，从 1 开始 |
+| `page_size` | int | 是 | 每页条数，最大 200 |
 
 ### 成功响应
 
 ```json
 {
-  "total": 2,
+  "total": 1,
   "page": 1,
   "page_size": 20,
   "list": [
     {
-      "task_id": 1001,
-      "product_listing_id": 123,
-      "product_url": "https://example.com/product/123",
-      "commission": 50.5,
-      "video_num": 6,
-      "deadline": 1778112000000,
-      "type": 0,
-      "budget": 1,
-      "status": 0,
-      "bd_count": 3,
+      "kol_id": "KOL001",
+      "kol_link": "https://example.com/kol/1",
+      "followers": 120000,
+      "is_paid": 1,
+      "cooperation_fee": 300,
+      "contact_info": "telegram:xxx",
+      "belong_bd_code": "BD001",
+      "belong_bd_name": "张三",
+      "current_prepare_bd_code": "BD001",
+      "current_prepare_bd_name": "张三",
+      "status": 1,
+      "score": 88.5,
+      "notes": "高意向达人",
+      "entry_time": 1775000000000,
       "created_at": 1775000000000,
       "updated_at": 1775000000000
-    },
-    {
-      "task_id": 1002,
-      "product_listing_id": 456,
-      "product_url": "https://example.com/product/456",
-      "commission": 30,
-      "video_num": 4,
-      "deadline": null,
-      "type": 1,
-      "budget": 0,
-      "status": 1,
-      "bd_count": 2,
-      "created_at": 1775001000000,
-      "updated_at": 1775002000000
     }
   ]
 }
@@ -137,117 +58,161 @@
 
 ### 响应字段说明
 
-| 字段                 | 类型           | 说明                               |
-| -------------------- | -------------- | ---------------------------------- |
-| `task_id`            | int64          | 总任务 ID                          |
-| `product_listing_id` | int64          | 商品链接                           |
-| `product_url`        | string \| null | 商品链接                           |
-| `commission`         | number         | 总任务固定佣金                     |
-| `video_num`          | int            | 总任务视频总数                     |
-| `deadline`           | int64 \| null  | 截止日期，UTC 毫秒时间戳           |
-| `type`               | int            | 任务类型：`0=定制`，`1=公开`       |
-| `budget`             | int            | 是否有预算：`0=无预算`，`1=有预算` |
-| `status`             | int            | 任务状态：`0=正常`，`1=废弃`       |
-| `bd_count`           | int            | 当前负责该总任务的 BD 数量         |
-| `created_at`         | int64          | 创建时间，UTC 毫秒时间戳           |
-| `updated_at`         | int64          | 更新时间，UTC 毫秒时间戳           |
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `kol_id` | string | 达人 ID |
+| `kol_link` | string \| null | 达人主页链接 |
+| `followers` | int64 | 粉丝数 |
+| `is_paid` | int | 是否付费：`0=否`，`1=是` |
+| `cooperation_fee` | number | 合作费 |
+| `contact_info` | string \| null | 联系方式 |
+| `belong_bd_code` | string \| null | 所属 BD 编码 |
+| `belong_bd_name` | string \| null | 所属 BD 名称 |
+| `current_prepare_bd_code` | string \| null | 当前筹备占用 BD 编码 |
+| `current_prepare_bd_name` | string \| null | 当前筹备占用 BD 名称 |
+| `status` | int | 达人状态：`1=正常`，`2=流失`，`3=黑名单` |
+| `score` | number | 权重分 |
+| `notes` | string \| null | 备注 |
+| `entry_time` | int64 | 录入时间，UTC 毫秒时间戳 |
+| `created_at` | int64 | 创建时间，UTC 毫秒时间戳 |
+| `updated_at` | int64 | 更新时间，UTC 毫秒时间戳 |
 
 ---
 
-## 3. 查看总任务下的 BD 分配列表
+## 2. 达人详情
 
-`GET /api/v1/admin/tasks/relations?task_id=1001`
+`GET /api/v1/admin/kols/detail?kol_id=...`
 
 ### 查询参数
 
-| 参数      | 类型  | 必填 | 说明      |
-| --------- | ----- | ---- | --------- |
-| `task_id` | int64 | 是   | 总任务 ID |
+| 参数     | 类型   | 必填 | 说明              |
+| -------- | ------ | ---- | ----------------- |
+| `kol_id` | string | 是   | 达人 ID，精确匹配 |
 
 ### 成功响应
 
 ```json
 {
-  "task_id": 1001,
-  "status": 0,
-  "video_num": 6,
-  "relations": [
-    {
-      "relation_id": 2001,
-      "bd_code": "BD001",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    },
-    {
-      "relation_id": 2002,
-      "bd_code": "BD002",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    },
-    {
-      "relation_id": 2003,
-      "bd_code": "BD003",
-      "video_quantity": 2,
-      "follow_entry_time": 1775000000000
-    }
-  ]
+  "kol_id": "KOL001",
+  "kol_link": "https://example.com/kol/1",
+  "followers": 120000,
+  "is_paid": 1,
+  "cooperation_fee": 300,
+  "contact_info": "telegram:xxx",
+  "belong_bd_code": "BD001",
+  "belong_bd_name": "张三",
+  "current_prepare_bd_code": "BD001",
+  "current_prepare_bd_name": "张三",
+  "status": 1,
+  "score": 88.5,
+  "notes": "高意向达人",
+  "entry_time": 1775000000000,
+  "created_at": 1775000000000,
+  "updated_at": 1775000000000,
+  "prepare_pending_count": 1,
+  "sop_total_count": 3,
+  "sop_active_count": 2,
+  "video_count": 5
 }
 ```
 
-### 响应字段说明
+### 统计字段说明
 
-| 字段                            | 类型   | 说明                             |
-| ------------------------------- | ------ | -------------------------------- |
-| `task_id`                       | int64  | 总任务 ID                        |
-| `status`                        | int    | 任务状态：`0=正常`，`1=废弃`     |
-| `video_num`                     | int    | 总任务视频总数                   |
-| `relations[].relation_id`       | int64  | `task_bd_relation.id`            |
-| `relations[].bd_code`           | string | BD 编码                          |
-| `relations[].video_quantity`    | int    | 该 BD 分配到的视频数             |
-| `relations[].follow_entry_time` | int64  | 分配记录创建时间，UTC 毫秒时间戳 |
+| 字段 | 类型 | 说明 |
+| --- | --- | --- |
+| `prepare_pending_count` | int | 待审核/审核中的筹备记录数，统计 `status in (0,1)` |
+| `sop_total_count` | int | 该达人关联 SOP 总数 |
+| `sop_active_count` | int | 进行中的 SOP 数，统计 `status in (0,1,2,4)` |
+| `video_count` | int | 视频总数 |
 
 ---
 
-## 4. 废弃总任务
+## 3. 编辑达人
 
-`PUT /api/v1/admin/tasks/abandon`
+`PUT /api/v1/admin/kols`
 
 ### 请求体
 
 ```json
 {
-  "task_id": 1001
+  "kol_id": "KOL001",
+  "status": 1,
+  "score": 90,
+  "notes": "重点维护",
+  "belong_bd_code": "BD001",
+  "followers": 150000,
+  "cooperation_fee": 500,
+  "contact_info": "telegram:new",
+  "is_paid": 1,
+  "kol_link": "https://example.com/kol/1"
 }
 ```
 
-### 请求参数说明
+### 请求字段说明
 
-| 字段      | 类型  | 必填 | 说明      |
-| --------- | ----- | ---- | --------- |
-| `task_id` | int64 | 是   | 总任务 ID |
+| 字段              | 类型   | 必填 | 说明                                     |
+| ----------------- | ------ | ---- | ---------------------------------------- |
+| `kol_id`          | string | 是   | 达人 ID                                  |
+| `status`          | int    | 否   | 达人状态：`1=正常`，`2=流失`，`3=黑名单` |
+| `score`           | number | 否   | 权重分，`>= 0`                           |
+| `notes`           | string | 否   | 备注，传空字符串表示清空                 |
+| `belong_bd_code`  | string | 否   | 所属 BD 编码，传空字符串表示清空归属     |
+| `followers`       | int64  | 否   | 粉丝数，`>= 0`                           |
+| `cooperation_fee` | number | 否   | 合作费，`>= 0`                           |
+| `contact_info`    | string | 否   | 联系方式，传空字符串表示清空             |
+| `is_paid`         | int    | 否   | 是否付费：`0=否`，`1=是`                 |
+| `kol_link`        | string | 否   | 达人主页链接，传空字符串表示清空         |
 
-### 业务说明
+### 业务规则
 
-1. admin 创建后的总任务，仅支持废弃，不支持修改其他字段。
-2. 废弃后，`task_main.status` 更新为 `1=废弃`。
-3. 该总任务下：
-   - `task_sop.status == 0` 的记录，自动更新为 `5=终止`
-   - 已经进入后续阶段的 SOP 保持原状态继续执行
+1. 除 `kol_id` 外，至少传一个可编辑字段。
+2. 如果传了 `belong_bd_code`：
+   - BD 必须存在
+   - BD 必须是在职状态
+3. 修改 `belong_bd_code` 时，会同时清空 `current_prepare_bd_code`。
+4. 如果达人存在进行中的筹备记录或 SOP，则不允许修改 `belong_bd_code`。
+
+### 成功响应
+
+返回更新后的完整达人详情，结构与“达人详情”接口一致。
+
+---
+
+## 4. 删除达人
+
+`DELETE /api/v1/admin/kols?kol_id=...`
+
+### 查询参数
+
+| 参数     | 类型   | 必填 | 说明    |
+| -------- | ------ | ---- | ------- |
+| `kol_id` | string | 是   | 达人 ID |
+
+### 业务规则
+
+1. 仅做软删除。
+2. 如果达人存在进行中的筹备记录或 SOP，不允许删除。
 
 ### 成功响应
 
 ```json
 {
-  "task_id": 1001,
-  "status": 1,
-  "terminated_sop_count": 3
+  "kol_id": "KOL001"
 }
 ```
 
-### 响应字段说明
+---
 
-| 字段                   | 类型  | 说明                          |
-| ---------------------- | ----- | ----------------------------- |
-| `task_id`              | int64 | 总任务 ID                     |
-| `status`               | int   | 最新任务状态，固定为 `1=废弃` |
-| `terminated_sop_count` | int64 | 本次自动终止的 SOP 数量       |
+## 5. 相关辅助接口
+
+### 5.1 查询 BD 列表
+
+`GET /api/v1/admin/bds`
+
+用于编辑达人归属、创建总任务时选择 BD。
+
+### 5.2 查询商品链接列表
+
+`GET /api/v1/admin/product-listings`
+
+用于创建总任务时选择商品链接。

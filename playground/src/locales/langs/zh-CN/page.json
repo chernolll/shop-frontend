@@ -370,6 +370,100 @@
       }
     }
   },
+  "kol": {
+    "title": "达人管理",
+    "list-title": "达人列表",
+    "detail-title": "达人详情",
+    "detail-description": "查看达人基础信息、归属信息和统计信息。",
+    "filters": {
+      "all-paid": "全部付费状态",
+      "all-status": "全部达人状态",
+      "belong-bd-code": "所属 BD",
+      "current-prepare-bd-code": "当前筹备 BD",
+      "entry-time-range": "录入日期",
+      "followers-max": "粉丝数上限",
+      "followers-min": "粉丝数下限",
+      "is-paid": "是否付费",
+      "kol-id": "达人 ID",
+      "range-end": "结束值",
+      "range-start": "开始值",
+      "score-range": "权重分范围",
+      "status": "达人状态"
+    },
+    "columns": {
+      "belong-bd-code": "所属 BD",
+      "contact-info": "联系方式",
+      "cooperation-fee": "合作费",
+      "created-at": "创建时间",
+      "current-prepare-bd-code": "当前筹备 BD",
+      "entry-time": "录入时间",
+      "followers": "粉丝数",
+      "is-paid": "是否付费",
+      "kol-id": "达人 ID",
+      "kol-link": "达人主页链接",
+      "notes": "备注",
+      "operation": "操作",
+      "score": "权重分",
+      "status": "达人状态",
+      "updated-at": "更新时间"
+    },
+    "actions": {
+      "back-to-list": "返回列表",
+      "delete": "删除",
+      "edit": "编辑",
+      "save": "保存",
+      "view": "查看"
+    },
+    "status": {
+      "blacklist": "黑名单",
+      "lost": "流失",
+      "normal": "正常"
+    },
+    "paid": {
+      "no": "否",
+      "yes": "是"
+    },
+    "bd-status": {
+      "active": "在职",
+      "left": "离职"
+    },
+    "edit": {
+      "belong-bd-code": "所属 BD",
+      "belong-bd-placeholder": "请选择所属 BD，留空表示清空",
+      "contact-info": "联系方式",
+      "contact-info-placeholder": "可留空，留空表示清空",
+      "cooperation-fee": "合作费",
+      "hint": "保存时会提交当前表单中的全部可编辑字段。若要清空文本字段，直接留空即可。",
+      "is-paid": "是否付费",
+      "kol-link": "达人主页链接",
+      "kol-link-placeholder": "可留空，留空表示清空",
+      "notes": "备注",
+      "notes-placeholder": "可留空，留空表示清空",
+      "score": "权重分",
+      "status": "达人状态",
+      "title": "编辑达人"
+    },
+    "delete": {
+      "confirm-content": "确认删除达人 {0} 吗？",
+      "confirm-title": "确认删除达人"
+    },
+    "detail-summary": {
+      "description": "以下统计由后端实时返回，可用于快速判断达人当前的筹备和 SOP 使用情况。",
+      "prepare-pending-count": "待审核/审核中筹备数",
+      "sop-active-count": "进行中 SOP 数",
+      "sop-total-count": "SOP 总数",
+      "title": "达人统计信息",
+      "video-count": "视频总数"
+    },
+    "messages": {
+      "cooperation-fee-invalid": "合作费不能小于 0",
+      "delete-success": "达人 {0} 删除成功",
+      "detail-empty": "未查询到达人详情",
+      "followers-invalid": "粉丝数不能小于 0",
+      "score-invalid": "权重分不能小于 0",
+      "update-success": "达人信息保存成功"
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "数据面板",
