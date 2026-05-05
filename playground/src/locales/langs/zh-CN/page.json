@@ -278,6 +278,100 @@
         "select-records-first": "请先选择至少 1 条记录",
         "unknown-failure": "未知失败原因"
       }
+    },
+    "sample": {
+      "list-title": "寄样审核",
+      "selected-count": "已选 {0} 条",
+      "filters": {
+        "all-status": "全部状态",
+        "bd-code": "BD 编码",
+        "created-time-end": "提交结束时间",
+        "created-time-start": "提交开始时间",
+        "kol-id": "达人 ID",
+        "status": "寄样状态"
+      },
+      "columns": {
+        "address": "收样地址",
+        "bd-code": "BD 编码",
+        "brief-url": "Brief",
+        "created-at": "提交时间",
+        "delivered-at": "发货时间",
+        "kol-id": "达人 ID",
+        "operation": "操作",
+        "package-received": "是否收样",
+        "product-url": "商品链接",
+        "quantity": "样品数量",
+        "review-reason": "审核原因",
+        "reviewed-at": "审核时间",
+        "reviewer-name": "审核人",
+        "sop-status": "SOP 状态",
+        "status": "寄样状态",
+        "terminate-remark": "终止原因",
+        "tracking-number": "物流单号",
+        "updated-at": "更新时间"
+      },
+      "status": {
+        "abandoned": "已放弃",
+        "approved": "审核通过",
+        "pending": "待审核",
+        "rejected": "已驳回"
+      },
+      "sop-status": {
+        "completed": "结束",
+        "contact": "建联",
+        "recover": "回收视频",
+        "remittance": "汇款阶段",
+        "sample": "寄样",
+        "terminated": "终止"
+      },
+      "package-received": {
+        "no": "未收样",
+        "yes": "已收样"
+      },
+      "actions": {
+        "batch-review": "批量审核",
+        "confirm-update": "确认更新",
+        "confirm-submit": "确认提交",
+        "review": "审核",
+        "update-logistics": "补充物流"
+      },
+      "review-modal": {
+        "address-label": "收样地址",
+        "address-placeholder": "请输入收样地址",
+        "batch-title": "批量审核寄样申请",
+        "delivered-at-label": "发货时间",
+        "description": "将对选中的 {0} 条寄样申请执行审核。",
+        "package-received-label": "是否已收样",
+        "quantity-label": "样品数量",
+        "quantity-placeholder": "请输入样品数量",
+        "reason-label": "审核原因",
+        "reason-placeholder": "可选填写审核备注或补充说明",
+        "reject-reason-placeholder": "请输入驳回原因",
+        "single-kol": "达人 ID：{0}",
+        "single-quantity": "样品数量：{0}",
+        "single-title": "审核寄样申请",
+        "status-label": "目标状态",
+        "status-placeholder": "请选择目标状态",
+        "tracking-number-label": "物流单号",
+        "tracking-number-placeholder": "请输入物流单号"
+      },
+      "update-modal": {
+        "description": "当前记录已审核通过，可继续补充或修改寄样信息。",
+        "title": "补充寄样信息"
+      },
+      "messages": {
+        "address-required": "请填写收样地址",
+        "partial-failed-title": "部分记录处理失败",
+        "preview-pdf-unavailable": "缺少产品信息，暂时无法查看 PDF",
+        "quantity-required": "样品数量必须大于 0",
+        "reject-reason-required": "驳回时必须填写原因",
+        "review-all-failed": "本次审核全部失败，共 {0} 条",
+        "review-partial-success": "审核已完成，成功 {0} 条，失败 {1} 条",
+        "review-success": "审核成功，共处理 {0} 条",
+        "select-records-first": "请先选择至少 1 条记录",
+        "status-required": "请选择目标状态",
+        "unknown-failure": "未知失败原因"
+      }
     }
   },
   "bd": {
