@@ -56,8 +56,7 @@
       "filters": {
         "all-status": "All Statuses",
         "bd-code": "BD Code",
-        "entry-time-end": "Entry Time To",
-        "entry-time-start": "Entry Time From",
+        "entry-time-range": "Entry Date",
         "kol-id": "KOL ID",
         "status": "Review Status",
         "task-bd-id": "Task Relation ID",
@@ -114,8 +113,7 @@
         "kol-id": "KOL ID",
         "product-listing-id": "Product Listing",
         "status": "Remittance Status",
-        "submit-time-end": "Submitted To",
-        "submit-time-start": "Submitted From",
+        "submit-time-range": "Submitted Date",
         "task-bd-id": "Task Relation ID",
         "task-id": "Task ID",
         "task-sop-id": "SOP ID"
@@ -219,8 +217,7 @@
         "bd-code": "BD Code",
         "kol-id": "KOL ID",
         "status": "Budget Status",
-        "submit-time-end": "Submitted To",
-        "submit-time-start": "Submitted From"
+        "submit-time-range": "Submitted Date"
       },
       "columns": {
         "amount": "Requested Budget",
@@ -285,8 +282,7 @@
       "filters": {
         "all-status": "All Statuses",
         "bd-code": "BD Code",
-        "created-time-end": "Submitted To",
-        "created-time-start": "Submitted From",
+        "created-time-range": "Submitted Date",
         "kol-id": "KOL ID",
         "status": "Sample Status"
       },

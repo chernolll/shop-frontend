@@ -16,6 +16,10 @@ import {
   ReviewBudgetApi,
 } from '#/api/review/budget';
 import { $t } from '#/locales';
+import {
+  resolveDateRange,
+  toOptionalNumber,
+} from '#/views/review/shared/dateRange';
 import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 const selectedRows = ref<ReviewBudgetApi.ListItem[]>([]);
@@ -129,14 +133,6 @@ function formatTimestamp(value?: null | number) {
 
 function canReviewRow(row: ReviewBudgetApi.ListItem) {
   return row.budget_status === ReviewBudgetApi.BudgetStatus.PENDING;
-}
-
-function toOptionalNumber(value: unknown) {
-  if (value === '' || value === null || value === undefined) {
-    return undefined;
-  }
-  const result = Number(value);
-  return Number.isFinite(result) ? result : undefined;
 }
 
 function syncSelectedRows() {
@@ -296,20 +292,12 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.budget.filters.status'),
     },
     {
-      component: 'DatePicker',
+      component: 'RangePicker',
       componentProps: {
         valueFormat: 'x',
       },
-      fieldName: 'submit_time_start',
-      label: $t('page.review.budget.filters.submit-time-start'),
-    },
-    {
-      component: 'DatePicker',
-      componentProps: {
-        valueFormat: 'x',
-      },
-      fieldName: 'submit_time_end',
-      label: $t('page.review.budget.filters.submit-time-end'),
+      fieldName: 'submit_time_range',
+      label: $t('page.review.budget.filters.submit-time-range'),
     },
   ],
   submitOnChange: true,
@@ -410,14 +398,15 @@ const gridOptions: VxeTableGridOptions<ReviewBudgetApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         selectedRows.value = [];
+        const submitTimeRange = resolveDateRange(formValues.submit_time_range);
         const result = await getReviewBudgetList({
           bd_code: formValues.bd_code?.trim() || undefined,
           kol_id: formValues.kol_id?.trim() || undefined,
           page: page.currentPage,
           page_size: page.pageSize,
           status: toOptionalNumber(formValues.status),
-          submit_time_end: toOptionalNumber(formValues.submit_time_end),
-          submit_time_start: toOptionalNumber(formValues.submit_time_start),
+          submit_time_end: submitTimeRange.end,
+          submit_time_start: submitTimeRange.start,
         });
         return {
           items: result.list,

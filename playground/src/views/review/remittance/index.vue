@@ -37,6 +37,10 @@ import {
   ReviewRemittanceApi,
 } from '#/api/review/remittance';
 import { $t } from '#/locales';
+import {
+  resolveDateRange,
+  toOptionalNumber,
+} from '#/views/review/shared/dateRange';
 import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 type ReviewModalMode = 'payment' | 'review';
@@ -219,14 +223,6 @@ function extractErrorMessage(error: any, fallbackKey: string) {
     error?.message ??
     $t(fallbackKey)
   );
-}
-
-function toOptionalNumber(value: unknown) {
-  if (value === '' || value === null || value === undefined) {
-    return undefined;
-  }
-  const result = Number(value);
-  return Number.isFinite(result) ? result : undefined;
 }
 
 function syncSelectedRows() {
@@ -602,20 +598,12 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.remittance.filters.status'),
     },
     {
-      component: 'DatePicker',
+      component: 'RangePicker',
       componentProps: {
         valueFormat: 'x',
       },
-      fieldName: 'submit_time_start',
-      label: $t('page.review.remittance.filters.submit-time-start'),
-    },
-    {
-      component: 'DatePicker',
-      componentProps: {
-        valueFormat: 'x',
-      },
-      fieldName: 'submit_time_end',
-      label: $t('page.review.remittance.filters.submit-time-end'),
+      fieldName: 'submit_time_range',
+      label: $t('page.review.remittance.filters.submit-time-range'),
     },
   ],
   submitOnChange: true,
@@ -727,6 +715,7 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         selectedRows.value = [];
+        const submitTimeRange = resolveDateRange(formValues.submit_time_range);
         const result = await getReviewRemittanceList({
           bd_code: formValues.bd_code?.trim() || undefined,
           kol_id: formValues.kol_id?.trim() || undefined,
@@ -734,8 +723,8 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
           page_size: page.pageSize,
           product_listing_id: toOptionalNumber(formValues.product_listing_id),
           status: toOptionalNumber(formValues.status),
-          submit_time_end: toOptionalNumber(formValues.submit_time_end),
-          submit_time_start: toOptionalNumber(formValues.submit_time_start),
+          submit_time_end: submitTimeRange.end,
+          submit_time_start: submitTimeRange.start,
           task_bd_id: toOptionalNumber(formValues.task_bd_id),
           task_id: toOptionalNumber(formValues.task_id),
           task_sop_id: toOptionalNumber(formValues.task_sop_id),

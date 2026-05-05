@@ -27,6 +27,10 @@ import {
   ReviewSampleApi,
 } from '#/api/review/sample';
 import { $t } from '#/locales';
+import {
+  resolveDateRange,
+  toOptionalNumber,
+} from '#/views/review/shared/dateRange';
 import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 type ReviewModalMode = 'review' | 'update';
@@ -200,14 +204,6 @@ function getPackageReceivedText(value?: 0 | 1) {
 
 function getPackageReceivedColor(value?: 0 | 1) {
   return value === 1 ? 'success' : 'default';
-}
-
-function toOptionalNumber(value: unknown) {
-  if (value === '' || value === null || value === undefined) {
-    return undefined;
-  }
-  const result = Number(value);
-  return Number.isFinite(result) ? result : undefined;
 }
 
 function canBatchReviewRow(row: ReviewSampleApi.ListItem) {
@@ -496,20 +492,12 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.sample.filters.status'),
     },
     {
-      component: 'DatePicker',
+      component: 'RangePicker',
       componentProps: {
         valueFormat: 'x',
       },
-      fieldName: 'created_time_start',
-      label: $t('page.review.sample.filters.created-time-start'),
-    },
-    {
-      component: 'DatePicker',
-      componentProps: {
-        valueFormat: 'x',
-      },
-      fieldName: 'created_time_end',
-      label: $t('page.review.sample.filters.created-time-end'),
+      fieldName: 'created_time_range',
+      label: $t('page.review.sample.filters.created-time-range'),
     },
   ],
   submitOnChange: true,
@@ -635,10 +623,13 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         selectedRows.value = [];
+        const createdTimeRange = resolveDateRange(
+          formValues.created_time_range,
+        );
         const result = await getReviewSampleList({
           bd_code: formValues.bd_code?.trim() || undefined,
-          created_time_end: toOptionalNumber(formValues.created_time_end),
-          created_time_start: toOptionalNumber(formValues.created_time_start),
+          created_time_end: createdTimeRange.end,
+          created_time_start: createdTimeRange.start,
           kol_id: formValues.kol_id?.trim() || undefined,
           page: page.currentPage,
           page_size: page.pageSize,

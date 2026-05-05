@@ -17,6 +17,10 @@ import {
   reviewKolPrepare,
 } from '#/api/review/kol-prepare';
 import { $t } from '#/locales';
+import {
+  resolveDateRange,
+  toOptionalNumber,
+} from '#/views/review/shared/dateRange';
 import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 const router = useRouter();
@@ -82,15 +86,6 @@ function getStatusColor(status: ReviewKolPrepareApi.Status) {
       return 'default';
     }
   }
-}
-
-function toOptionalNumber(value: unknown) {
-  if (value === '' || value === null || value === undefined) {
-    return undefined;
-  }
-
-  const result = Number(value);
-  return Number.isFinite(result) ? result : undefined;
 }
 
 function openDetail(row: ReviewKolPrepareApi.ListItem) {
@@ -292,20 +287,12 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.kolPrepare.filters.status'),
     },
     {
-      component: 'DatePicker',
+      component: 'RangePicker',
       componentProps: {
         valueFormat: 'x',
       },
-      fieldName: 'entry_time_start',
-      label: $t('page.review.kolPrepare.filters.entry-time-start'),
-    },
-    {
-      component: 'DatePicker',
-      componentProps: {
-        valueFormat: 'x',
-      },
-      fieldName: 'entry_time_end',
-      label: $t('page.review.kolPrepare.filters.entry-time-end'),
+      fieldName: 'entry_time_range',
+      label: $t('page.review.kolPrepare.filters.entry-time-range'),
     },
   ],
   submitOnChange: true,
@@ -390,10 +377,11 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         selectedRows.value = [];
+        const entryTimeRange = resolveDateRange(formValues.entry_time_range);
         const result = await getReviewKolPrepareList({
           bd_code: formValues.bd_code?.trim() || undefined,
-          entry_time_end: toOptionalNumber(formValues.entry_time_end),
-          entry_time_start: toOptionalNumber(formValues.entry_time_start),
+          entry_time_end: entryTimeRange.end,
+          entry_time_start: entryTimeRange.start,
           kol_id: formValues.kol_id?.trim() || undefined,
           page: page.currentPage,
           page_size: page.pageSize,
