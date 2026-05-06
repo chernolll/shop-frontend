@@ -1,46 +1,51 @@
-// import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router';
 
-// import { $t } from '#/locales';
+import { RoleEnum } from '#/consts/role';
+import { $t } from '#/locales';
 
-// const routes: RouteRecordRaw[] = [
-//   {
-//     meta: {
-//       icon: 'ion:settings-outline',
-//       order: 9997,
-//       title: $t('system.title'),
-//     },
-//     name: 'System',
-//     path: '/system',
-//     children: [
-//       {
-//         path: '/system/role',
-//         name: 'SystemRole',
-//         meta: {
-//           icon: 'mdi:account-group',
-//           title: $t('system.role.title'),
-//         },
-//         component: () => import('#/views/system/role/list.vue'),
-//       },
-//       {
-//         path: '/system/menu',
-//         name: 'SystemMenu',
-//         meta: {
-//           icon: 'mdi:menu',
-//           title: $t('system.menu.title'),
-//         },
-//         component: () => import('#/views/system/menu/list.vue'),
-//       },
-//       {
-//         path: '/system/dept',
-//         name: 'SystemDept',
-//         meta: {
-//           icon: 'charm:organisation',
-//           title: $t('system.dept.title'),
-//         },
-//         component: () => import('#/views/system/dept/list.vue'),
-//       },
-//     ],
-//   },
-// ];
+const routes: RouteRecordRaw[] = [
+  {
+    meta: {
+      icon: 'ion:settings-outline',
+      order: 1030,
+      title: $t('system.title'),
+      authority: [RoleEnum.ADMIN],
+    },
+    name: 'System',
+    path: '/system',
+    children: [
+      {
+        path: '/system/departments',
+        name: 'SystemDepartments',
+        meta: {
+          icon: 'charm:organisation',
+          title: $t('system.department.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+        component: () => import('#/views/system/department/index.vue'),
+      },
+      {
+        path: '/system/employees',
+        name: 'SystemEmployees',
+        meta: {
+          icon: 'mdi:card-account-details-outline',
+          title: $t('system.employee.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+        component: () => import('#/views/system/employee/index.vue'),
+      },
+      {
+        path: '/system/bd-persons',
+        name: 'SystemBdPersons',
+        meta: {
+          icon: 'lucide:badge-plus',
+          title: $t('system.bdPerson.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+        component: () => import('#/views/system/bd-person/index.vue'),
+      },
+    ],
+  },
+];
 
-export default [];
+export default routes;

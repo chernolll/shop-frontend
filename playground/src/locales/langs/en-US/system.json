@@ -10,6 +10,180 @@
     "operation": "Operation",
     "parentDept": "Parent Department"
   },
+  "department": {
+    "title": "Department Management",
+    "list": "Department List",
+    "filters": {
+      "code": "Department Code",
+      "name": "Department Name"
+    },
+    "columns": {
+      "code": "Department Code",
+      "created-at": "Created At",
+      "employee-count": "Employees",
+      "name": "Department Name",
+      "operation": "Action",
+      "updated-at": "Updated At"
+    },
+    "actions": {
+      "create": "Create Department",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "form": {
+      "code": "Department Code",
+      "code-placeholder": "Enter department code",
+      "name": "Department Name",
+      "name-placeholder": "Enter department name"
+    },
+    "delete": {
+      "confirm-content": "Are you sure you want to delete department {0}?",
+      "confirm-title": "Confirm Delete Department"
+    },
+    "messages": {
+      "code-required": "Please enter the department code",
+      "create-success": "Department created successfully",
+      "delete-success": "Department {0} deleted successfully",
+      "name-required": "Please enter the department name",
+      "update-success": "Department updated successfully"
+    }
+  },
+  "employee": {
+    "title": "Employee Management",
+    "list": "Employee List",
+    "filters": {
+      "all-bd": "All BD Statuses",
+      "all-status": "All Statuses",
+      "country": "Country",
+      "department": "Department",
+      "employee-no": "Employee No",
+      "is-bd": "BD Binding",
+      "name": "Name",
+      "post": "Post",
+      "status": "Status"
+    },
+    "columns": {
+      "bd-code": "BD Code",
+      "country": "Country",
+      "department": "Department",
+      "display-name": "Name",
+      "employee-no": "Employee No",
+      "entry-time": "Entry Time",
+      "leave-time": "Leave Time",
+      "operation": "Action",
+      "phone": "Phone",
+      "post": "Post",
+      "status": "Status",
+      "updated-at": "Updated At"
+    },
+    "actions": {
+      "create": "Create Employee",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "form": {
+      "avatar": "Avatar URL",
+      "country": "Country",
+      "department": "Department",
+      "employee-no": "Employee No",
+      "emergency-contact": "Emergency Contact",
+      "emergency-phone": "Emergency Phone",
+      "entry-time": "Entry Time",
+      "gender": "Gender",
+      "id-card": "ID Card",
+      "lark-id": "Lark ID",
+      "leave-time": "Leave Time",
+      "name-cn": "Chinese Name",
+      "name-en": "English Name",
+      "name-th": "Thai Name",
+      "performance-bonus": "Performance Bonus",
+      "phone": "Phone",
+      "post": "Post",
+      "remark": "Remark",
+      "salary": "Salary",
+      "status": "Status",
+      "subsidy": "Subsidy"
+    },
+    "status": {
+      "active": "Active",
+      "left": "Left"
+    },
+    "gender": {
+      "female": "Female",
+      "male": "Male",
+      "unknown": "Unknown"
+    },
+    "bd": {
+      "no": "No",
+      "yes": "Yes"
+    },
+    "delete": {
+      "confirm-content": "Are you sure you want to delete employee {0}?",
+      "confirm-title": "Confirm Delete Employee"
+    },
+    "messages": {
+      "avatar-required": "Please enter the avatar URL",
+      "country-required": "Please select a country",
+      "create-success": "Employee created successfully",
+      "delete-success": "Employee {0} deleted successfully",
+      "employee-no-required": "Please enter the employee number",
+      "entry-time-required": "Please select the entry time",
+      "leave-time-required": "Leave time is required when status is left",
+      "name-cn-required": "Chinese name is required when country is CN",
+      "name-required": "At least one of Chinese, Thai, or English name is required",
+      "name-th-required": "Thai name is required when country is TH",
+      "performance-bonus-invalid": "Performance bonus cannot be less than 0",
+      "salary-invalid": "Salary cannot be less than 0",
+      "subsidy-invalid": "Subsidy cannot be less than 0",
+      "update-success": "Employee updated successfully"
+    }
+  },
+  "bdPerson": {
+    "title": "BD Person Management",
+    "list": "BD Binding List",
+    "filters": {
+      "all-status": "All Employee Statuses",
+      "bd-code": "BD Code",
+      "department": "Department",
+      "employee-no": "Employee No",
+      "employee-status": "Employee Status"
+    },
+    "columns": {
+      "bd-code": "BD Code",
+      "department": "Department",
+      "employee-name": "Employee Name",
+      "employee-no": "Employee No",
+      "employee-status": "Employee Status",
+      "leave-time": "Leave Time",
+      "operation": "Action",
+      "post": "Post",
+      "updated-at": "Updated At"
+    },
+    "actions": {
+      "create": "Create BD Binding",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "form": {
+      "bd-code": "BD Code",
+      "employee": "Employee"
+    },
+    "status": {
+      "active": "Active",
+      "left": "Left"
+    },
+    "delete": {
+      "confirm-content": "Are you sure you want to delete BD binding {0}?",
+      "confirm-title": "Confirm Delete BD Binding"
+    },
+    "messages": {
+      "bd-code-required": "Please enter the BD code",
+      "create-success": "BD binding created successfully",
+      "delete-success": "BD binding {0} deleted successfully",
+      "employee-required": "Please select an employee",
+      "update-success": "BD binding updated successfully"
+    }
+  },
   "menu": {
     "title": "Menu Management",
     "parent": "Parent Menu",

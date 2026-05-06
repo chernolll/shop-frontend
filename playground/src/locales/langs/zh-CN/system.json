@@ -11,6 +11,180 @@
     "status": "状态",
     "title": "部门管理"
   },
+  "department": {
+    "title": "部门管理",
+    "list": "部门列表",
+    "filters": {
+      "code": "部门编码",
+      "name": "部门名称"
+    },
+    "columns": {
+      "code": "部门编码",
+      "created-at": "创建时间",
+      "employee-count": "员工数",
+      "name": "部门名称",
+      "operation": "操作",
+      "updated-at": "更新时间"
+    },
+    "actions": {
+      "create": "新建部门",
+      "delete": "删除",
+      "edit": "编辑"
+    },
+    "form": {
+      "code": "部门编码",
+      "code-placeholder": "请输入部门编码",
+      "name": "部门名称",
+      "name-placeholder": "请输入部门名称"
+    },
+    "delete": {
+      "confirm-content": "确认删除部门 {0} 吗？",
+      "confirm-title": "确认删除部门"
+    },
+    "messages": {
+      "code-required": "请输入部门编码",
+      "create-success": "部门创建成功",
+      "delete-success": "部门 {0} 删除成功",
+      "name-required": "请输入部门名称",
+      "update-success": "部门更新成功"
+    }
+  },
+  "employee": {
+    "title": "员工管理",
+    "list": "员工列表",
+    "filters": {
+      "all-bd": "全部BD状态",
+      "all-status": "全部员工状态",
+      "country": "国家",
+      "department": "部门",
+      "employee-no": "员工编号",
+      "is-bd": "是否绑定BD",
+      "name": "姓名",
+      "post": "岗位",
+      "status": "员工状态"
+    },
+    "columns": {
+      "bd-code": "BD编码",
+      "country": "国家",
+      "department": "部门",
+      "display-name": "姓名",
+      "employee-no": "员工编号",
+      "entry-time": "入职时间",
+      "leave-time": "离职时间",
+      "operation": "操作",
+      "phone": "联系电话",
+      "post": "岗位",
+      "status": "员工状态",
+      "updated-at": "更新时间"
+    },
+    "actions": {
+      "create": "新建员工",
+      "delete": "删除",
+      "edit": "编辑"
+    },
+    "form": {
+      "avatar": "头像链接",
+      "country": "国家",
+      "department": "部门",
+      "employee-no": "员工编号",
+      "emergency-contact": "紧急联系人",
+      "emergency-phone": "紧急联系电话",
+      "entry-time": "入职时间",
+      "gender": "性别",
+      "id-card": "身份证号",
+      "lark-id": "Lark ID",
+      "leave-time": "离职时间",
+      "name-cn": "中文名",
+      "name-en": "英文名",
+      "name-th": "泰文名",
+      "performance-bonus": "绩效",
+      "phone": "联系电话",
+      "post": "岗位",
+      "remark": "备注",
+      "salary": "月薪",
+      "status": "员工状态",
+      "subsidy": "补贴"
+    },
+    "status": {
+      "active": "在职",
+      "left": "离职"
+    },
+    "gender": {
+      "female": "女",
+      "male": "男",
+      "unknown": "未知"
+    },
+    "bd": {
+      "no": "否",
+      "yes": "是"
+    },
+    "delete": {
+      "confirm-content": "确认删除员工 {0} 吗？",
+      "confirm-title": "确认删除员工"
+    },
+    "messages": {
+      "avatar-required": "请输入头像链接",
+      "country-required": "请选择国家",
+      "create-success": "员工创建成功",
+      "delete-success": "员工 {0} 删除成功",
+      "employee-no-required": "请输入员工编号",
+      "entry-time-required": "请选择入职时间",
+      "leave-time-required": "离职状态下必须填写离职时间",
+      "name-cn-required": "国家为CN时必须填写中文名",
+      "name-required": "中文名、泰文名、英文名至少填写一个",
+      "name-th-required": "国家为TH时必须填写泰文名",
+      "performance-bonus-invalid": "绩效不能小于0",
+      "salary-invalid": "月薪不能小于0",
+      "subsidy-invalid": "补贴不能小于0",
+      "update-success": "员工更新成功"
+    }
+  },
+  "bdPerson": {
+    "title": "BD人员管理",
+    "list": "BD绑定列表",
+    "filters": {
+      "all-status": "全部员工状态",
+      "bd-code": "BD编码",
+      "department": "部门",
+      "employee-no": "员工编号",
+      "employee-status": "员工状态"
+    },
+    "columns": {
+      "bd-code": "BD编码",
+      "department": "部门",
+      "employee-name": "员工姓名",
+      "employee-no": "员工编号",
+      "employee-status": "员工状态",
+      "leave-time": "离职时间",
+      "operation": "操作",
+      "post": "岗位",
+      "updated-at": "更新时间"
+    },
+    "actions": {
+      "create": "新建BD绑定",
+      "delete": "删除",
+      "edit": "编辑"
+    },
+    "form": {
+      "bd-code": "BD编码",
+      "employee": "员工"
+    },
+    "status": {
+      "active": "在职",
+      "left": "离职"
+    },
+    "delete": {
+      "confirm-content": "确认删除BD绑定 {0} 吗？",
+      "confirm-title": "确认删除BD绑定"
+    },
+    "messages": {
+      "bd-code-required": "请输入BD编码",
+      "create-success": "BD绑定创建成功",
+      "delete-success": "BD绑定 {0} 删除成功",
+      "employee-required": "请选择员工",
+      "update-success": "BD绑定更新成功"
+    }
+  },
   "menu": {
     "list": "菜单列表",
     "activeIcon": "激活图标",
