@@ -18,6 +18,7 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
@@ -453,13 +454,19 @@ const formOptions: VbenFormProps = {
       label: $t('page.bd.task-center.filters.deadline-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 
 const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
   columns: [
     { type: 'seq', width: 60 },
+    {
+      field: 'task_code',
+      minWidth: 180,
+      slots: { default: 'task_code' },
+      title: $t('page.bd.task-center.columns.task-code'),
+    },
     // {
     //   field: 'task_id',
     //   minWidth: 120,
@@ -587,6 +594,30 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <Button type="primary" @click="openCreateModal">
           {{ $t('page.bd.task-center.actions.create') }}
         </Button>
+      </template>
+
+      <template #task_code="{ row }">
+        <Tooltip>
+          <template #title>
+            <div class="space-y-1">
+              <div>
+                {{ $t('page.bd.task-center.main-sku.code') }}:
+                {{ row.main_sku_code || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.name') }}:
+                {{ row.main_sku_name || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.status') }}:
+                {{ getProductStatusText(row.main_sku_status) }}
+              </div>
+            </div>
+          </template>
+          <span class="cursor-help text-blue-500 hover:underline">
+            {{ row.task_code || '-' }}
+          </span>
+        </Tooltip>
       </template>
 
       <template #product_url="{ row }">

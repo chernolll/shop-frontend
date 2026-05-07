@@ -500,7 +500,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.sample.filters.created-time-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

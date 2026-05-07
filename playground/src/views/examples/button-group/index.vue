@@ -130,7 +130,7 @@ const [Form] = useVbenForm({
     },
   ],
   showDefaultActions: false,
-  submitOnChange: true,
+  submitOnChange: false,
 });
 
 function onBtnClick(value: any) {

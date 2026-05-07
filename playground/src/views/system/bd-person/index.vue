@@ -196,7 +196,7 @@ const formOptions: VbenFormProps = {
       label: $t('system.bdPerson.filters.employee-status'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

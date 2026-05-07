@@ -1,6 +1,11 @@
 import { requestClient } from '../request';
 
 export namespace AdminKolApi {
+  export interface TagItem {
+    id: number;
+    name: string;
+  }
+
   export enum KolStatus {
     NORMAL = 1,
     LOST = 2,
@@ -26,14 +31,18 @@ export namespace AdminKolApi {
     score_max?: number;
     score_min?: number;
     status?: KolStatus;
+    tags?: string;
   }
 
   export interface ListItem {
     belong_bd_code: null | string;
     belong_bd_name: null | string;
+    completed_task_count: number;
     contact_info: null | string;
     cooperation_fee: number;
     created_at: number;
+    current_month_gmv: number;
+    current_month_video_count: number;
     current_prepare_bd_code: null | string;
     current_prepare_bd_name: null | string;
     entry_time: number;
@@ -42,8 +51,12 @@ export namespace AdminKolApi {
     kol_id: string;
     kol_link: null | string;
     notes: null | string;
+    participated_task_count: number;
+    recent_two_month_gmv: number;
+    recent_two_month_video_count: number;
     score: number;
     status: KolStatus;
+    tags: TagItem[];
     updated_at: number;
   }
 
@@ -76,6 +89,7 @@ export namespace AdminKolApi {
     notes?: string;
     score?: number;
     status?: KolStatus;
+    tag_names?: string[];
   }
 
   export interface DeleteParams {
@@ -94,6 +108,10 @@ export namespace AdminKolApi {
     belong_bd_code: null | string;
     kol_id: string;
   }
+
+  export interface TagListResult {
+    list: TagItem[];
+  }
 }
 
 /** Admin 查询达人列表 */
@@ -108,6 +126,11 @@ export async function getAdminKolDetail(params: AdminKolApi.DetailParams) {
   return requestClient.get<AdminKolApi.DetailResult>('/admin/kols/detail', {
     params,
   });
+}
+
+/** Admin 查询达人标签列表 */
+export async function getAdminKolTagList() {
+  return requestClient.get<AdminKolApi.TagListResult>('/admin/kol-tags');
 }
 
 /** Admin 编辑达人 */

@@ -13,6 +13,8 @@ export namespace BdTaskApi {
     hasBudget?: 0 | 1; // 是否有预算
     page: number;
     pageSize: number;
+    task_code?: string; // 任务代码
+    taskCode?: string; // 任务代码
     taskStatus?: TaskStatus; // 任务状态
   }
   export interface BDTaskRow {
@@ -22,6 +24,9 @@ export namespace BdTaskApi {
     deadline: number; // 截止日期 单位毫秒
     hasBudget: 0 | 1; // 是否有预算 1:有
     hasPrepareRecords: number; // 是否提交过达人审核记录
+    main_sku_code?: string;
+    main_sku_name?: string;
+    main_sku_status?: number;
     prepareApprovedCount: number; // 达人审核通过数量
     preparePendingCount: number; // 达人审核中/待审核数量
     prepareRejectedCount: number; // 达人审核驳回数量
@@ -30,7 +35,9 @@ export namespace BdTaskApi {
     productListingId?: number;
     productUrl: string;
     relationId: number; // task_bd_relation.id
+    task_code?: string;
     task_status?: TaskStatus;
+    taskCode?: string;
     taskId: number; // task_main.id
     taskStatus?: TaskStatus;
     totalVideos: number; // 总视频数 task_bd_relation.video_quantity

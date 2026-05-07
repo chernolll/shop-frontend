@@ -403,7 +403,7 @@ const formOptions: VbenFormProps = {
       label: $t('system.employee.filters.country'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

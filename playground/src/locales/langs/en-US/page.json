@@ -59,8 +59,7 @@
         "entry-time-range": "Entry Date",
         "kol-id": "KOL ID",
         "status": "Review Status",
-        "task-bd-id": "Task Relation ID",
-        "task-id": "Task ID"
+        "task-code": "Task Code"
       },
       "columns": {
         "audit-time": "Reviewed At",
@@ -70,14 +69,14 @@
         "kol-id": "KOL ID",
         "kol-link": "KOL Link",
         "operation": "Action",
+        "participated-task-count": "Task Count",
         "prepare-id": "Prepare Record ID",
         "product-url": "Product URL",
         "reason": "Review Reason",
         "reviewer-name": "Reviewer",
         "sop-id": "SOP ID",
         "status": "Review Status",
-        "task-bd-id": "Task Relation ID",
-        "task-id": "Task ID"
+        "task-code": "Task Code"
       },
       "review-modal": {
         "approve-reason-placeholder": "Optionally add an approval note or extra context",
@@ -88,6 +87,31 @@
         "reject-title": "Reject KOL Prepare Records",
         "single-kol": "KOL ID: {0}",
         "single-record": "Prepare Record ID: {0}"
+      },
+      "history": {
+        "title": "KOL Task History: {0}",
+        "description": "{0} historical task record(s) found.",
+        "empty": "No historical task records",
+        "view-count": "View {0}",
+        "columns": {
+          "completion-status": "Completion Status",
+          "sop-status": "SOP Status",
+          "task-code": "Task Code",
+          "video-urls": "Video URLs"
+        },
+        "completion-status": {
+          "completed": "Completed",
+          "processing": "Processing",
+          "terminated": "Terminated"
+        },
+        "sop-status": {
+          "completed": "Completed",
+          "contact": "Contact",
+          "recover": "Video Recovery",
+          "remittance": "Remittance",
+          "sample": "Sample",
+          "terminated": "Terminated"
+        }
       },
       "messages": {
         "partial-failed-title": "Some Records Failed",
@@ -383,18 +407,23 @@
       "entry-time-range": "Entry Date",
       "followers-max": "Followers Max",
       "followers-min": "Followers Min",
+      "followers-range": "Followers Range",
       "is-paid": "Paid",
       "kol-id": "KOL ID",
       "range-end": "End",
       "range-start": "Start",
       "score-range": "Score Range",
-      "status": "KOL Status"
+      "status": "KOL Status",
+      "tags": "Tag Search"
     },
     "columns": {
       "belong-bd-code": "Owner BD",
+      "completed-task-count": "Completed Tasks",
       "contact-info": "Contact Info",
       "cooperation-fee": "Cooperation Fee",
       "created-at": "Created At",
+      "current-month-gmv": "Current Month GMV",
+      "current-month-video-count": "Current Month Videos",
       "current-prepare-bd-code": "Current Prepare BD",
       "entry-time": "Entry Time",
       "followers": "Followers",
@@ -403,8 +432,12 @@
       "kol-link": "KOL Link",
       "notes": "Notes",
       "operation": "Action",
+      "participated-task-count": "Participated Tasks",
+      "recent-two-month-gmv": "Recent 2-Month GMV",
+      "recent-two-month-video-count": "Recent 2-Month Videos",
       "score": "Score",
       "status": "KOL Status",
+      "tags": "Tags",
       "updated-at": "Updated At"
     },
     "actions": {
@@ -442,7 +475,10 @@
       "notes-placeholder": "Leave empty to clear",
       "score": "Score",
       "status": "KOL Status",
-      "title": "Edit KOL"
+      "tags": "Tags",
+      "tags-placeholder": "Enter a new tag and press Enter to create",
+      "title": "Edit KOL",
+      "followers": "Followers"
     },
     "delete": {
       "confirm-content": "Are you sure you want to delete KOL {0}? ",
@@ -453,8 +489,14 @@
       "confirm-title": "Confirm Unbind KOL"
     },
     "detail-summary": {
+      "completed-task-count": "Completed Tasks",
+      "current-month-gmv": "Current Month GMV",
+      "current-month-video-count": "Current Month Videos",
       "description": "These metrics are returned by the backend in real time and can help evaluate the current prepare and SOP usage of this KOL.",
+      "participated-task-count": "Participated Tasks",
       "prepare-pending-count": "Pending Prepare Count",
+      "recent-two-month-gmv": "Recent 2-Month GMV",
+      "recent-two-month-video-count": "Recent 2-Month Videos",
       "sop-active-count": "Active SOP Count",
       "sop-total-count": "Total SOP Count",
       "title": "KOL Summary",
@@ -557,10 +599,16 @@
         "operation": "Action",
         "product-url": "Product URL",
         "status": "Task Status",
+        "task-code": "Task Code",
         "task-id": "Task ID",
         "type": "Task Type",
         "updated-at": "Updated At",
         "video-num": "Total Videos"
+      },
+      "main-sku": {
+        "code": "Main SKU Code",
+        "name": "Main SKU Name",
+        "status": "Main SKU Status"
       },
       "status-text": {
         "abandoned": "Abandoned",
@@ -635,6 +683,7 @@
         "has-budget": "Budget",
         "prepare-summary": "Prepare Review",
         "product-url": "Product URL",
+        "task-code": "Task Code",
         "task-status": "Task Status",
         "video-progress": "Video(completed/total)"
       },
@@ -643,6 +692,7 @@
         "deadline-range": "Deadline",
         "deadline-start": "Deadline From",
         "has-budget": "Budget",
+        "task-code": "Task Code",
         "task-status": "Task Status"
       },
       "actions": {

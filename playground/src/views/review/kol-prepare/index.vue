@@ -1,20 +1,32 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
-import type { ReviewKolPrepareApi } from '#/api/review/kol-prepare';
 
 import { computed, h, reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Button, Input, message, Modal, Space, Tag } from 'ant-design-vue';
+import {
+  Button,
+  Drawer,
+  Empty,
+  Input,
+  message,
+  Modal,
+  Space,
+  Spin,
+  Table,
+  Tag,
+  Tooltip,
+} from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getBriefAccessUrl } from '#/api/core';
 import {
+  getKolTaskHistory,
   getReviewKolPrepareList,
   reviewKolPrepare,
+  ReviewKolPrepareApi,
 } from '#/api/review/kol-prepare';
 import { $t } from '#/locales';
 import {
@@ -23,10 +35,14 @@ import {
 } from '#/views/review/shared/dateRange';
 import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
-const router = useRouter();
 const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 
 const briefLoadingIds = ref<number[]>([]);
+const historyDrawerOpen = ref(false);
+const historyLoading = ref(false);
+const historyItems = ref<ReviewKolPrepareApi.TaskHistoryItem[]>([]);
+const historyKolId = ref('');
+const historyTotal = ref(0);
 const selectedRows = ref<ReviewKolPrepareApi.ListItem[]>([]);
 const reviewSubmitting = ref(false);
 const reviewTargetRows = ref<ReviewKolPrepareApi.ListItem[]>([]);
@@ -88,8 +104,72 @@ function getStatusColor(status: ReviewKolPrepareApi.Status) {
   }
 }
 
-function openDetail(row: ReviewKolPrepareApi.ListItem) {
-  router.push(`/review/kol-prepare/${row.task_id}`);
+function getSopStatusText(status?: number) {
+  switch (status) {
+    case ReviewKolPrepareApi.SopStatus.COMPLETED: {
+      return $t('page.review.kolPrepare.history.sop-status.completed');
+    }
+    case ReviewKolPrepareApi.SopStatus.CONTACT: {
+      return $t('page.review.kolPrepare.history.sop-status.contact');
+    }
+    case ReviewKolPrepareApi.SopStatus.RECOVER: {
+      return $t('page.review.kolPrepare.history.sop-status.recover');
+    }
+    case ReviewKolPrepareApi.SopStatus.REMITTANCE: {
+      return $t('page.review.kolPrepare.history.sop-status.remittance');
+    }
+    case ReviewKolPrepareApi.SopStatus.SAMPLE: {
+      return $t('page.review.kolPrepare.history.sop-status.sample');
+    }
+    case ReviewKolPrepareApi.SopStatus.TERMINATED: {
+      return $t('page.review.kolPrepare.history.sop-status.terminated');
+    }
+    default: {
+      return '-';
+    }
+  }
+}
+
+function getCompletionStatusText(status?: number) {
+  switch (status) {
+    case ReviewKolPrepareApi.CompletionStatus.COMPLETED: {
+      return $t('page.review.kolPrepare.history.completion-status.completed');
+    }
+    case ReviewKolPrepareApi.CompletionStatus.TERMINATED: {
+      return $t('page.review.kolPrepare.history.completion-status.terminated');
+    }
+    default: {
+      return $t('page.review.kolPrepare.history.completion-status.processing');
+    }
+  }
+}
+
+function getCompletionStatusColor(status?: number) {
+  switch (status) {
+    case ReviewKolPrepareApi.CompletionStatus.COMPLETED: {
+      return 'success';
+    }
+    case ReviewKolPrepareApi.CompletionStatus.TERMINATED: {
+      return 'error';
+    }
+    default: {
+      return 'processing';
+    }
+  }
+}
+
+function hasMainSkuInfo(
+  row: ReviewKolPrepareApi.ListItem | ReviewKolPrepareApi.TaskHistoryItem,
+) {
+  return Boolean(
+    row.main_sku_code || row.main_sku_name || row.main_sku_status !== undefined,
+  );
+}
+
+function getMainSkuStatusText(status?: number) {
+  return status === 1
+    ? $t('page.bd.task-center.product-status.on-sale')
+    : $t('page.bd.task-center.product-status.off-shelf');
 }
 
 function isBriefLoading(row: ReviewKolPrepareApi.ListItem) {
@@ -124,6 +204,28 @@ async function openBriefPreview(row: ReviewKolPrepareApi.ListItem) {
       (id) => id !== row.prepare_id,
     );
   }
+}
+
+async function openTaskHistory(row: ReviewKolPrepareApi.ListItem) {
+  historyKolId.value = row.kol_id;
+  historyDrawerOpen.value = true;
+  historyLoading.value = true;
+  historyItems.value = [];
+  historyTotal.value = 0;
+
+  try {
+    const result = await getKolTaskHistory({
+      kol_id: row.kol_id,
+    });
+    historyItems.value = result.list;
+    historyTotal.value = result.total;
+  } finally {
+    historyLoading.value = false;
+  }
+}
+
+function closeHistoryDrawer() {
+  historyDrawerOpen.value = false;
 }
 
 function syncSelectedRows() {
@@ -237,13 +339,8 @@ const formOptions: VbenFormProps = {
   schema: [
     {
       component: 'Input',
-      fieldName: 'task_bd_id',
-      label: $t('page.review.kolPrepare.filters.task-bd-id'),
-    },
-    {
-      component: 'Input',
-      fieldName: 'task_id',
-      label: $t('page.review.kolPrepare.filters.task-id'),
+      fieldName: 'task_code',
+      label: $t('page.review.kolPrepare.filters.task-code'),
     },
     {
       component: 'Select',
@@ -295,7 +392,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.kolPrepare.filters.entry-time-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 
@@ -306,6 +403,12 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
   columns: [
     { type: 'seq', width: 60 },
     { type: 'checkbox', width: 56 },
+    {
+      field: 'task_code',
+      minWidth: 180,
+      slots: { default: 'task_code' },
+      title: $t('page.review.kolPrepare.columns.task-code'),
+    },
     {
       field: 'bd_code',
       minWidth: 120,
@@ -341,6 +444,12 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
       title: $t('page.review.kolPrepare.columns.entry-time'),
     },
     {
+      field: 'participated_task_count',
+      minWidth: 140,
+      slots: { default: 'participated_task_count' },
+      title: $t('page.review.kolPrepare.columns.participated-task-count'),
+    },
+    {
       field: 'status',
       minWidth: 120,
       slots: { default: 'status' },
@@ -366,7 +475,7 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
     {
       field: 'operation',
       fixed: 'right',
-      minWidth: 220,
+      minWidth: 160,
       slots: { default: 'operation' },
       title: $t('page.review.kolPrepare.columns.operation'),
     },
@@ -386,8 +495,7 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
           page: page.currentPage,
           page_size: page.pageSize,
           status: toOptionalNumber(formValues.status),
-          task_bd_id: toOptionalNumber(formValues.task_bd_id),
-          task_id: toOptionalNumber(formValues.task_id),
+          task_code: formValues.task_code?.trim() || undefined,
         });
 
         return {
@@ -458,6 +566,31 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </a>
       </template>
 
+      <template #task_code="{ row }">
+        <Tooltip v-if="hasMainSkuInfo(row)">
+          <template #title>
+            <div class="space-y-1">
+              <div>
+                {{ $t('page.bd.task-center.main-sku.code') }}:
+                {{ row.main_sku_code || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.name') }}:
+                {{ row.main_sku_name || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.status') }}:
+                {{ getMainSkuStatusText(row.main_sku_status) }}
+              </div>
+            </div>
+          </template>
+          <span class="cursor-help text-blue-500 hover:underline">
+            {{ row.task_code || '-' }}
+          </span>
+        </Tooltip>
+        <span v-else>{{ row.task_code || '-' }}</span>
+      </template>
+
       <template #product_url="{ row }">
         <a
           v-if="row.product_url"
@@ -482,6 +615,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </Button>
       </template>
 
+      <template #participated_task_count="{ row }">
+        <Button
+          v-if="row.participated_task_count > 0"
+          size="small"
+          @click="openTaskHistory(row)"
+        >
+          {{
+            $t('page.review.kolPrepare.history.view-count', [
+              String(row.participated_task_count),
+            ])
+          }}
+        </Button>
+        <span v-else>0</span>
+      </template>
+
       <template #status="{ row }">
         <Tag :color="getStatusColor(row.status)">
           {{ getStatusText(row.status) }}
@@ -494,9 +642,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       <template #operation="{ row }">
         <Space size="small">
-          <Button type="link" size="small" @click="openDetail(row)">
-            {{ $t('page.review.actions.view') }}
-          </Button>
           <Button
             type="link"
             size="small"
@@ -576,5 +721,112 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </div>
       </Space>
     </Modal>
+
+    <Drawer
+      :open="historyDrawerOpen"
+      :title="$t('page.review.kolPrepare.history.title', [historyKolId || '-'])"
+      :width="920"
+      @close="closeHistoryDrawer"
+    >
+      <Spin :spinning="historyLoading">
+        <div class="mb-4 text-sm text-muted-foreground">
+          {{
+            $t('page.review.kolPrepare.history.description', [
+              String(historyTotal),
+            ])
+          }}
+        </div>
+
+        <Empty
+          v-if="!historyLoading && historyItems.length === 0"
+          :description="$t('page.review.kolPrepare.history.empty')"
+        />
+
+        <Table
+          v-else
+          :data-source="historyItems"
+          :pagination="false"
+          row-key="task_bd_id"
+          size="small"
+        >
+          <Table.Column
+            key="task_code"
+            data-index="task_code"
+            :title="$t('page.review.kolPrepare.history.columns.task-code')"
+          >
+            <template #default="{ record }">
+              <Tooltip v-if="hasMainSkuInfo(record)">
+                <template #title>
+                  <div class="space-y-1">
+                    <div>
+                      {{ $t('page.bd.task-center.main-sku.code') }}:
+                      {{ record.main_sku_code || '-' }}
+                    </div>
+                    <div>
+                      {{ $t('page.bd.task-center.main-sku.name') }}:
+                      {{ record.main_sku_name || '-' }}
+                    </div>
+                    <div>
+                      {{ $t('page.bd.task-center.main-sku.status') }}:
+                      {{ getMainSkuStatusText(record.main_sku_status) }}
+                    </div>
+                  </div>
+                </template>
+                <span class="cursor-help text-blue-500 hover:underline">
+                  {{ record.task_code || '-' }}
+                </span>
+              </Tooltip>
+              <span v-else>{{ record.task_code || '-' }}</span>
+            </template>
+          </Table.Column>
+          <Table.Column
+            key="sop_status"
+            data-index="sop_status"
+            :title="$t('page.review.kolPrepare.history.columns.sop-status')"
+          >
+            <template #default="{ record }">
+              <span>{{ getSopStatusText(record.sop_status) }}</span>
+            </template>
+          </Table.Column>
+          <Table.Column
+            key="completion_status"
+            data-index="completion_status"
+            :title="
+              $t('page.review.kolPrepare.history.columns.completion-status')
+            "
+          >
+            <template #default="{ record }">
+              <Tag :color="getCompletionStatusColor(record.completion_status)">
+                {{ getCompletionStatusText(record.completion_status) }}
+              </Tag>
+            </template>
+          </Table.Column>
+          <Table.Column
+            key="video_urls"
+            data-index="video_urls"
+            :title="$t('page.review.kolPrepare.history.columns.video-urls')"
+          >
+            <template #default="{ record }">
+              <div
+                v-if="record.video_urls?.length"
+                class="flex flex-col gap-1 py-1"
+              >
+                <a
+                  v-for="(videoUrl, index) in record.video_urls"
+                  :key="`${record.task_bd_id}-${index}`"
+                  :href="videoUrl"
+                  target="_blank"
+                  rel="noreferrer"
+                  class="text-blue-500 hover:underline"
+                >
+                  {{ videoUrl }}
+                </a>
+              </div>
+              <span v-else>-</span>
+            </template>
+          </Table.Column>
+        </Table>
+      </Spin>
+    </Drawer>
   </Page>
 </template>

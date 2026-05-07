@@ -126,10 +126,16 @@ export namespace AdminTaskApi {
     budget: BudgetFlag;
     commission: number;
     created_at: number;
-    deadline: null | number;
+    deadline: number;
+    main_sku_code: string;
+    main_sku_id: number;
+    main_sku_name: string;
+    main_sku_status: number;
     product_listing_id: number;
-    product_url: null | string;
+    product_status: number;
+    product_url: string;
     status: Status;
+    task_code: string;
     task_id: number;
     type: TaskType;
     updated_at: number;

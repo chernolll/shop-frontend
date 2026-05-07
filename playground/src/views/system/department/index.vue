@@ -145,7 +145,7 @@ const formOptions: VbenFormProps = {
       label: $t('system.department.filters.code'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

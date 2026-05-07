@@ -59,8 +59,7 @@
         "entry-time-range": "录入日期",
         "kol-id": "达人 ID",
         "status": "审核状态",
-        "task-bd-id": "任务分配 ID",
-        "task-id": "任务 ID"
+        "task-code": "任务代码"
       },
       "columns": {
         "audit-time": "审核时间",
@@ -70,14 +69,14 @@
         "kol-id": "达人 ID",
         "kol-link": "达人链接",
         "operation": "操作",
+        "participated-task-count": "已参与任务数",
         "prepare-id": "筹备记录 ID",
         "product-url": "商品链接",
         "reason": "审核原因",
         "reviewer-name": "审核人",
         "sop-id": "SOP ID",
         "status": "审核状态",
-        "task-bd-id": "任务分配 ID",
-        "task-id": "任务 ID"
+        "task-code": "任务代码"
       },
       "review-modal": {
         "approve-reason-placeholder": "可选填写通过备注或补充说明",
@@ -88,6 +87,31 @@
         "reject-title": "批量驳回达人筹备",
         "single-kol": "达人 ID：{0}",
         "single-record": "筹备记录 ID：{0}"
+      },
+      "history": {
+        "title": "达人历史参与任务：{0}",
+        "description": "共查询到 {0} 条历史任务记录。",
+        "empty": "暂无历史参与任务记录",
+        "view-count": "查看 {0} 条",
+        "columns": {
+          "completion-status": "完成状态",
+          "sop-status": "SOP状态",
+          "task-code": "任务编号",
+          "video-urls": "视频链接"
+        },
+        "completion-status": {
+          "completed": "已完成",
+          "processing": "进行中",
+          "terminated": "已终止"
+        },
+        "sop-status": {
+          "completed": "结束",
+          "contact": "建联",
+          "recover": "回收视频",
+          "remittance": "汇款阶段",
+          "sample": "寄样",
+          "terminated": "终止"
+        }
       },
       "messages": {
         "partial-failed-title": "部分记录处理失败",
@@ -383,18 +407,23 @@
       "entry-time-range": "录入日期",
       "followers-max": "粉丝数上限",
       "followers-min": "粉丝数下限",
+      "followers-range": "粉丝数范围",
       "is-paid": "是否付费",
       "kol-id": "达人 ID",
       "range-end": "结束值",
       "range-start": "开始值",
       "score-range": "权重分范围",
-      "status": "达人状态"
+      "status": "达人状态",
+      "tags": "标签搜索"
     },
     "columns": {
       "belong-bd-code": "所属 BD",
+      "completed-task-count": "完成任务数",
       "contact-info": "联系方式",
       "cooperation-fee": "合作费",
       "created-at": "创建时间",
+      "current-month-gmv": "当月GMV",
+      "current-month-video-count": "当月视频数",
       "current-prepare-bd-code": "当前筹备 BD",
       "entry-time": "录入时间",
       "followers": "粉丝数",
@@ -403,8 +432,12 @@
       "kol-link": "达人主页链接",
       "notes": "备注",
       "operation": "操作",
+      "participated-task-count": "参与任务数",
+      "recent-two-month-gmv": "近2月GMV",
+      "recent-two-month-video-count": "近2月视频数",
       "score": "权重分",
       "status": "达人状态",
+      "tags": "标签",
       "updated-at": "更新时间"
     },
     "actions": {
@@ -442,7 +475,10 @@
       "notes-placeholder": "可留空，留空表示清空",
       "score": "权重分",
       "status": "达人状态",
-      "title": "编辑达人"
+      "tags": "标签",
+      "tags-placeholder": "可输入新标签，回车后创建",
+      "title": "编辑达人",
+      "followers": "粉丝数"
     },
     "delete": {
       "confirm-content": "确认删除达人 {0} 吗？",
@@ -453,8 +489,14 @@
       "confirm-title": "确认解绑达人"
     },
     "detail-summary": {
+      "completed-task-count": "完成任务数",
+      "current-month-gmv": "当月GMV",
+      "current-month-video-count": "当月视频数",
       "description": "以下统计由后端实时返回，可用于快速判断达人当前的筹备和 SOP 使用情况。",
+      "participated-task-count": "参与任务数",
       "prepare-pending-count": "待审核/审核中筹备数",
+      "recent-two-month-gmv": "近2月GMV",
+      "recent-two-month-video-count": "近2月视频数",
       "sop-active-count": "进行中 SOP 数",
       "sop-total-count": "SOP 总数",
       "title": "达人统计信息",
@@ -557,10 +599,16 @@
         "operation": "操作",
         "product-url": "商品链接",
         "status": "任务状态",
+        "task-code": "任务代码",
         "task-id": "总任务 ID",
         "type": "任务类型",
         "updated-at": "更新时间",
         "video-num": "视频总数"
+      },
+      "main-sku": {
+        "code": "主SKU编码",
+        "name": "主SKU名称",
+        "status": "主SKU状态"
       },
       "status-text": {
         "abandoned": "已废弃",
@@ -635,6 +683,7 @@
         "has-budget": "是否有预算",
         "prepare-summary": "达人审核",
         "product-url": "商品链接",
+        "task-code": "任务代码",
         "task-status": "任务状态",
         "video-progress": "视频进度 (已完成/总数)"
       },
@@ -643,6 +692,7 @@
         "deadline-range": "截止时间",
         "deadline-start": "截止时间起",
         "has-budget": "是否有预算",
+        "task-code": "任务代码",
         "task-status": "任务状态"
       },
       "actions": {

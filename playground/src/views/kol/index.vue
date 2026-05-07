@@ -29,6 +29,7 @@ import {
   AdminKolApi,
   deleteAdminKol,
   getAdminKolList,
+  getAdminKolTagList,
   unbindAdminKol,
   updateAdminKol,
 } from '#/api/kol';
@@ -49,6 +50,8 @@ const detailLoading = ref(false);
 const editDrawerOpen = ref(false);
 const editSubmitting = ref(false);
 const editingRow = ref<AdminKolApi.ListItem | null>(null);
+const tagOptionsLoading = ref(false);
+const tagOptions = ref<Array<{ label: string; value: string }>>([]);
 const unbindingKolId = ref('');
 
 const editForm = reactive<{
@@ -61,6 +64,7 @@ const editForm = reactive<{
   notes: string;
   score: number | undefined;
   status: AdminKolApi.KolStatus;
+  tag_names: string[];
 }>({
   belong_bd_code: undefined,
   contact_info: '',
@@ -71,6 +75,7 @@ const editForm = reactive<{
   notes: '',
   score: undefined,
   status: AdminKolApi.KolStatus.NORMAL,
+  tag_names: [],
 });
 
 const statusOptions = [
@@ -164,6 +169,16 @@ function formatFollowers(value?: null | number) {
   return new Intl.NumberFormat('en-US').format(value);
 }
 
+function formatMetricValue(value?: null | number) {
+  if (value === null || value === undefined) {
+    return '-';
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
 function resolveNumberRange(value: unknown) {
   if (!Array.isArray(value)) {
     return {};
@@ -177,6 +192,27 @@ function resolveNumberRange(value: unknown) {
 
 function normalizeOptionalString(value: string) {
   return value.trim();
+}
+
+function normalizeTagsKeyword(value: string) {
+  const items = value
+    .split(/\s+/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+  return items.length > 0 ? items.join(' ') : undefined;
+}
+
+async function loadTagOptions() {
+  try {
+    tagOptionsLoading.value = true;
+    const result = await getAdminKolTagList();
+    tagOptions.value = result.list.map((item) => ({
+      label: item.name,
+      value: item.name,
+    }));
+  } finally {
+    tagOptionsLoading.value = false;
+  }
 }
 
 function goDetail(row: AdminKolApi.ListItem) {
@@ -197,6 +233,7 @@ function resetEditForm() {
   editForm.notes = '';
   editForm.score = undefined;
   editForm.status = AdminKolApi.KolStatus.NORMAL;
+  editForm.tag_names = [];
 }
 
 async function openEditDrawer(row: AdminKolApi.ListItem) {
@@ -210,10 +247,14 @@ async function openEditDrawer(row: AdminKolApi.ListItem) {
   editForm.notes = row.notes ?? '';
   editForm.score = row.score;
   editForm.status = row.status;
+  editForm.tag_names = row.tags.map((item) => item.name);
   editDrawerOpen.value = true;
   detailLoading.value = true;
   try {
-    await loadBdOptions(row.belong_bd_code ?? '');
+    await Promise.all([
+      loadBdOptions(row.belong_bd_code ?? ''),
+      loadTagOptions(),
+    ]);
   } finally {
     detailLoading.value = false;
   }
@@ -275,6 +316,11 @@ async function submitEdit() {
       notes: editForm.notes.trim(),
       score: editForm.score,
       status: editForm.status,
+      tag_names: [
+        ...new Set(
+          editForm.tag_names.map((item) => item.trim()).filter(Boolean),
+        ),
+      ],
     });
     message.success($t('page.kol.messages.update-success'));
     editDrawerOpen.value = false;
@@ -337,6 +383,11 @@ const formOptions: VbenFormProps = {
       label: $t('page.kol.filters.kol-id'),
     },
     {
+      component: 'Input',
+      fieldName: 'tags',
+      label: $t('page.kol.filters.tags'),
+    },
+    {
       component: 'Select',
       componentProps: {
         allowClear: true,
@@ -362,20 +413,15 @@ const formOptions: VbenFormProps = {
       label: $t('page.kol.filters.is-paid'),
     },
     {
-      component: 'InputNumber',
-      fieldName: 'followers_min',
-      label: $t('page.kol.filters.followers-min'),
+      component: markRaw(NumberRangeField),
+      defaultValue: [undefined, undefined],
+      disabledOnChangeListener: false,
+      fieldName: 'followers_range',
+      label: $t('page.kol.filters.followers-range'),
       componentProps: {
         min: 0,
-        precision: 0,
-      },
-    },
-    {
-      component: 'InputNumber',
-      fieldName: 'followers_max',
-      label: $t('page.kol.filters.followers-max'),
-      componentProps: {
-        min: 0,
+        placeholderEnd: $t('page.kol.filters.range-end'),
+        placeholderStart: $t('page.kol.filters.range-start'),
         precision: 0,
       },
     },
@@ -401,7 +447,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.kol.filters.entry-time-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 
@@ -418,6 +464,12 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
       minWidth: 220,
       slots: { default: 'kol_link' },
       title: $t('page.kol.columns.kol-link'),
+    },
+    {
+      field: 'tags',
+      minWidth: 220,
+      slots: { default: 'tags' },
+      title: $t('page.kol.columns.tags'),
     },
     {
       field: 'followers',
@@ -466,6 +518,42 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
       title: $t('page.kol.columns.score'),
     },
     {
+      field: 'participated_task_count',
+      minWidth: 120,
+      slots: { default: 'participated_task_count' },
+      title: $t('page.kol.columns.participated-task-count'),
+    },
+    {
+      field: 'completed_task_count',
+      minWidth: 120,
+      slots: { default: 'completed_task_count' },
+      title: $t('page.kol.columns.completed-task-count'),
+    },
+    {
+      field: 'current_month_gmv',
+      minWidth: 130,
+      slots: { default: 'current_month_gmv' },
+      title: $t('page.kol.columns.current-month-gmv'),
+    },
+    {
+      field: 'current_month_video_count',
+      minWidth: 140,
+      slots: { default: 'current_month_video_count' },
+      title: $t('page.kol.columns.current-month-video-count'),
+    },
+    {
+      field: 'recent_two_month_gmv',
+      minWidth: 140,
+      slots: { default: 'recent_two_month_gmv' },
+      title: $t('page.kol.columns.recent-two-month-gmv'),
+    },
+    {
+      field: 'recent_two_month_video_count',
+      minWidth: 150,
+      slots: { default: 'recent_two_month_video_count' },
+      title: $t('page.kol.columns.recent-two-month-video-count'),
+    },
+    {
       field: 'notes',
       minWidth: 180,
       slots: { default: 'notes' },
@@ -497,6 +585,7 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         const entryTimeRange = resolveDateRange(formValues.entry_time_range);
+        const followersRange = resolveNumberRange(formValues.followers_range);
         const scoreRange = resolveNumberRange(formValues.score_range);
         const result = await getAdminKolList({
           belong_bd_code: formValues.belong_bd_code?.trim() || undefined,
@@ -504,8 +593,8 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
             formValues.current_prepare_bd_code?.trim() || undefined,
           entry_time_end: entryTimeRange.end,
           entry_time_start: entryTimeRange.start,
-          followers_max: toOptionalNumber(formValues.followers_max),
-          followers_min: toOptionalNumber(formValues.followers_min),
+          followers_max: followersRange.end,
+          followers_min: followersRange.start,
           is_paid: toOptionalNumber(formValues.is_paid) as
             | AdminKolApi.PaidStatus
             | undefined,
@@ -517,6 +606,7 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
           status: toOptionalNumber(formValues.status) as
             | AdminKolApi.KolStatus
             | undefined,
+          tags: normalizeTagsKeyword(formValues.tags ?? ''),
         });
 
         return {
@@ -556,6 +646,15 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           {{ row.kol_link }}
         </a>
+        <span v-else>-</span>
+      </template>
+
+      <template #tags="{ row }">
+        <Space v-if="row.tags?.length" wrap :size="[4, 4]">
+          <Tag v-for="tag in row.tags" :key="tag.id">
+            {{ tag.name }}
+          </Tag>
+        </Space>
         <span v-else>-</span>
       </template>
 
@@ -604,6 +703,30 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       <template #notes="{ row }">
         <span>{{ row.notes || '-' }}</span>
+      </template>
+
+      <template #participated_task_count="{ row }">
+        <span>{{ formatMetricValue(row.participated_task_count) }}</span>
+      </template>
+
+      <template #completed_task_count="{ row }">
+        <span>{{ formatMetricValue(row.completed_task_count) }}</span>
+      </template>
+
+      <template #current_month_gmv="{ row }">
+        <span>{{ formatMetricValue(row.current_month_gmv) }}</span>
+      </template>
+
+      <template #current_month_video_count="{ row }">
+        <span>{{ formatMetricValue(row.current_month_video_count) }}</span>
+      </template>
+
+      <template #recent_two_month_gmv="{ row }">
+        <span>{{ formatMetricValue(row.recent_two_month_gmv) }}</span>
+      </template>
+
+      <template #recent_two_month_video_count="{ row }">
+        <span>{{ formatMetricValue(row.recent_two_month_video_count) }}</span>
       </template>
 
       <template #entry_time="{ row }">
@@ -673,6 +796,24 @@ const [Grid, gridApi] = useVbenVxeGrid({
             <Input
               v-model:value="editForm.notes"
               :placeholder="$t('page.kol.edit.notes-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.tags')">
+            <Select
+              v-model:value="editForm.tag_names"
+              mode="tags"
+              class="w-full"
+              :loading="tagOptionsLoading"
+              :options="tagOptions"
+              :placeholder="$t('page.kol.edit.tags-placeholder')"
+              @dropdown-visible-change="
+                (open) => {
+                  if (open && tagOptions.length === 0) {
+                    void loadTagOptions();
+                  }
+                }
+              "
             />
           </Form.Item>
 

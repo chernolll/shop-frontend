@@ -300,7 +300,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.budget.filters.submit-time-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

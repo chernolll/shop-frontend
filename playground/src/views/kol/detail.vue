@@ -65,6 +65,16 @@ function formatTimestamp(value?: null | number) {
   return value ? formatDateTime(value) : '-';
 }
 
+function formatMetricValue(value?: null | number) {
+  if (value === null || value === undefined) {
+    return '-';
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
 async function loadDetail() {
   if (!kolId.value) {
     detail.value = null;
@@ -139,6 +149,14 @@ onMounted(() => {
                 </a>
                 <span v-else>-</span>
               </Descriptions.Item>
+              <Descriptions.Item :label="$t('page.kol.columns.tags')">
+                <Space v-if="detail.tags?.length" wrap :size="[4, 4]">
+                  <Tag v-for="tag in detail.tags" :key="tag.id">
+                    {{ tag.name }}
+                  </Tag>
+                </Space>
+                <span v-else>-</span>
+              </Descriptions.Item>
               <Descriptions.Item :label="$t('page.kol.columns.followers')">
                 {{ detail.followers }}
               </Descriptions.Item>
@@ -204,6 +222,38 @@ onMounted(() => {
                 :label="$t('page.kol.detail-summary.video-count')"
               >
                 {{ detail.video_count }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="$t('page.kol.detail-summary.participated-task-count')"
+              >
+                {{ formatMetricValue(detail.participated_task_count) }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="$t('page.kol.detail-summary.completed-task-count')"
+              >
+                {{ formatMetricValue(detail.completed_task_count) }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="$t('page.kol.detail-summary.current-month-gmv')"
+              >
+                {{ formatMetricValue(detail.current_month_gmv) }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="$t('page.kol.detail-summary.current-month-video-count')"
+              >
+                {{ formatMetricValue(detail.current_month_video_count) }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="$t('page.kol.detail-summary.recent-two-month-gmv')"
+              >
+                {{ formatMetricValue(detail.recent_two_month_gmv) }}
+              </Descriptions.Item>
+              <Descriptions.Item
+                :label="
+                  $t('page.kol.detail-summary.recent-two-month-video-count')
+                "
+              >
+                {{ formatMetricValue(detail.recent_two_month_video_count) }}
               </Descriptions.Item>
             </Descriptions>
           </Spin>

@@ -9,6 +9,9 @@ export interface MyTaskItem {
   deadline: number;
   hasBudget: number;
   hasPrepareRecords: number;
+  main_sku_code?: string;
+  main_sku_name?: string;
+  main_sku_status?: number;
   prepareApprovedCount: number;
   preparePendingCount: number;
   prepareRejectedCount: number;
@@ -17,7 +20,9 @@ export interface MyTaskItem {
   productListingId?: number;
   productUrl: string;
   relationId: number;
+  task_code?: string;
   task_status?: number;
+  taskCode?: string;
   taskId: number;
   taskStatus?: number;
   totalVideos: number;
@@ -25,6 +30,12 @@ export interface MyTaskItem {
 
 export function useColumns(): VxeTableGridColumns<MyTaskItem> {
   return [
+    {
+      field: 'task_code',
+      minWidth: 180,
+      slots: { default: 'task_code' },
+      title: $t('page.bd.my-task.columns.task-code'),
+    },
     {
       field: 'productUrl',
       minWidth: 220,

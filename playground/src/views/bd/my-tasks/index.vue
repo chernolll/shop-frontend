@@ -6,7 +6,15 @@ import { useRouter } from 'vue-router';
 
 import { Page } from '@vben/common-ui';
 
-import { Button, Empty, message, Progress, Space, Tag } from 'ant-design-vue';
+import {
+  Button,
+  Empty,
+  message,
+  Progress,
+  Space,
+  Tag,
+  Tooltip,
+} from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { BdTaskApi, getBdTaskList } from '#/api';
@@ -81,6 +89,7 @@ async function fetchMyTaskList({
             : 0),
       page: currentPage,
       pageSize,
+      task_code: formValues?.task_code?.trim() || undefined,
       taskStatus:
         formValues?.taskStatus === undefined
           ? undefined
@@ -98,6 +107,11 @@ async function fetchMyTaskList({
 const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
+    {
+      component: 'Input',
+      fieldName: 'task_code',
+      label: $t('page.bd.my-task.filters.task-code'),
+    },
     {
       component: 'RangePicker',
       componentProps: {
@@ -151,7 +165,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.bd.my-task.filters.has-budget'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 
@@ -251,6 +265,18 @@ function getTaskStatusColor(row: BdTaskApi.BDTaskRow) {
   return isTaskAbandoned(row) ? 'error' : 'success';
 }
 
+function hasMainSkuInfo(row: BdTaskApi.BDTaskRow) {
+  return Boolean(
+    row.main_sku_code || row.main_sku_name || row.main_sku_status !== undefined,
+  );
+}
+
+function getMainSkuStatusText(status?: number) {
+  return status === 1
+    ? $t('page.bd.task-center.product-status.on-sale')
+    : $t('page.bd.task-center.product-status.off-shelf');
+}
+
 function getVideoProgressPercent(row: BdTaskApi.BDTaskRow) {
   const total = Number(row.totalVideos ?? 0);
   const completed = Number(row.completedVideos ?? 0);
@@ -294,6 +320,30 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
             </template>
           </Empty>
         </div>
+      </template>
+      <template #task_code="{ row }">
+        <Tooltip v-if="hasMainSkuInfo(row)">
+          <template #title>
+            <div class="space-y-1">
+              <div>
+                {{ $t('page.bd.task-center.main-sku.code') }}:
+                {{ row.main_sku_code || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.name') }}:
+                {{ row.main_sku_name || '-' }}
+              </div>
+              <div>
+                {{ $t('page.bd.task-center.main-sku.status') }}:
+                {{ getMainSkuStatusText(row.main_sku_status) }}
+              </div>
+            </div>
+          </template>
+          <span class="cursor-help text-blue-500 hover:underline">
+            {{ row.task_code || '-' }}
+          </span>
+        </Tooltip>
+        <span v-else>{{ row.task_code || '-' }}</span>
       </template>
       <template #productUrl="{ row }">
         <a

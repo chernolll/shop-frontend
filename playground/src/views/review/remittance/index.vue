@@ -606,7 +606,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.review.remittance.filters.submit-time-range'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 

@@ -144,7 +144,7 @@ const formOptions: VbenFormProps = {
       label: $t('page.bd.sop.filters.status'),
     },
   ],
-  submitOnChange: true,
+  submitOnChange: false,
   submitOnEnter: false,
 };
 
