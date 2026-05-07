@@ -19,7 +19,12 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { createAdminDepartment, deleteAdminDepartment, getAdminDepartmentList, updateAdminDepartment } from '#/api/system/admin-department';
+import {
+  createAdminDepartment,
+  deleteAdminDepartment,
+  getAdminDepartmentList,
+  updateAdminDepartment,
+} from '#/api/system/admin-department';
 import { $t } from '#/locales';
 
 const drawerOpen = ref(false);

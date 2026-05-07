@@ -718,6 +718,7 @@ const uploadColumns: VxeGridProps<PrepareRow>['columns'] = [
     slots: { default: 'action' },
     title: $t('page.bd.my-task.kol-prepare.columns.action'),
     width: 150,
+    fixed: 'right',
   },
 ];
 

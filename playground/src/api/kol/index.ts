@@ -85,6 +85,15 @@ export namespace AdminKolApi {
   export interface DeleteResult {
     kol_id: string;
   }
+
+  export interface UnbindParams {
+    kol_id: string;
+  }
+
+  export interface UnbindResult {
+    belong_bd_code: null | string;
+    kol_id: string;
+  }
 }
 
 /** Admin 查询达人列表 */
@@ -111,4 +120,12 @@ export async function deleteAdminKol(params: AdminKolApi.DeleteParams) {
   return requestClient.delete<AdminKolApi.DeleteResult>('/admin/kols', {
     params,
   });
+}
+
+/** Admin 解绑达人 */
+export async function unbindAdminKol(data: AdminKolApi.UnbindParams) {
+  return requestClient.put<AdminKolApi.UnbindResult>(
+    '/admin/kols/unbind',
+    data,
+  );
 }

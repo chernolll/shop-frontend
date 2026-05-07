@@ -46,6 +46,16 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
+      {
+        name: 'BD-Kols',
+        path: '/bd/kols',
+        component: () => import('#/views/bd/kols/index.vue'),
+        meta: {
+          icon: 'lucide:users-round',
+          title: $t('page.bd.kols.title'),
+          authority: [RoleEnum.BD],
+        },
+      },
       // 达人筹备详情（隐藏路由，不在菜单显示）
       {
         name: 'BD-MyTask-Detail',

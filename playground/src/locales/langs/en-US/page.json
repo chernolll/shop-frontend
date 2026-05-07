@@ -412,6 +412,7 @@
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
+      "unbind": "Unbind",
       "view": "View"
     },
     "status": {
@@ -447,6 +448,10 @@
       "confirm-content": "Are you sure you want to delete KOL {0}? ",
       "confirm-title": "Confirm Delete KOL"
     },
+    "unbind": {
+      "confirm-content": "Are you sure you want to unbind KOL {0}?",
+      "confirm-title": "Confirm Unbind KOL"
+    },
     "detail-summary": {
       "description": "These metrics are returned by the backend in real time and can help evaluate the current prepare and SOP usage of this KOL.",
       "prepare-pending-count": "Pending Prepare Count",
@@ -461,12 +466,73 @@
       "detail-empty": "No KOL detail found",
       "followers-invalid": "Followers cannot be less than 0",
       "score-invalid": "Score cannot be less than 0",
+      "unbind-success": "KOL {0} unbound successfully",
       "update-success": "KOL saved successfully"
     }
   },
   "bd": {
     "title": "BD",
     "dashboard": "Dashboard",
+    "kols": {
+      "title": "KOL List",
+      "list-title": "KOL List",
+      "description": "View my KOLs and unassigned KOLs, and claim available KOLs.",
+      "tabs": {
+        "my-kols": "My KOLs",
+        "unassigned-kols": "Unassigned KOLs"
+      },
+      "filters": {
+        "all-status": "All KOL Statuses",
+        "kol-id": "KOL ID",
+        "status": "KOL Status"
+      },
+      "columns": {
+        "belong-bd-code": "Owner BD",
+        "can-claim": "Claimable",
+        "claim-block-reason": "Block Reason",
+        "completed-task-count": "Completed Tasks",
+        "contact-info": "Contact Info",
+        "cooperation-fee": "Cooperation Fee",
+        "entry-time": "Entry Time",
+        "followers": "Followers",
+        "is-paid": "Paid",
+        "kol-id": "KOL ID",
+        "kol-link": "KOL Link",
+        "notes": "Notes",
+        "operation": "Action",
+        "participated-task-count": "Participated Tasks",
+        "score": "Score",
+        "status": "KOL Status",
+        "updated-at": "Updated At"
+      },
+      "actions": {
+        "claim": "Claim",
+        "unbind": "Unbind"
+      },
+      "status": {
+        "blacklist": "Blacklist",
+        "lost": "Lost",
+        "normal": "Normal"
+      },
+      "paid": {
+        "no": "No",
+        "yes": "Yes"
+      },
+      "claim": {
+        "can-claim": "Claimable",
+        "cannot-claim": "Unavailable",
+        "confirm-content": "Are you sure you want to claim KOL {0}?",
+        "confirm-title": "Confirm Claim KOL"
+      },
+      "unbind": {
+        "confirm-content": "Are you sure you want to unbind KOL {0}?",
+        "confirm-title": "Confirm Unbind KOL"
+      },
+      "messages": {
+        "claim-success": "KOL {0} claimed successfully",
+        "unbind-success": "KOL {0} unbound successfully"
+      }
+    },
     "tasks": "Task Center",
     "task-center": {
       "list-title": "Task Center",

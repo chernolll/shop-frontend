@@ -29,6 +29,7 @@ import {
   AdminKolApi,
   deleteAdminKol,
   getAdminKolList,
+  unbindAdminKol,
   updateAdminKol,
 } from '#/api/kol';
 import { useAdminKolBdSelect } from '#/api/kol/useAdminKolBdSelect';
@@ -48,6 +49,7 @@ const detailLoading = ref(false);
 const editDrawerOpen = ref(false);
 const editSubmitting = ref(false);
 const editingRow = ref<AdminKolApi.ListItem | null>(null);
+const unbindingKolId = ref('');
 
 const editForm = reactive<{
   belong_bd_code: string | undefined;
@@ -181,6 +183,10 @@ function goDetail(row: AdminKolApi.ListItem) {
   router.push(`/kol/${encodeURIComponent(row.kol_id)}`);
 }
 
+function isUnbinding(row: AdminKolApi.ListItem) {
+  return unbindingKolId.value === row.kol_id;
+}
+
 function resetEditForm() {
   editForm.belong_bd_code = undefined;
   editForm.contact_info = '';
@@ -296,6 +302,32 @@ function confirmDelete(row: AdminKolApi.ListItem) {
   });
 }
 
+function confirmUnbind(row: AdminKolApi.ListItem) {
+  if (!row.belong_bd_code) {
+    return;
+  }
+
+  Modal.confirm({
+    okText: $t('common.confirm'),
+    title: $t('page.kol.unbind.confirm-title'),
+    content: $t('page.kol.unbind.confirm-content', [row.kol_id]),
+    async onOk() {
+      try {
+        unbindingKolId.value = row.kol_id;
+        const result = await unbindAdminKol({
+          kol_id: row.kol_id,
+        });
+        message.success(
+          $t('page.kol.messages.unbind-success', [result.kol_id]),
+        );
+        await gridApi.query();
+      } finally {
+        unbindingKolId.value = '';
+      }
+    },
+  });
+}
+
 const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
@@ -319,12 +351,7 @@ const formOptions: VbenFormProps = {
       fieldName: 'belong_bd_code',
       label: $t('page.kol.filters.belong-bd-code'),
     },
-    {
-      component: 'Select',
-      componentProps: () => bdSelectProps.value,
-      fieldName: 'current_prepare_bd_code',
-      label: $t('page.kol.filters.current-prepare-bd-code'),
-    },
+
     {
       component: 'Select',
       componentProps: {
@@ -594,6 +621,15 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </Button>
           <Button type="link" size="small" @click="openEditDrawer(row)">
             {{ $t('page.kol.actions.edit') }}
+          </Button>
+          <Button
+            v-if="row.belong_bd_code"
+            type="link"
+            size="small"
+            :loading="isUnbinding(row)"
+            @click="confirmUnbind(row)"
+          >
+            {{ $t('page.kol.actions.unbind') }}
           </Button>
           <Button danger type="link" size="small" @click="confirmDelete(row)">
             {{ $t('page.kol.actions.delete') }}

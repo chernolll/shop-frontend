@@ -412,6 +412,7 @@
       "delete": "删除",
       "edit": "编辑",
       "save": "保存",
+      "unbind": "解绑",
       "view": "查看"
     },
     "status": {
@@ -447,6 +448,10 @@
       "confirm-content": "确认删除达人 {0} 吗？",
       "confirm-title": "确认删除达人"
     },
+    "unbind": {
+      "confirm-content": "确认解绑达人 {0} 吗？",
+      "confirm-title": "确认解绑达人"
+    },
     "detail-summary": {
       "description": "以下统计由后端实时返回，可用于快速判断达人当前的筹备和 SOP 使用情况。",
       "prepare-pending-count": "待审核/审核中筹备数",
@@ -461,12 +466,73 @@
       "detail-empty": "未查询到达人详情",
       "followers-invalid": "粉丝数不能小于 0",
       "score-invalid": "权重分不能小于 0",
+      "unbind-success": "达人 {0} 解绑成功",
       "update-success": "达人信息保存成功"
     }
   },
   "bd": {
     "title": "BD",
     "dashboard": "数据面板",
+    "kols": {
+      "title": "达人列表",
+      "list-title": "达人列表",
+      "description": "支持查看我的达人与未归属达人，并可对可认领达人执行认领。",
+      "tabs": {
+        "my-kols": "我的达人",
+        "unassigned-kols": "未归属达人"
+      },
+      "filters": {
+        "all-status": "全部达人状态",
+        "kol-id": "达人 ID",
+        "status": "达人状态"
+      },
+      "columns": {
+        "belong-bd-code": "所属 BD",
+        "can-claim": "是否可认领",
+        "claim-block-reason": "不可认领原因",
+        "completed-task-count": "历史完成任务数",
+        "contact-info": "联系方式",
+        "cooperation-fee": "合作费",
+        "entry-time": "录入时间",
+        "followers": "粉丝数",
+        "is-paid": "是否付费",
+        "kol-id": "达人 ID",
+        "kol-link": "达人主页链接",
+        "notes": "备注",
+        "operation": "操作",
+        "participated-task-count": "历史参与任务数",
+        "score": "权重分",
+        "status": "达人状态",
+        "updated-at": "更新时间"
+      },
+      "actions": {
+        "claim": "认领",
+        "unbind": "解绑"
+      },
+      "status": {
+        "blacklist": "黑名单",
+        "lost": "流失",
+        "normal": "正常"
+      },
+      "paid": {
+        "no": "否",
+        "yes": "是"
+      },
+      "claim": {
+        "can-claim": "可认领",
+        "cannot-claim": "不可认领",
+        "confirm-content": "确认认领达人 {0} 吗？",
+        "confirm-title": "确认认领达人"
+      },
+      "unbind": {
+        "confirm-content": "确认解绑达人 {0} 吗？",
+        "confirm-title": "确认解绑达人"
+      },
+      "messages": {
+        "claim-success": "达人 {0} 认领成功",
+        "unbind-success": "达人 {0} 解绑成功"
+      }
+    },
     "tasks": "任务中心",
     "task-center": {
       "list-title": "任务中心",
