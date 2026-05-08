@@ -1,13 +1,10 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-
 import { InputNumber, Space } from 'ant-design-vue';
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     max?: number;
     min?: number;
-    modelValue?: Array<number | string | undefined>;
     placeholderEnd?: string;
     placeholderStart?: string;
     precision?: number;
@@ -15,26 +12,25 @@ const props = withDefaults(
   {
     max: undefined,
     min: 0,
-    modelValue: () => [undefined, undefined],
     placeholderEnd: '',
     placeholderStart: '',
     precision: 0,
   },
 );
 
-const emit = defineEmits<{
-  'update:modelValue': [Array<number | string | undefined>];
-}>();
+const emit = defineEmits(['blur', 'change']);
 
-const currentValue = computed(() => {
-  const source = Array.isArray(props.modelValue) ? props.modelValue : [];
-  return [source[0], source[1]];
+const modelValue = defineModel<Array<number | string | undefined>>('value', {
+  default: () => [undefined, undefined],
 });
 
-function updateValue(index: 0 | 1, value: null | number | string) {
-  const nextValue = [...currentValue.value];
+function normalizeValue(index: 0 | 1, value: null | number | string) {
+  const nextValue = Array.isArray(modelValue.value)
+    ? [...modelValue.value]
+    : [undefined, undefined];
   nextValue[index] = value ?? undefined;
-  emit('update:modelValue', nextValue);
+  modelValue.value = nextValue;
+  emit('change', modelValue.value);
 }
 </script>
 
@@ -45,18 +41,22 @@ function updateValue(index: 0 | 1, value: null | number | string) {
       :min="min"
       :precision="precision"
       :placeholder="placeholderStart"
-      :value="currentValue[0] as any"
+      :value="modelValue?.[0] as any"
       class="w-full"
-      @update:value="(value) => updateValue(0, value)"
+      @blur="emit('blur')"
+      @change="(value) => normalizeValue(0, value)"
+      @update:value="(value) => normalizeValue(0, value)"
     />
     <InputNumber
       :max="max"
       :min="min"
       :precision="precision"
       :placeholder="placeholderEnd"
-      :value="currentValue[1] as any"
+      :value="modelValue?.[1] as any"
       class="w-full"
-      @update:value="(value) => updateValue(1, value)"
+      @blur="emit('blur')"
+      @change="(value) => normalizeValue(1, value)"
+      @update:value="(value) => normalizeValue(1, value)"
     />
   </Space.Compact>
 </template>
