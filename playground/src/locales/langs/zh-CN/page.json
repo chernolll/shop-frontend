@@ -512,6 +512,128 @@
       "update-success": "达人信息保存成功"
     }
   },
+  "product": {
+    "title": "商品资料",
+    "common": {
+      "filters": {
+        "all-sku-type": "全部SKU类型",
+        "all-status": "全部状态"
+      },
+      "sku-type": {
+        "bundle": "组合SKU",
+        "single": "单SKU"
+      },
+      "status": {
+        "off-shelf": "下架",
+        "on-sale": "在售"
+      }
+    },
+    "sku": {
+      "list-title": "SKU管理",
+      "actions": {
+        "create": "新增SKU",
+        "delete": "删除",
+        "edit": "编辑"
+      },
+      "filters": {
+        "brand": "品牌",
+        "sku-code": "SKU编码",
+        "sku-name": "SKU名称",
+        "sku-type": "SKU类型",
+        "status": "状态"
+      },
+      "columns": {
+        "active-sop-count": "进行中SOP数",
+        "brand": "品牌",
+        "cost-price": "成本价",
+        "created-at": "创建时间",
+        "currency": "币种",
+        "offline-margin": "线下毛利率",
+        "online-margin": "线上毛利率",
+        "operation": "操作",
+        "retail-price": "零售价",
+        "sku-code": "SKU编码",
+        "sku-name": "SKU名称",
+        "sku-type": "SKU类型",
+        "status": "状态",
+        "updated-at": "更新时间"
+      },
+      "form": {
+        "brand": "品牌",
+        "cost-price": "成本价",
+        "currency": "币种",
+        "offline-margin": "线下毛利率",
+        "online-margin": "线上毛利率",
+        "retail-price": "零售价",
+        "sku-code": "SKU编码",
+        "sku-name": "SKU名称",
+        "sku-type": "SKU类型",
+        "status": "状态"
+      },
+      "messages": {
+        "create-success": "SKU创建成功",
+        "delete-success": "SKU删除成功",
+        "input-brand": "请输入品牌",
+        "input-sku-code": "请输入SKU编码",
+        "input-sku-name": "请输入SKU名称",
+        "update-success": "SKU更新成功"
+      },
+      "delete": {
+        "confirm-content": "确认删除 SKU {0} 吗？",
+        "confirm-title": "确认删除SKU"
+      }
+    },
+    "listing": {
+      "list-title": "商品链接管理",
+      "actions": {
+        "create": "新增商品链接",
+        "delete": "删除",
+        "edit": "编辑"
+      },
+      "filters": {
+        "product-url": "商品链接",
+        "shop-id": "店铺ID",
+        "shop-name": "店铺名称",
+        "status": "状态"
+      },
+      "columns": {
+        "active-sop-count": "进行中SOP数",
+        "commission-private": "私佣",
+        "commission-public": "公佣",
+        "country": "国家",
+        "created-at": "创建时间",
+        "main-sku": "主SKU编码",
+        "main-sku-brand": "主SKU品牌",
+        "main-sku-name": "主SKU名称",
+        "main-sku-status": "主SKU状态",
+        "operation": "操作",
+        "product-url": "商品链接",
+        "shop-id": "店铺ID",
+        "shop-name": "店铺名称",
+        "status": "状态",
+        "updated-at": "更新时间"
+      },
+      "form": {
+        "commission-private": "私佣",
+        "commission-public": "公佣",
+        "main-sku-id": "主SKU",
+        "product-url": "商品链接",
+        "shop-id": "店铺ID",
+        "status": "状态"
+      },
+      "messages": {
+        "create-success": "商品链接创建成功",
+        "delete-success": "商品链接删除成功",
+        "input-product-url": "请输入商品链接",
+        "input-shop-id": "请输入店铺ID",
+        "update-success": "商品链接更新成功"
+      },
+      "delete": {
+        "confirm-content": "确认删除商品链接 {0} 吗？",
+        "confirm-title": "确认删除商品链接"
+      }
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "数据面板",

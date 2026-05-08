@@ -512,6 +512,128 @@
       "update-success": "KOL saved successfully"
     }
   },
+  "product": {
+    "title": "Product Catalog",
+    "common": {
+      "filters": {
+        "all-sku-type": "All SKU Types",
+        "all-status": "All Statuses"
+      },
+      "sku-type": {
+        "bundle": "Bundle SKU",
+        "single": "Single SKU"
+      },
+      "status": {
+        "off-shelf": "Off Shelf",
+        "on-sale": "On Sale"
+      }
+    },
+    "sku": {
+      "list-title": "SKU Management",
+      "actions": {
+        "create": "Create SKU",
+        "delete": "Delete",
+        "edit": "Edit"
+      },
+      "filters": {
+        "brand": "Brand",
+        "sku-code": "SKU Code",
+        "sku-name": "SKU Name",
+        "sku-type": "SKU Type",
+        "status": "Status"
+      },
+      "columns": {
+        "active-sop-count": "Active SOP Count",
+        "brand": "Brand",
+        "cost-price": "Cost Price",
+        "created-at": "Created At",
+        "currency": "Currency",
+        "offline-margin": "Offline Margin",
+        "online-margin": "Online Margin",
+        "operation": "Action",
+        "retail-price": "Retail Price",
+        "sku-code": "SKU Code",
+        "sku-name": "SKU Name",
+        "sku-type": "SKU Type",
+        "status": "Status",
+        "updated-at": "Updated At"
+      },
+      "form": {
+        "brand": "Brand",
+        "cost-price": "Cost Price",
+        "currency": "Currency",
+        "offline-margin": "Offline Margin",
+        "online-margin": "Online Margin",
+        "retail-price": "Retail Price",
+        "sku-code": "SKU Code",
+        "sku-name": "SKU Name",
+        "sku-type": "SKU Type",
+        "status": "Status"
+      },
+      "messages": {
+        "create-success": "SKU created successfully",
+        "delete-success": "SKU deleted successfully",
+        "input-brand": "Please enter the brand",
+        "input-sku-code": "Please enter the SKU code",
+        "input-sku-name": "Please enter the SKU name",
+        "update-success": "SKU updated successfully"
+      },
+      "delete": {
+        "confirm-content": "Are you sure you want to delete SKU {0}?",
+        "confirm-title": "Confirm Delete SKU"
+      }
+    },
+    "listing": {
+      "list-title": "Product Listing Management",
+      "actions": {
+        "create": "Create Listing",
+        "delete": "Delete",
+        "edit": "Edit"
+      },
+      "filters": {
+        "product-url": "Product URL",
+        "shop-id": "Shop ID",
+        "shop-name": "Shop Name",
+        "status": "Status"
+      },
+      "columns": {
+        "active-sop-count": "Active SOP Count",
+        "commission-private": "Private Commission",
+        "commission-public": "Public Commission",
+        "country": "Country",
+        "created-at": "Created At",
+        "main-sku": "Main SKU Code",
+        "main-sku-brand": "Main SKU Brand",
+        "main-sku-name": "Main SKU Name",
+        "main-sku-status": "Main SKU Status",
+        "operation": "Action",
+        "product-url": "Product URL",
+        "shop-id": "Shop ID",
+        "shop-name": "Shop Name",
+        "status": "Status",
+        "updated-at": "Updated At"
+      },
+      "form": {
+        "commission-private": "Private Commission",
+        "commission-public": "Public Commission",
+        "main-sku-id": "Main SKU",
+        "product-url": "Product URL",
+        "shop-id": "Shop ID",
+        "status": "Status"
+      },
+      "messages": {
+        "create-success": "Product listing created successfully",
+        "delete-success": "Product listing deleted successfully",
+        "input-product-url": "Please enter the product URL",
+        "input-shop-id": "Please enter the shop ID",
+        "update-success": "Product listing updated successfully"
+      },
+      "delete": {
+        "confirm-content": "Are you sure you want to delete product listing {0}?",
+        "confirm-title": "Confirm Delete Product Listing"
+      }
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "Dashboard",
