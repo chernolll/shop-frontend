@@ -33,16 +33,23 @@ export namespace ReviewRemittanceApi {
 
   export interface ListItem {
     amount: number;
+    bank_card_no: string;
     bank_name: string;
     bd_code: string;
     chat_attachment_count: number;
+    chat_attachments: AttachmentItem[];
+    created_at: number;
     default_amount: null | number;
     has_budget: 0 | 1;
+    influencer_fee: number;
     kol_id: string;
+    kol_link: null | string;
     payee_name: string;
     payment_attachment_count: number;
+    payment_attachments: AttachmentItem[];
     product_listing_id: number;
     product_url: string;
+    remark: null | string;
     remittance_id: number;
     review_remark: null | string;
     reviewed_at: null | number;
@@ -52,8 +59,11 @@ export namespace ReviewRemittanceApi {
     submit_at: number;
     submitter_name: string;
     task_bd_id: number;
+    task_code: null | string;
     task_id: number;
     task_sop_id: number;
+    video_ads_code: null | string;
+    video_url: null | string;
   }
 
   export interface ListResult {

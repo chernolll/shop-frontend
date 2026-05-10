@@ -146,22 +146,32 @@
         "amount": "Amount",
         "audit-time": "Audit Time",
         "bank-name": "Bank Name",
+        "bank-card-no": "Bank Card Number",
         "bd-code": "BD Code",
         "chat-attachment-count": "Chat Images",
+        "chat-attachments": "Chat Records",
+        "created-at": "Created At",
         "default-amount": "Default Amount",
         "has-budget": "Budget",
+        "influencer-fee": "Influencer Fee",
         "kol-id": "KOL ID",
+        "kol-link": "KOL Link",
         "operation": "Action",
         "payee-name": "Payee",
         "payment-attachment-count": "Payment Images",
+        "payment-attachments": "Payment Proof",
         "product-url": "Product URL",
+        "remark": "Remark",
         "review-remark": "Review Remark",
         "reviewed-at": "Reviewed At",
         "reviewer-name": "Reviewer",
         "sop-status": "SOP Status",
         "status": "Remittance Status",
         "submit-at": "Submitted At",
-        "submitter-name": "Submitter"
+        "submitter-name": "Submitter",
+        "task-code": "Task Code",
+        "video-ads-code": "Video Ads Code",
+        "video-url": "Video URL"
       },
       "budget": {
         "no": "No Budget",
@@ -634,6 +644,57 @@
       }
     }
   },
+  "video": {
+    "title": "Video Management",
+    "list-title": "Video Management",
+    "selected-count": "{0} selected",
+    "actions": {
+      "batch-score": "Batch Score",
+      "confirm-score": "Confirm Score",
+      "score": "Score"
+    },
+    "filters": {
+      "bd-code": "BD Code",
+      "gmv-range": "GMV Range",
+      "kol-id": "KOL ID",
+      "play-count-range": "Play Count Range",
+      "range-end": "End",
+      "range-start": "Start",
+      "score-range": "Score Range",
+      "upload-time-range": "Upload Date"
+    },
+    "columns": {
+      "ads-code": "Ads Code",
+      "bd-code": "BD Code",
+      "commission": "Commission",
+      "created-at": "Created At",
+      "gmv": "GMV",
+      "kol-id": "KOL ID",
+      "operation": "Action",
+      "play-count": "Play Count",
+      "score": "Score",
+      "updated-at": "Updated At",
+      "upload-time": "Upload Time",
+      "video-url": "Video URL"
+    },
+    "score-modal": {
+      "batch-title": "Batch Video Scoring",
+      "bd-code": "BD Code: {0}",
+      "current-score": "Current Score: {0}",
+      "description": "Submit scores for {0} selected video(s).",
+      "kol-id": "KOL ID: {0}",
+      "score-label": "Score"
+    },
+    "messages": {
+      "partial-failed-title": "Some Videos Failed to Score",
+      "score-all-failed": "All scoring operations failed, total {0}",
+      "score-partial-success": "Scoring finished: {0} succeeded, {1} failed",
+      "score-required": "Please enter a score between 0 and 100 for all selected videos",
+      "score-success": "Scored successfully for {0} video(s)",
+      "select-videos-first": "Select at least one video first",
+      "unknown-failure": "Unknown failure reason"
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "Dashboard",
@@ -695,6 +756,43 @@
       "messages": {
         "claim-success": "KOL {0} claimed successfully",
         "unbind-success": "KOL {0} unbound successfully"
+      }
+    },
+    "videos": {
+      "title": "Video List",
+      "filters": {
+        "gmv-range": "GMV Range",
+        "kol-id": "KOL ID",
+        "play-count-range": "Play Count Range",
+        "range-end": "End",
+        "range-start": "Start",
+        "score-range": "Score Range",
+        "task-sop-id": "SOP ID",
+        "upload-time-range": "Upload Date"
+      },
+      "columns": {
+        "ads-code": "Ads Code",
+        "bd-code": "BD Code",
+        "commission": "Commission",
+        "commission-tooltip": "The commission field is displayed exactly as returned by the backend",
+        "created-at": "Created At",
+        "gmv": "GMV",
+        "kol-id": "KOL ID",
+        "play-count": "Play Count",
+        "product-url": "Product URL",
+        "score": "Score",
+        "sop-status": "SOP Status",
+        "updated-at": "Updated At",
+        "upload-time": "Upload Time",
+        "video-url": "Video URL"
+      },
+      "sop-status": {
+        "completed": "Completed",
+        "contact": "Contact",
+        "recover": "Video Recovery",
+        "remittance": "Remittance",
+        "sample": "Sample",
+        "terminated": "Terminated"
       }
     },
     "tasks": "Task Center",

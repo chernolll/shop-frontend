@@ -4,3 +4,4 @@ export * from './examples';
 export * from './kol';
 export * from './review';
 export * from './system';
+export * from './video';

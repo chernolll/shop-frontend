@@ -120,6 +120,11 @@ function formatTimestamp(value?: null | number) {
   return value ? formatDateTime(value) : '-';
 }
 
+function formatOptionalText(value?: null | string) {
+  const normalizedValue = value?.trim();
+  return normalizedValue ?? '-';
+}
+
 function getBudgetText(value?: 0 | 1) {
   return value === 1
     ? $t('page.review.remittance.budget.yes')
@@ -618,10 +623,79 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
     { type: 'seq', width: 60 },
     { type: 'checkbox', width: 56 },
     {
-      field: 'product_url',
-      minWidth: 220,
-      slots: { default: 'product_url' },
-      title: $t('page.review.remittance.columns.product-url'),
+      field: 'task_code',
+      minWidth: 180,
+      slots: { default: 'task_code' },
+      title: $t('page.review.remittance.columns.task-code'),
+    },
+    {
+      field: 'created_at',
+      minWidth: 180,
+      slots: { default: 'created_at' },
+      title: $t('page.review.remittance.columns.created-at'),
+    },
+    {
+      field: 'payment_attachments',
+      minWidth: 180,
+      slots: { default: 'payment_attachments' },
+      title: $t('page.review.remittance.columns.payment-attachments'),
+    },
+    {
+      field: 'kol_id',
+      minWidth: 140,
+      title: $t('page.review.remittance.columns.kol-id'),
+    },
+    {
+      field: 'remark',
+      minWidth: 180,
+      slots: { default: 'remark' },
+      title: $t('page.review.remittance.columns.remark'),
+    },
+    {
+      field: 'kol_link',
+      minWidth: 180,
+      slots: { default: 'kol_link' },
+      title: $t('page.review.remittance.columns.kol-link'),
+    },
+    {
+      field: 'influencer_fee',
+      minWidth: 140,
+      slots: { default: 'influencer_fee' },
+      title: $t('page.review.remittance.columns.influencer-fee'),
+    },
+    {
+      field: 'video_url',
+      minWidth: 180,
+      slots: { default: 'video_url' },
+      title: $t('page.review.remittance.columns.video-url'),
+    },
+    {
+      field: 'video_ads_code',
+      minWidth: 150,
+      slots: { default: 'video_ads_code' },
+      title: $t('page.review.remittance.columns.video-ads-code'),
+    },
+    {
+      field: 'chat_attachments',
+      minWidth: 180,
+      slots: { default: 'chat_attachments' },
+      title: $t('page.review.remittance.columns.chat-attachments'),
+    },
+    {
+      field: 'payee_name',
+      minWidth: 120,
+      title: $t('page.review.remittance.columns.payee-name'),
+    },
+    {
+      field: 'bank_name',
+      minWidth: 140,
+      title: $t('page.review.remittance.columns.bank-name'),
+    },
+    {
+      field: 'bank_card_no',
+      minWidth: 180,
+      slots: { default: 'bank_card_no' },
+      title: $t('page.review.remittance.columns.bank-card-no'),
     },
     {
       field: 'bd_code',
@@ -629,9 +703,10 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
       title: $t('page.review.remittance.columns.bd-code'),
     },
     {
-      field: 'kol_id',
-      minWidth: 140,
-      title: $t('page.review.remittance.columns.kol-id'),
+      field: 'product_url',
+      minWidth: 220,
+      slots: { default: 'product_url' },
+      title: $t('page.review.remittance.columns.product-url'),
     },
     {
       field: 'has_budget',
@@ -788,6 +863,101 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           {{ row.product_url }}
         </a>
+      </template>
+
+      <template #task_code="{ row }">
+        <span>{{ formatOptionalText(row.task_code) }}</span>
+      </template>
+
+      <template #created_at="{ row }">
+        <span>{{ formatTimestamp(row.created_at) }}</span>
+      </template>
+
+      <template #payment_attachments="{ row }">
+        <Image.PreviewGroup>
+          <div
+            v-if="row.payment_attachments?.length"
+            class="flex flex-wrap gap-2"
+          >
+            <Image
+              v-for="attachment in row.payment_attachments.slice(0, 2)"
+              :key="attachment.r2_file_id"
+              :src="attachment.access_url"
+              :alt="attachment.file_name"
+              :width="40"
+              :height="40"
+              class="rounded border border-border object-cover"
+            />
+            <Tag v-if="row.payment_attachments.length > 2">
+              +{{ row.payment_attachments.length - 2 }}
+            </Tag>
+          </div>
+          <span v-else>-</span>
+        </Image.PreviewGroup>
+      </template>
+
+      <template #remark="{ row }">
+        <span>{{ formatOptionalText(row.remark ?? row.review_remark) }}</span>
+      </template>
+
+      <template #kol_link="{ row }">
+        <a
+          v-if="row.kol_link"
+          :href="row.kol_link"
+          target="_blank"
+          rel="noreferrer"
+          class="text-blue-500 hover:underline"
+        >
+          {{ row.kol_link }}
+        </a>
+        <span v-else>-</span>
+      </template>
+
+      <template #influencer_fee="{ row }">
+        <span>{{ formatAmount(row.influencer_fee) }}</span>
+      </template>
+
+      <template #video_url="{ row }">
+        <a
+          v-if="row.video_url"
+          :href="row.video_url"
+          target="_blank"
+          rel="noreferrer"
+          class="text-blue-500 hover:underline"
+        >
+          {{ row.video_url }}
+        </a>
+        <span v-else>-</span>
+      </template>
+
+      <template #video_ads_code="{ row }">
+        <span>{{ formatOptionalText(row.video_ads_code) }}</span>
+      </template>
+
+      <template #chat_attachments="{ row }">
+        <Image.PreviewGroup>
+          <div v-if="row.chat_attachments?.length" class="flex flex-wrap gap-2">
+            <Image
+              v-for="attachment in row.chat_attachments.slice(0, 2)"
+              :key="attachment.r2_file_id"
+              :src="attachment.access_url"
+              :alt="attachment.file_name"
+              :width="40"
+              :height="40"
+              class="rounded border border-border object-cover"
+            />
+            <Tag v-if="row.chat_attachments.length > 2">
+              +{{ row.chat_attachments.length - 2 }}
+            </Tag>
+          </div>
+          <span v-else>-</span>
+        </Image.PreviewGroup>
+      </template>
+
+      <template #bank_card_no="{ row }">
+        <span class="break-all">{{
+          formatOptionalText(row.bank_card_no)
+        }}</span>
       </template>
 
       <template #has_budget="{ row }">

@@ -56,6 +56,16 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
+      {
+        name: 'BD-Videos',
+        path: '/bd/videos',
+        component: () => import('#/views/bd/videos/index.vue'),
+        meta: {
+          icon: 'lucide:clapperboard',
+          title: $t('page.bd.videos.title'),
+          authority: [RoleEnum.BD],
+        },
+      },
       // 达人筹备详情（隐藏路由，不在菜单显示）
       {
         name: 'BD-MyTask-Detail',

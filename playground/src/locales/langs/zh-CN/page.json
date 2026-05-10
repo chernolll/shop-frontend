@@ -146,22 +146,32 @@
         "amount": "汇款金额",
         "audit-time": "审核时间",
         "bank-name": "银行名称",
+        "bank-card-no": "银行卡号",
         "bd-code": "BD 编码",
         "chat-attachment-count": "聊天截图数",
+        "chat-attachments": "聊天记录",
+        "created-at": "创建时间",
         "default-amount": "默认金额",
         "has-budget": "预算",
+        "influencer-fee": "Influencer Fee",
         "kol-id": "达人 ID",
+        "kol-link": "达人链接",
         "operation": "操作",
         "payee-name": "收款人",
         "payment-attachment-count": "付款截图数",
+        "payment-attachments": "付款凭证",
         "product-url": "商品链接",
+        "remark": "备注",
         "review-remark": "审核备注",
         "reviewed-at": "审核时间",
         "reviewer-name": "审核人",
         "sop-status": "SOP 状态",
         "status": "汇款状态",
         "submit-at": "提交时间",
-        "submitter-name": "提交人"
+        "submitter-name": "提交人",
+        "task-code": "任务代码",
+        "video-ads-code": "视频 Ads Code",
+        "video-url": "视频链接"
       },
       "budget": {
         "no": "无预算",
@@ -634,6 +644,57 @@
       }
     }
   },
+  "video": {
+    "title": "视频管理",
+    "list-title": "视频管理",
+    "selected-count": "已选 {0} 条",
+    "actions": {
+      "batch-score": "批量打分",
+      "confirm-score": "确认打分",
+      "score": "打分"
+    },
+    "filters": {
+      "bd-code": "BD 编码",
+      "gmv-range": "GMV范围",
+      "kol-id": "达人 ID",
+      "play-count-range": "播放量范围",
+      "range-end": "结束值",
+      "range-start": "开始值",
+      "score-range": "打分范围",
+      "upload-time-range": "上传日期"
+    },
+    "columns": {
+      "ads-code": "Ads Code",
+      "bd-code": "BD 编码",
+      "commission": "佣金",
+      "created-at": "创建时间",
+      "gmv": "GMV",
+      "kol-id": "达人 ID",
+      "operation": "操作",
+      "play-count": "播放量",
+      "score": "打分",
+      "updated-at": "更新时间",
+      "upload-time": "上传时间",
+      "video-url": "视频链接"
+    },
+    "score-modal": {
+      "batch-title": "批量视频打分",
+      "bd-code": "BD 编码：{0}",
+      "current-score": "当前分数：{0}",
+      "description": "将对选中的 {0} 条视频提交打分。",
+      "kol-id": "达人 ID：{0}",
+      "score-label": "打分"
+    },
+    "messages": {
+      "partial-failed-title": "部分视频打分失败",
+      "score-all-failed": "本次打分全部失败，共 {0} 条",
+      "score-partial-success": "打分已完成，成功 {0} 条，失败 {1} 条",
+      "score-required": "请为所有选中视频填写 0-100 的分数",
+      "score-success": "打分成功，共处理 {0} 条",
+      "select-videos-first": "请先选择至少 1 条视频",
+      "unknown-failure": "未知失败原因"
+    }
+  },
   "bd": {
     "title": "BD",
     "dashboard": "数据面板",
@@ -695,6 +756,43 @@
       "messages": {
         "claim-success": "达人 {0} 认领成功",
         "unbind-success": "达人 {0} 解绑成功"
+      }
+    },
+    "videos": {
+      "title": "视频列表",
+      "filters": {
+        "gmv-range": "GMV范围",
+        "kol-id": "达人 ID",
+        "play-count-range": "播放量范围",
+        "range-end": "结束值",
+        "range-start": "开始值",
+        "score-range": "打分范围",
+        "task-sop-id": "SOP ID",
+        "upload-time-range": "上传日期"
+      },
+      "columns": {
+        "ads-code": "Ads Code",
+        "bd-code": "BD 编码",
+        "commission": "佣金",
+        "commission-tooltip": "当前后端返回的佣金字段原样展示",
+        "created-at": "创建时间",
+        "gmv": "GMV",
+        "kol-id": "达人 ID",
+        "play-count": "播放量",
+        "product-url": "商品链接",
+        "score": "打分",
+        "sop-status": "SOP 状态",
+        "updated-at": "更新时间",
+        "upload-time": "上传时间",
+        "video-url": "视频链接"
+      },
+      "sop-status": {
+        "completed": "结束",
+        "contact": "建联",
+        "recover": "回收视频",
+        "remittance": "汇款阶段",
+        "sample": "寄样",
+        "terminated": "终止"
       }
     },
     "tasks": "任务中心",
