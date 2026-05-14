@@ -21,6 +21,8 @@
   - 模块划分
 - `docs/backend-bd-flow.md`
   - BD 后端流程说明
+- `docs/ui-system.md`
+  - UI设计规范
 
 ## 使用原则
 
