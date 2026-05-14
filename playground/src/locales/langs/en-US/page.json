@@ -890,7 +890,8 @@
         "create-success": "Task created successfully. Task ID: {0}",
         "product-listing-id-required": "Product listing must not be empty",
         "video-num-required": "Total videos must be greater than 0"
-      }
+      },
+      "empty": "No task data"
     },
     "taskProgress": "Task Progress",
     "my-task": {

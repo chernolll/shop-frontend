@@ -890,7 +890,8 @@
         "create-success": "总任务创建成功，任务 ID：{0}",
         "product-listing-id-required": "商品链接不能为空",
         "video-num-required": "视频总数必须大于 0"
-      }
+      },
+      "empty": "暂无任务数据"
     },
     "taskProgress": "任务完成情况",
     "my-task": {

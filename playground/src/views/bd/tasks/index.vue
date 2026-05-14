@@ -11,6 +11,9 @@ import {
   Button,
   DatePicker,
   Drawer,
+  Empty,
+  Form,
+  FormItem,
   InputNumber,
   message,
   Modal,
@@ -252,7 +255,7 @@ function getBudgetText(value?: number) {
 }
 
 function getBudgetColor(value?: number) {
-  return value === AdminTaskApi.BudgetFlag.YES ? 'green' : 'default';
+  return value === AdminTaskApi.BudgetFlag.YES ? 'success' : 'default';
 }
 
 function resetCreateForm() {
@@ -372,7 +375,9 @@ function confirmAbandonTask(row: AdminTaskApi.ListItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     // {
     //   component: 'Input',
@@ -467,11 +472,6 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
       slots: { default: 'task_code' },
       title: $t('page.bd.task-center.columns.task-code'),
     },
-    // {
-    //   field: 'task_id',
-    //   minWidth: 120,
-    //   title: $t('page.bd.task-center.columns.task-id'),
-    // },
     {
       field: 'product_url',
       minWidth: 220,
@@ -537,6 +537,7 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
       title: $t('page.bd.task-center.columns.operation'),
     },
   ],
+  stripe: true,
   height: 'auto',
   keepSource: true,
   proxyConfig: {
@@ -571,6 +572,7 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'task_id',
   },
   toolbarConfig: {
@@ -614,7 +616,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               </div>
             </div>
           </template>
-          <span class="cursor-help text-blue-500 hover:underline">
+          <span class="cursor-pointer text-blue-500 hover:underline">
             {{ row.task_code || '-' }}
           </span>
         </Tooltip>
@@ -627,10 +629,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :href="row.product_url"
             target="_blank"
             rel="noreferrer"
-            class="text-blue-500 hover:underline"
-          >
-            {{ row.product_url }}
-          </a>
+            class="cursor-pointer text-blue-500 hover:underline"
+          ></a>
+
           <span v-else>-</span>
         </Space>
       </template>
@@ -640,7 +641,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
       </template>
 
       <template #type="{ row }">
-        <Tag color="blue">
+        <Tag
+          :color="row.type === AdminTaskApi.TaskType.PUBLIC ? 'purple' : 'blue'"
+        >
           {{ getTaskTypeText(row.type) }}
         </Tag>
       </template>
@@ -681,6 +684,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </Button>
         </Space>
       </template>
+
+      <template #empty>
+        <Empty :description="$t('page.bd.task-center.empty')" />
+      </template>
     </Grid>
 
     <Modal
@@ -692,11 +699,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
       @cancel="closeCreateModal"
       @ok="submitCreateTask"
     >
-      <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.product-listing-id') }}
-          </div>
+      <Form layout="vertical" class="pt-2">
+        <FormItem
+          :label="$t('page.bd.task-center.create-modal.product-listing-id')"
+          required
+        >
           <Select
             v-model:value="createForm.product_listing_id"
             class="w-full"
@@ -720,70 +727,61 @@ const [Grid, gridApi] = useVbenVxeGrid({
               }
             "
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.commission') }}
-          </div>
+        <FormItem
+          :label="$t('page.bd.task-center.create-modal.commission')"
+          required
+        >
           <InputNumber
             v-model:value="createForm.commission"
             class="w-full"
             :min="0"
             :precision="2"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.video-num') }}
-          </div>
+        <FormItem
+          :label="$t('page.bd.task-center.create-modal.video-num')"
+          required
+        >
           <InputNumber
             v-model:value="createForm.video_num"
             class="w-full"
             :min="1"
             :precision="0"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.deadline') }}
-          </div>
+        <FormItem :label="$t('page.bd.task-center.create-modal.deadline')">
           <DatePicker
             v-model:value="createForm.deadline"
             class="w-full"
             show-time
             value-format="x"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.type') }}
-          </div>
+        <FormItem :label="$t('page.bd.task-center.create-modal.type')">
           <Select
             v-model:value="createForm.type"
             class="w-full"
             :options="taskTypeOptions"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.budget') }}
-          </div>
+        <FormItem :label="$t('page.bd.task-center.create-modal.budget')">
           <Select
             v-model:value="createForm.budget"
             class="w-full"
             :options="budgetOptions"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.task-center.create-modal.bd-codes') }}
-          </div>
+        <FormItem
+          :label="$t('page.bd.task-center.create-modal.bd-codes')"
+          required
+        >
           <Select
             v-model:value="createForm.bd_codes"
             mode="multiple"
@@ -804,8 +802,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
               }
             "
           />
-        </div>
-      </Space>
+        </FormItem>
+      </Form>
     </Modal>
 
     <Drawer
