@@ -22,7 +22,9 @@
 - `docs/backend-bd-flow.md`
   - BD 后端流程说明
 - `docs/ui-system.md`
-  - UI设计规范
+  - UI 设计规范（AI prompt）
+- `docs/ui-audit.md`
+  - UI 合规审计报告（当前代码与设计规范的差距）
 
 ## 使用原则
 
