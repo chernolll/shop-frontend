@@ -16,6 +16,8 @@ import {
   Descriptions,
   Drawer,
   Empty,
+  Form,
+  FormItem,
   Image,
   Input,
   InputNumber,
@@ -551,7 +553,9 @@ async function handleAttachmentImageError() {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Select',
@@ -616,6 +620,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
+  stripe: true,
   checkboxConfig: {
     highlight: true,
   },
@@ -812,6 +817,7 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'remittance_id',
   },
   toolbarConfig: {
@@ -859,7 +865,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.product_url"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.product_url }}
         </a>
@@ -906,7 +912,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.kol_link"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.kol_link }}
         </a>
@@ -923,7 +929,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.video_url"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.video_url }}
         </a>
@@ -1015,6 +1021,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </Button>
         </Space>
       </template>
+
+      <template #empty>
+        <Empty :description="$t('page.review.remittance.empty')" />
+      </template>
     </Grid>
 
     <Drawer
@@ -1055,7 +1065,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
                   :href="remittanceDetail.product_url"
                   target="_blank"
                   rel="noreferrer"
-                  class="break-all text-blue-500 hover:underline"
+                  class="cursor-pointer break-all text-blue-500 hover:underline"
                 >
                   {{ remittanceDetail.product_url }}
                 </a>
@@ -1271,8 +1281,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
       @cancel="closeReviewModal"
       @ok="submitReview"
     >
-      <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="text-sm leading-6 text-muted-foreground">
+      <Form layout="vertical" class="pt-2">
+        <div class="mb-4 text-sm leading-6 text-muted-foreground">
           {{
             isPaymentMode
               ? $t('page.review.remittance.payment-modal.description', [
@@ -1284,21 +1294,21 @@ const [Grid, gridApi] = useVbenVxeGrid({
           }}
         </div>
 
-        <div class="space-y-2" v-if="!isPaymentMode">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.remittance.review-modal.status-label') }}
-          </div>
+        <FormItem
+          v-if="!isPaymentMode"
+          :label="$t('page.review.remittance.review-modal.status-label')"
+        >
           <Select
             v-model:value="reviewForm.status"
             class="w-full"
             :options="paymentStatusOptions"
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2" v-if="canEditAmount">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.remittance.columns.amount') }}
-          </div>
+        <FormItem
+          v-if="canEditAmount"
+          :label="$t('page.review.remittance.columns.amount')"
+        >
           <InputNumber
             v-model:value="reviewForm.amount"
             :min="0"
@@ -1308,12 +1318,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
               $t('page.review.remittance.review-modal.amount-placeholder')
             "
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.remittance.review-modal.review-remark-label') }}
-          </div>
+        <FormItem :label="$t('page.review.remittance.review-modal.review-remark-label')">
           <Input.TextArea
             v-model:value="reviewForm.review_remark"
             :auto-size="{ minRows: 4, maxRows: 8 }"
@@ -1325,12 +1332,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
             "
             show-count
           />
-        </div>
+        </FormItem>
 
-        <div class="space-y-2" v-if="showUploadField">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.remittance.payment-modal.attachments-label') }}
-          </div>
+        <FormItem
+          v-if="showUploadField"
+          :label="$t('page.review.remittance.payment-modal.attachments-label')"
+        >
           <Upload
             accept=".jpg,.jpeg,.png,image/jpeg,image/png"
             :before-upload="validateUploadFile"
@@ -1344,11 +1351,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
               {{ $t('page.review.remittance.payment-modal.upload-button') }}
             </div>
           </Upload>
-          <div class="text-xs leading-5 text-muted-foreground">
+          <div class="mt-2 text-xs leading-5 text-muted-foreground">
             {{ $t('page.review.remittance.payment-modal.upload-helper') }}
           </div>
-        </div>
-      </Space>
+        </FormItem>
+      </Form>
     </Modal>
 
     <Modal

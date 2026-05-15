@@ -130,6 +130,7 @@
     },
     "remittance": {
       "list-title": "Remittance Review",
+      "empty": "No remittance review data",
       "selected-count": "{0} selected",
       "filters": {
         "all-status": "All Statuses",
@@ -245,6 +246,7 @@
     },
     "budget": {
       "list-title": "Budget Review",
+      "empty": "No budget review data",
       "selected-count": "{0} selected",
       "filters": {
         "all-status": "All Statuses",
@@ -312,6 +314,7 @@
     },
     "sample": {
       "list-title": "Sample Review",
+      "empty": "No sample review data",
       "selected-count": "{0} selected",
       "filters": {
         "all-status": "All Statuses",

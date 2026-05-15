@@ -7,7 +7,17 @@ import { computed, h, reactive, ref } from 'vue';
 import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
 
-import { Button, Input, message, Modal, Space, Tag } from 'ant-design-vue';
+import {
+  Button,
+  Empty,
+  Form,
+  FormItem,
+  Input,
+  message,
+  Modal,
+  Space,
+  Tag,
+} from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -252,7 +262,9 @@ async function submitReview() {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Select',
@@ -305,6 +317,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<ReviewBudgetApi.ListItem> = {
+  stripe: true,
   checkboxConfig: {
     highlight: true,
     checkMethod: ({ row }) => canReviewRow(row),
@@ -416,6 +429,7 @@ const gridOptions: VxeTableGridOptions<ReviewBudgetApi.ListItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'budget_application_id',
   },
   toolbarConfig: {
@@ -468,7 +482,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.product_url"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.product_url }}
         </a>
@@ -527,6 +541,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </Button>
         </Space>
       </template>
+
+      <template #empty>
+        <Empty :description="$t('page.review.budget.empty')" />
+      </template>
     </Grid>
 
     <Modal
@@ -542,8 +560,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
       @cancel="closeReviewModal"
       @ok="submitReview"
     >
-      <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="text-sm leading-6 text-muted-foreground">
+      <Form layout="vertical" class="pt-2">
+        <div class="mb-4 text-sm leading-6 text-muted-foreground">
           {{
             $t('page.review.budget.review-modal.description', [
               String(reviewTargetRows.length),
@@ -553,7 +571,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
         <div
           v-if="reviewTargetRows.length === 1"
-          class="rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
+          class="mb-4 rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
         >
           <div>
             {{
@@ -571,10 +589,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </div>
         </div>
 
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.budget.review-modal.reason-label') }}
-          </div>
+        <FormItem :label="$t('page.review.budget.review-modal.reason-label')">
           <Input.TextArea
             v-model:value="reviewForm.reason"
             :auto-size="{ minRows: 4, maxRows: 8 }"
@@ -590,8 +605,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
             "
             show-count
           />
-        </div>
-      </Space>
+        </FormItem>
+      </Form>
     </Modal>
   </Page>
 </template>

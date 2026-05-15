@@ -10,6 +10,9 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   DatePicker,
+  Empty,
+  Form,
+  FormItem,
   Input,
   InputNumber,
   message,
@@ -446,7 +449,9 @@ async function submitReview() {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Select',
@@ -505,6 +510,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
+  stripe: true,
   checkboxConfig: {
     checkMethod: ({ row }) => canBatchReviewRow(row),
     highlight: true,
@@ -643,6 +649,7 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'request_id',
   },
   toolbarConfig: {
@@ -699,7 +706,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.product_url"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.product_url }}
         </a>
@@ -772,6 +779,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <span v-else>-</span>
         </Space>
       </template>
+
+      <template #empty>
+        <Empty :description="$t('page.review.sample.empty')" />
+      </template>
     </Grid>
 
     <Modal
@@ -787,8 +798,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
       @cancel="closeReviewModal"
       @ok="submitReview"
     >
-      <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="text-sm leading-6 text-muted-foreground">
+      <Form layout="vertical" class="pt-2">
+        <div class="mb-4 text-sm leading-6 text-muted-foreground">
           {{
             isUpdateMode
               ? $t('page.review.sample.update-modal.description')
@@ -800,7 +811,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
         <div
           v-if="reviewTargetRows.length === 1"
-          class="rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
+          class="mb-4 rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
         >
           <div>
             {{
@@ -818,10 +829,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </div>
         </div>
 
-        <div v-if="!isUpdateMode" class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.sample.review-modal.status-label') }}
-          </div>
+        <FormItem
+          v-if="!isUpdateMode"
+          :label="$t('page.review.sample.review-modal.status-label')"
+        >
           <Select
             v-model:value="reviewForm.status"
             class="w-full"
@@ -830,13 +841,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
               $t('page.review.sample.review-modal.status-placeholder')
             "
           />
-        </div>
+        </FormItem>
 
         <template v-if="!isBatchMode">
-          <div class="space-y-2">
-            <div class="text-sm font-medium text-foreground">
-              {{ $t('page.review.sample.review-modal.address-label') }}
-            </div>
+          <FormItem :label="$t('page.review.sample.review-modal.address-label')">
             <Input.TextArea
               v-model:value="reviewForm.address"
               :auto-size="{ minRows: 3, maxRows: 6 }"
@@ -846,12 +854,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
               "
               show-count
             />
-          </div>
+          </FormItem>
 
-          <div class="space-y-2">
-            <div class="text-sm font-medium text-foreground">
-              {{ $t('page.review.sample.review-modal.quantity-label') }}
-            </div>
+          <FormItem :label="$t('page.review.sample.review-modal.quantity-label')">
             <InputNumber
               v-model:value="reviewForm.quantity"
               class="w-full"
@@ -861,12 +866,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
                 $t('page.review.sample.review-modal.quantity-placeholder')
               "
             />
-          </div>
+          </FormItem>
 
-          <div class="space-y-2">
-            <div class="text-sm font-medium text-foreground">
-              {{ $t('page.review.sample.review-modal.tracking-number-label') }}
-            </div>
+          <FormItem :label="$t('page.review.sample.review-modal.tracking-number-label')">
             <Input
               v-model:value="reviewForm.tracking_number"
               :maxlength="100"
@@ -876,36 +878,30 @@ const [Grid, gridApi] = useVbenVxeGrid({
                 )
               "
             />
-          </div>
+          </FormItem>
 
-          <div class="space-y-2">
-            <div class="text-sm font-medium text-foreground">
-              {{ $t('page.review.sample.review-modal.delivered-at-label') }}
-            </div>
+          <FormItem :label="$t('page.review.sample.review-modal.delivered-at-label')">
             <DatePicker
               v-model:value="reviewForm.delivered_at"
               class="w-full"
               show-time
               value-format="x"
             />
-          </div>
+          </FormItem>
 
-          <div class="space-y-2">
-            <div class="text-sm font-medium text-foreground">
-              {{ $t('page.review.sample.review-modal.package-received-label') }}
-            </div>
+          <FormItem :label="$t('page.review.sample.review-modal.package-received-label')">
             <Select
               v-model:value="reviewForm.package_received"
               class="w-full"
               :options="packageReceivedOptions"
             />
-          </div>
+          </FormItem>
         </template>
 
-        <div v-if="!isUpdateMode" class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.review.sample.review-modal.reason-label') }}
-          </div>
+        <FormItem
+          v-if="!isUpdateMode"
+          :label="$t('page.review.sample.review-modal.reason-label')"
+        >
           <Input.TextArea
             v-model:value="reviewForm.reason"
             :auto-size="{ minRows: 4, maxRows: 8 }"
@@ -919,8 +915,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
             "
             show-count
           />
-        </div>
-      </Space>
+        </FormItem>
+      </Form>
     </Modal>
   </Page>
 </template>

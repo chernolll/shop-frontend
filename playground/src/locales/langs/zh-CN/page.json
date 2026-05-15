@@ -130,6 +130,7 @@
     },
     "remittance": {
       "list-title": "汇款审核",
+      "empty": "暂无汇款审核数据",
       "selected-count": "已选 {0} 条",
       "filters": {
         "all-status": "全部状态",
@@ -245,6 +246,7 @@
     },
     "budget": {
       "list-title": "预算审核",
+      "empty": "暂无预算审核数据",
       "selected-count": "已选 {0} 条",
       "filters": {
         "all-status": "全部状态",
@@ -312,6 +314,7 @@
     },
     "sample": {
       "list-title": "寄样审核",
+      "empty": "暂无寄样审核数据",
       "selected-count": "已选 {0} 条",
       "filters": {
         "all-status": "全部状态",
