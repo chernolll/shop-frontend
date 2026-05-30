@@ -81,7 +81,7 @@ BD 对已通过筹备的达人执行 SOP：
     └── 当 SOP 无法继续推进时，由 BD 主动终止
 ```
 
-**关键表**：`task_sop`, `sop_contact`, `sop_budget_audit`, `sample_application`, `video`, `sop_remittance`, `sop_remittance_audit`
+**关键表**：`task_sop`, `sop_contact`, `sop_budget_application`, `sample_application`, `sample_application_request`, `video`, `sop_remittance`, `sop_remittance_attachment`
 
 **SOP 状态机**：
 

@@ -34,9 +34,12 @@
 | 表名 | 说明 | 关键字段 |
 | --- | --- | --- |
 | `sop_contact` | 建联明细 | task_sop_id(1:1), budget, budget_status(0-待审/1-通过/2-驳回) |
-| `sop_budget_audit` | 预算审核记录 | contact_id, from_status → to_status, auditor_id(→sys_user), reason |
+| `sop_budget_application` | 预算申请 | task_sop_id, amount, status, latest_audit_id, submitter_id |
+| `sop_budget_audit` | 预算审核记录 | application_id, from_status → to_status, auditor_id(→sys_user), reason |
 | `sample_application` | 样品申请 | task_sop_id(1:1), product_listing_id, address, tracking_number |
-| `sop_remittance` | 汇款申请 | task_sop_id(1:1), amount, chat_screenshot_urls, remittance_screenshot_urls, status |
+| `sample_application_request` | 样品申请记录 | task_sop_id, product_listing_id, address, quantity, status, reviewer_id |
+| `sop_remittance` | 汇款申请 | task_sop_id(1:1), amount, status, latest_audit_id, submitter_id |
+| `sop_remittance_attachment` | 汇款附件 | remittance_id, attachment_type(chat/remittance), url |
 | `sop_remittance_audit` | 汇款审核记录 | remittance_id, from_status → to_status, auditor_id(→sys_user), reason |
 
 ### 1.4 权限系统（5 张）
@@ -94,8 +97,8 @@ shop ── product_listing ── task_main
                               │
                     ┌─────────┼─────────┐
                     │         │         │          │
-              sop_contact  sample_    video   sop_remittance
-              (建联)     application (回收视频)   (汇款)
+              sop_contact   sample_         video     sop_remittance
+              (建联)   application+request (回收视频)    (汇款)
                          (送样)
 ```
 
