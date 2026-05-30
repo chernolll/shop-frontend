@@ -9,7 +9,8 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 | 路由 | 视图 | 角色 | 行数 | 状态 |
 | --- | --- | --- | --- | --- |
 | `/bd/analytics` | `views/bd/analytics/index.vue` | BD | 5 | ⬜ 占位 |
-| `/bd/tasks` | `views/bd/tasks/index.vue` | ADMIN | 849 | ✅ |
+| `/bd/public-tasks` | `views/bd/public-tasks/index.vue` | BD | 145 | ✅ |
+| `/bd/tasks` | `views/bd/tasks/index.vue` | ADMIN | 895 | ✅ |
 | `/bd/my-tasks` | `views/bd/my-tasks/index.vue` | BD | 461 | ✅ |
 | `/bd/kols` | `views/bd/kols/index.vue` | BD | 444 | ✅ |
 | `/bd/videos` | `views/bd/videos/index.vue` | BD | 368 | ✅ |
@@ -21,17 +22,17 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 ### KOL 模块 (`/kol`) — ADMIN 专用
 
-| 路由 | 视图 | 行数 |
-| --- | --- | --- |
-| `/kol/list` | `views/kol/index.vue` | 893 |
+| 路由           | 视图                   | 行数         |
+| -------------- | ---------------------- | ------------ |
+| `/kol/list`    | `views/kol/index.vue`  | 893          |
 | `/kol/:kol_id` | `views/kol/detail.vue` | 270 隐藏路由 |
 
 ### 商品模块 (`/product`) — ADMIN 专用
 
-| 路由 | 视图 | 行数 |
-| --- | --- | --- |
-| `/product/sku` | `views/product/sku/index.vue` | 548 |
-| `/product/listing` | `views/product/listing/index.vue` | 493 |
+| 路由               | 视图                              | 行数 |
+| ------------------ | --------------------------------- | ---- |
+| `/product/sku`     | `views/product/sku/index.vue`     | 548  |
+| `/product/listing` | `views/product/listing/index.vue` | 493  |
 
 ### 审核模块 (`/review`) — ADMIN 专用
 
@@ -45,12 +46,12 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 ### 视频模块 + 系统管理 — ADMIN 专用
 
-| 路由 | 视图 | 行数 |
-| --- | --- | --- |
-| `/video/list` | `views/video/index.vue` | 523 |
-| `/system/departments` | `views/system/department/index.vue` | 293 |
-| `/system/employees` | `views/system/employee/index.vue` | 716 |
-| `/system/bd-persons` | `views/system/bd-person/index.vue` | 385 |
+| 路由                  | 视图                                | 行数 |
+| --------------------- | ----------------------------------- | ---- |
+| `/video/list`         | `views/video/index.vue`             | 523  |
+| `/system/departments` | `views/system/department/index.vue` | 293  |
+| `/system/employees`   | `views/system/employee/index.vue`   | 716  |
+| `/system/bd-persons`  | `views/system/bd-person/index.vue`  | 385  |
 
 > 旧版文件 `views/system/dept/`、`role/`、`menu/` 代码仍在但路由已废弃。
 

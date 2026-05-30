@@ -82,6 +82,47 @@ export namespace BdTaskApi {
   }
 }
 
+export namespace BdPublicTaskApi {
+  export interface BdPublicTaskListParams {
+    deadlineEnd?: number;
+    deadlineStart?: number;
+    hasBudget?: boolean;
+    page: number;
+    pageSize: number;
+  }
+
+  export interface BdPublicTaskItem {
+    bd_count: number;
+    budget: 0 | 1;
+    commission: number;
+    created_at: number;
+    deadline: null | number;
+    main_sku_code?: string;
+    main_sku_name?: string;
+    main_sku_brand?: string;
+    main_sku_status?: number;
+    product_listing_id: number;
+    product_url: string;
+    task_id: number;
+    video_num: number;
+  }
+
+  export interface BdPublicTaskListResult {
+    list: BdPublicTaskItem[];
+    total: number;
+  }
+}
+
+/** BD 用户获取公开任务列表 */
+export async function getBDPublicTaskList(
+  params: BdPublicTaskApi.BdPublicTaskListParams,
+) {
+  return requestClient.get<BdPublicTaskApi.BdPublicTaskListResult>(
+    '/bd/public-tasks',
+    { params },
+  );
+}
+
 /** BD 用户获取自己任务信息 */
 export async function getBdTaskList(params: BdTaskApi.BdTaskListParams) {
   return requestClient.get<BdTaskApi.BdTasListResult>('/bd/tasks', { params });

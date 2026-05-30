@@ -228,3 +228,34 @@ export async function abandonAdminTask(data: AdminTaskApi.AbandonParams) {
     data,
   );
 }
+
+export namespace AdminAssignApi {
+  export interface AssignParams {
+    bd_codes: string[];
+    task_id: number | string;
+    video_quantity?: number;
+  }
+
+  export interface AssignRelationItem {
+    bd_code: string;
+    follow_entry_time: number;
+    relation_id: number;
+    task_code: string;
+    video_quantity: number;
+  }
+
+  export interface AssignResult {
+    relations: AssignRelationItem[];
+    task_id: number;
+  }
+}
+
+/** Admin 为公开任务分配 BD */
+export async function assignBDToPublicTask(
+  data: AdminAssignApi.AssignParams,
+) {
+  return requestClient.post<AdminAssignApi.AssignResult>(
+    '/admin/tasks/assign',
+    data,
+  );
+}

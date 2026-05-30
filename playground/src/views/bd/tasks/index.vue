@@ -28,6 +28,7 @@ import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   abandonAdminTask,
   AdminTaskApi,
+  assignBDToPublicTask,
   createAdminTask,
   getAdminBdList,
   getAdminProductListingList,
@@ -268,6 +269,57 @@ function resetCreateForm() {
   createForm.video_num = undefined;
 }
 
+// 分配 BD 到公开任务
+const assignModalOpen = ref(false);
+const assignSubmitting = ref(false);
+const assignTaskRow = ref<AdminTaskApi.ListItem | null>(null);
+const assignBdCodes = ref<string[]>([]);
+const assignVideoQuantity = ref<number>(1);
+
+function openAssignModal(row: AdminTaskApi.ListItem) {
+  assignTaskRow.value = row;
+  assignBdCodes.value = [];
+  assignVideoQuantity.value = 1;
+  void loadBdOptions();
+  assignModalOpen.value = true;
+}
+
+function closeAssignModal() {
+  if (assignSubmitting.value) return;
+  assignModalOpen.value = false;
+}
+
+async function submitAssign() {
+  if (!assignTaskRow.value) return;
+  const codes = [
+    ...new Set(
+      assignBdCodes.value
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .map((item) => item.toUpperCase()),
+    ),
+  ];
+  if (codes.length === 0) {
+    message.warning('请选择至少一个 BD');
+    return;
+  }
+
+  try {
+    assignSubmitting.value = true;
+    await assignBDToPublicTask({
+      bd_codes: codes,
+      task_id: assignTaskRow.value.task_id,
+      video_quantity:
+        assignVideoQuantity.value > 0 ? assignVideoQuantity.value : 1,
+    });
+    assignModalOpen.value = false;
+    message.success('BD 分配成功');
+    await gridApi.query();
+  } finally {
+    assignSubmitting.value = false;
+  }
+}
+
 function openCreateModal() {
   resetCreateForm();
   void loadBdOptions();
@@ -297,7 +349,7 @@ async function submitCreateTask() {
     message.warning($t('page.bd.task-center.messages.video-num-required'));
     return;
   }
-  if (normalizedBdCodes.value.length === 0) {
+  if (createForm.type === AdminTaskApi.TaskType.CUSTOM && normalizedBdCodes.value.length === 0) {
     message.warning($t('page.bd.task-center.messages.bd-codes-required'));
     return;
   }
@@ -674,6 +726,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.bd.task-center.actions.view-relations') }}
           </Button>
           <Button
+            v-if="row.type === AdminTaskApi.TaskType.PUBLIC && !isTaskAbandoned(row)"
+            type="link"
+            size="small"
+            @click="openAssignModal(row)"
+          >
+            分配BD
+          </Button>
+          <Button
             danger
             type="link"
             size="small"
@@ -779,8 +839,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </FormItem>
 
         <FormItem
-          :label="$t('page.bd.task-center.create-modal.bd-codes')"
-          required
+          :label="createForm.type === AdminTaskApi.TaskType.PUBLIC ? 'BD代号（可选）' : $t('page.bd.task-center.create-modal.bd-codes')"
+          :required="createForm.type === AdminTaskApi.TaskType.CUSTOM"
         >
           <Select
             v-model:value="createForm.bd_codes"
@@ -789,7 +849,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :loading="bdOptionsLoading"
             :options="bdOptions"
             :placeholder="
-              $t('page.bd.task-center.create-modal.bd-codes-placeholder')
+              createForm.type === AdminTaskApi.TaskType.PUBLIC
+                ? '公开任务可不指定BD，后续再分配'
+                : $t('page.bd.task-center.create-modal.bd-codes-placeholder')
             "
             :filter-option="false"
             show-search
@@ -845,5 +907,53 @@ const [Grid, gridApi] = useVbenVxeGrid({
         />
       </Space>
     </Drawer>
+
+    <Modal
+      :open="assignModalOpen"
+      :confirm-loading="assignSubmitting"
+      :ok-text="'确认分配'"
+      :cancel-text="$t('common.cancel')"
+      title="分配 BD 到公开任务"
+      @cancel="closeAssignModal"
+      @ok="submitAssign"
+    >
+      <Form layout="vertical" class="pt-2">
+        <FormItem v-if="assignTaskRow" label="任务信息">
+          <div class="text-sm text-gray-500">
+            任务ID: {{ assignTaskRow.task_id }} | 佣金: ¥{{ assignTaskRow.commission }} | 视频数: {{ assignTaskRow.video_num }}
+          </div>
+        </FormItem>
+
+        <FormItem label="BD代号" required>
+          <Select
+            v-model:value="assignBdCodes"
+            mode="multiple"
+            class="w-full"
+            :loading="bdOptionsLoading"
+            :options="bdOptions"
+            placeholder="请选择要分配的 BD"
+            :filter-option="false"
+            show-search
+            @search="loadBdOptions"
+            @dropdown-visible-change="
+              (open) => {
+                if (open) {
+                  void loadBdOptions();
+                }
+              }
+            "
+          />
+        </FormItem>
+
+        <FormItem label="每人视频数">
+          <InputNumber
+            v-model:value="assignVideoQuantity"
+            class="w-full"
+            :min="1"
+            :precision="0"
+          />
+        </FormItem>
+      </Form>
+    </Modal>
   </Page>
 </template>

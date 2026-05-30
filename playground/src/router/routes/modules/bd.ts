@@ -35,6 +35,17 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
+      // 公开任务（BD用）
+      {
+        name: 'BD-PublicTasks',
+        path: '/bd/public-tasks',
+        component: () => import('#/views/bd/public-tasks/index.vue'),
+        meta: {
+          icon: 'lucide:megaphone',
+          title: '公开任务',
+          authority: [RoleEnum.BD],
+        },
+      },
       // 我的任务（BD用）
       {
         name: 'BD-MyTasks',
