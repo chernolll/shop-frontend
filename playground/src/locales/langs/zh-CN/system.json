@@ -41,6 +41,7 @@
       "confirm-content": "确认删除部门 {0} 吗？",
       "confirm-title": "确认删除部门"
     },
+    "empty": "暂无部门数据",
     "messages": {
       "code-required": "请输入部门编码",
       "create-success": "部门创建成功",
@@ -122,6 +123,7 @@
       "confirm-content": "确认删除员工 {0} 吗？",
       "confirm-title": "确认删除员工"
     },
+    "empty": "暂无员工数据",
     "messages": {
       "avatar-required": "请输入头像链接",
       "country-required": "请选择国家",
@@ -177,6 +179,7 @@
       "confirm-content": "确认删除BD绑定 {0} 吗？",
       "confirm-title": "确认删除BD绑定"
     },
+    "empty": "暂无BD人员数据",
     "messages": {
       "bd-code-required": "请输入BD编码",
       "create-success": "BD绑定创建成功",

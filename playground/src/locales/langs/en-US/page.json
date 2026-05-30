@@ -515,6 +515,7 @@
       "title": "KOL Summary",
       "video-count": "Video Count"
     },
+    "empty": "No KOL data",
     "messages": {
       "cooperation-fee-invalid": "Cooperation fee cannot be less than 0",
       "delete-success": "KOL {0} deleted successfully",
@@ -583,6 +584,7 @@
         "sku-type": "SKU Type",
         "status": "Status"
       },
+      "empty": "No SKU data",
       "messages": {
         "create-success": "SKU created successfully",
         "delete-success": "SKU deleted successfully",
@@ -634,6 +636,7 @@
         "shop-id": "Shop ID",
         "status": "Status"
       },
+      "empty": "No product listing data",
       "messages": {
         "create-success": "Product listing created successfully",
         "delete-success": "Product listing deleted successfully",

@@ -10,6 +10,7 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Drawer,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -213,7 +214,9 @@ function confirmDelete(row: AdminProductApi.ProductListingItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Input',
@@ -240,6 +243,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminProductApi.ProductListingItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -325,6 +329,7 @@ const gridOptions: VxeTableGridOptions<AdminProductApi.ProductListingItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'id',
   },
   toolbarConfig: {
@@ -355,7 +360,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.product_url"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.product_url }}
         </a>
@@ -379,7 +384,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               </div>
             </div>
           </template>
-          <span class="cursor-help text-blue-500 hover:underline">
+          <span class="cursor-pointer text-blue-500 hover:underline">
             {{ row.main_sku_code || '-' }}
           </span>
         </Tooltip>
@@ -409,6 +414,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.product.listing.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('page.product.listing.empty')" />
       </template>
     </Grid>
 

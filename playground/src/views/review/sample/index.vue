@@ -844,7 +844,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </FormItem>
 
         <template v-if="!isBatchMode">
-          <FormItem :label="$t('page.review.sample.review-modal.address-label')">
+          <FormItem
+            :label="$t('page.review.sample.review-modal.address-label')"
+          >
             <Input.TextArea
               v-model:value="reviewForm.address"
               :auto-size="{ minRows: 3, maxRows: 6 }"
@@ -856,7 +858,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             />
           </FormItem>
 
-          <FormItem :label="$t('page.review.sample.review-modal.quantity-label')">
+          <FormItem
+            :label="$t('page.review.sample.review-modal.quantity-label')"
+          >
             <InputNumber
               v-model:value="reviewForm.quantity"
               class="w-full"
@@ -868,7 +872,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             />
           </FormItem>
 
-          <FormItem :label="$t('page.review.sample.review-modal.tracking-number-label')">
+          <FormItem
+            :label="$t('page.review.sample.review-modal.tracking-number-label')"
+          >
             <Input
               v-model:value="reviewForm.tracking_number"
               :maxlength="100"
@@ -880,7 +886,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             />
           </FormItem>
 
-          <FormItem :label="$t('page.review.sample.review-modal.delivered-at-label')">
+          <FormItem
+            :label="$t('page.review.sample.review-modal.delivered-at-label')"
+          >
             <DatePicker
               v-model:value="reviewForm.delivered_at"
               class="w-full"
@@ -889,7 +897,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
             />
           </FormItem>
 
-          <FormItem :label="$t('page.review.sample.review-modal.package-received-label')">
+          <FormItem
+            :label="
+              $t('page.review.sample.review-modal.package-received-label')
+            "
+          >
             <Select
               v-model:value="reviewForm.package_received"
               class="w-full"

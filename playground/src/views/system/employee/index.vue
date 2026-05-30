@@ -11,6 +11,7 @@ import {
   Button,
   DatePicker,
   Drawer,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -365,7 +366,9 @@ function confirmDelete(row: AdminEmployeeApi.EmployeeItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Input',
@@ -408,6 +411,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminEmployeeApi.EmployeeItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -506,6 +510,7 @@ const gridOptions: VxeTableGridOptions<AdminEmployeeApi.EmployeeItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'id',
   },
   toolbarConfig: {
@@ -574,6 +579,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('system.employee.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('system.employee.empty')" />
       </template>
     </Grid>
 

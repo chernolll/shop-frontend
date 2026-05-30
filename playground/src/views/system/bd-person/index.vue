@@ -11,6 +11,7 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Drawer,
+  Empty,
   Form,
   Input,
   message,
@@ -168,7 +169,9 @@ function confirmDelete(row: AdminBdPersonApi.BdPersonItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Input',
@@ -201,6 +204,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminBdPersonApi.BdPersonItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -281,6 +285,7 @@ const gridOptions: VxeTableGridOptions<AdminBdPersonApi.BdPersonItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'id',
   },
   toolbarConfig: {
@@ -337,6 +342,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('system.bdPerson.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('system.bdPerson.empty')" />
       </template>
     </Grid>
 

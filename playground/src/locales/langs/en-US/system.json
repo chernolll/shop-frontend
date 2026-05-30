@@ -40,6 +40,7 @@
       "confirm-content": "Are you sure you want to delete department {0}?",
       "confirm-title": "Confirm Delete Department"
     },
+    "empty": "No department data",
     "messages": {
       "code-required": "Please enter the department code",
       "create-success": "Department created successfully",
@@ -121,6 +122,7 @@
       "confirm-content": "Are you sure you want to delete employee {0}?",
       "confirm-title": "Confirm Delete Employee"
     },
+    "empty": "No employee data",
     "messages": {
       "avatar-required": "Please enter the avatar URL",
       "country-required": "Please select a country",
@@ -176,6 +178,7 @@
       "confirm-content": "Are you sure you want to delete BD binding {0}?",
       "confirm-title": "Confirm Delete BD Binding"
     },
+    "empty": "No BD person data",
     "messages": {
       "bd-code-required": "Please enter the BD code",
       "create-success": "BD binding created successfully",

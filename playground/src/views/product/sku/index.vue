@@ -10,6 +10,7 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Drawer,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -254,7 +255,9 @@ function confirmDelete(row: AdminProductApi.SkuItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Input',
@@ -295,6 +298,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminProductApi.SkuItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -396,6 +400,7 @@ const gridOptions: VxeTableGridOptions<AdminProductApi.SkuItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'id',
   },
   toolbarConfig: {
@@ -450,6 +455,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.product.sku.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('page.product.sku.empty')" />
       </template>
     </Grid>
 

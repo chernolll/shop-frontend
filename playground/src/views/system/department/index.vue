@@ -11,6 +11,7 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Drawer,
+  Empty,
   Form,
   Input,
   message,
@@ -150,6 +151,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminDepartmentApi.DepartmentItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -206,6 +208,7 @@ const gridOptions: VxeTableGridOptions<AdminDepartmentApi.DepartmentItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'id',
   },
   toolbarConfig: {
@@ -248,6 +251,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('system.department.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('system.department.empty')" />
       </template>
     </Grid>
 

@@ -143,7 +143,7 @@ onMounted(() => {
                   :href="detail.kol_link"
                   target="_blank"
                   rel="noreferrer"
-                  class="text-blue-500 hover:underline"
+                  class="cursor-pointer text-blue-500 hover:underline"
                 >
                   {{ detail.kol_link }}
                 </a>

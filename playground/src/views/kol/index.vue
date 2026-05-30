@@ -12,6 +12,7 @@ import {
   Button,
   Descriptions,
   Drawer,
+  Empty,
   Form,
   Input,
   InputNumber,
@@ -375,7 +376,9 @@ function confirmUnbind(row: AdminKolApi.ListItem) {
 }
 
 const formOptions: VbenFormProps = {
-  collapsed: false,
+  collapsed: true,
+  collapsedRows: 1,
+  showCollapseButton: true,
   schema: [
     {
       component: 'Input',
@@ -452,6 +455,7 @@ const formOptions: VbenFormProps = {
 };
 
 const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
+  stripe: true,
   columns: [
     { type: 'seq', width: 60 },
     {
@@ -617,6 +621,7 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
     },
   },
   rowConfig: {
+    isHover: true,
     keyField: 'kol_id',
   },
   toolbarConfig: {
@@ -642,7 +647,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :href="row.kol_link"
           target="_blank"
           rel="noreferrer"
-          class="text-blue-500 hover:underline"
+          class="cursor-pointer text-blue-500 hover:underline"
         >
           {{ row.kol_link }}
         </a>
@@ -758,6 +763,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.kol.actions.delete') }}
           </Button>
         </Space>
+      </template>
+
+      <template #empty>
+        <Empty :description="$t('page.kol.empty')" />
       </template>
     </Grid>
 

@@ -1320,7 +1320,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
           />
         </FormItem>
 
-        <FormItem :label="$t('page.review.remittance.review-modal.review-remark-label')">
+        <FormItem
+          :label="$t('page.review.remittance.review-modal.review-remark-label')"
+        >
           <Input.TextArea
             v-model:value="reviewForm.review_remark"
             :auto-size="{ minRows: 4, maxRows: 8 }"

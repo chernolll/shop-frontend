@@ -515,6 +515,7 @@
       "title": "达人统计信息",
       "video-count": "视频总数"
     },
+    "empty": "暂无达人数据",
     "messages": {
       "cooperation-fee-invalid": "合作费不能小于 0",
       "delete-success": "达人 {0} 删除成功",
@@ -583,6 +584,7 @@
         "sku-type": "SKU类型",
         "status": "状态"
       },
+      "empty": "暂无SKU数据",
       "messages": {
         "create-success": "SKU创建成功",
         "delete-success": "SKU删除成功",
@@ -634,6 +636,7 @@
         "shop-id": "店铺ID",
         "status": "状态"
       },
+      "empty": "暂无商品链接数据",
       "messages": {
         "create-success": "商品链接创建成功",
         "delete-success": "商品链接删除成功",
