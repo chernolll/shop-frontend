@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
+import type { BdPublicTaskApi } from '#/api';
 
 import { Page } from '@vben/common-ui';
-
-import type { BdPublicTaskApi } from '#/api';
 
 import { Alert, Empty, Tag } from 'ant-design-vue';
 
@@ -153,7 +152,7 @@ const [Grid] = useVbenVxeGrid<BdPublicTaskApi.BdPublicTaskItem>({
   },
 });
 
-function formatDate(timestamp: number | null | undefined): string {
+function formatDate(timestamp: null | number | undefined): string {
   if (!timestamp) return '长期';
   return new Date(timestamp).toLocaleDateString('zh-CN');
 }
@@ -175,9 +174,7 @@ function formatCurrency(value: number): string {
         />
       </template>
       <template #empty>
-        <div
-          class="flex min-h-[220px] items-center justify-center px-6 py-10"
-        >
+        <div class="flex min-h-[220px] items-center justify-center px-6 py-10">
           <Empty description="暂无公开任务" class="max-w-[360px]">
             <template #image>
               <div class="mb-4 text-base font-medium text-foreground">

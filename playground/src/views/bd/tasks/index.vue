@@ -349,7 +349,10 @@ async function submitCreateTask() {
     message.warning($t('page.bd.task-center.messages.video-num-required'));
     return;
   }
-  if (createForm.type === AdminTaskApi.TaskType.CUSTOM && normalizedBdCodes.value.length === 0) {
+  if (
+    createForm.type === AdminTaskApi.TaskType.CUSTOM &&
+    normalizedBdCodes.value.length === 0
+  ) {
     message.warning($t('page.bd.task-center.messages.bd-codes-required'));
     return;
   }
@@ -726,7 +729,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.bd.task-center.actions.view-relations') }}
           </Button>
           <Button
-            v-if="row.type === AdminTaskApi.TaskType.PUBLIC && !isTaskAbandoned(row)"
+            v-if="
+              row.type === AdminTaskApi.TaskType.PUBLIC && !isTaskAbandoned(row)
+            "
             type="link"
             size="small"
             @click="openAssignModal(row)"
@@ -839,7 +844,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </FormItem>
 
         <FormItem
-          :label="createForm.type === AdminTaskApi.TaskType.PUBLIC ? 'BD代号（可选）' : $t('page.bd.task-center.create-modal.bd-codes')"
+          :label="
+            createForm.type === AdminTaskApi.TaskType.PUBLIC
+              ? 'BD代号（可选）'
+              : $t('page.bd.task-center.create-modal.bd-codes')
+          "
           :required="createForm.type === AdminTaskApi.TaskType.CUSTOM"
         >
           <Select
@@ -911,7 +920,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <Modal
       :open="assignModalOpen"
       :confirm-loading="assignSubmitting"
-      :ok-text="'确认分配'"
+      ok-text="确认分配"
       :cancel-text="$t('common.cancel')"
       title="分配 BD 到公开任务"
       @cancel="closeAssignModal"
@@ -920,7 +929,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <Form layout="vertical" class="pt-2">
         <FormItem v-if="assignTaskRow" label="任务信息">
           <div class="text-sm text-gray-500">
-            任务ID: {{ assignTaskRow.task_id }} | 佣金: ¥{{ assignTaskRow.commission }} | 视频数: {{ assignTaskRow.video_num }}
+            任务ID: {{ assignTaskRow.task_id }} | 佣金: ¥{{
+              assignTaskRow.commission
+            }}
+            | 视频数: {{ assignTaskRow.video_num }}
           </div>
         </FormItem>
 

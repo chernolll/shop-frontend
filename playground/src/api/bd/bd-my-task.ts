@@ -97,9 +97,9 @@ export namespace BdPublicTaskApi {
     commission: number;
     created_at: number;
     deadline: null | number;
+    main_sku_brand?: string;
     main_sku_code?: string;
     main_sku_name?: string;
-    main_sku_brand?: string;
     main_sku_status?: number;
     product_listing_id: number;
     product_url: string;

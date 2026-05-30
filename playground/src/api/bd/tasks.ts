@@ -251,9 +251,7 @@ export namespace AdminAssignApi {
 }
 
 /** Admin 为公开任务分配 BD */
-export async function assignBDToPublicTask(
-  data: AdminAssignApi.AssignParams,
-) {
+export async function assignBDToPublicTask(data: AdminAssignApi.AssignParams) {
   return requestClient.post<AdminAssignApi.AssignResult>(
     '/admin/tasks/assign',
     data,
