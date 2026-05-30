@@ -113,6 +113,36 @@ export namespace BdPublicTaskApi {
   }
 }
 
+export namespace BdAnalyticsApi {
+  export interface KOLSalesRankItem {
+    kol_id: string;
+    kol_name: string;
+    gmv: number;
+    rank: number;
+  }
+
+  export interface BDSalesRankItem {
+    bd_code: string;
+    bd_name: string;
+    gmv: number;
+    rank: number;
+  }
+
+  export interface BDAnalyticsResult {
+    monthly_gmv: number;
+    monthly_completed_tasks: number;
+    deadline_14days_tasks: number;
+    total_kols: number;
+    kol_sales_ranking: KOLSalesRankItem[];
+    bd_sales_ranking: BDSalesRankItem[];
+  }
+}
+
+/** BD 用户获取数据面板 */
+export async function getBDAnalytics() {
+  return requestClient.get<BdAnalyticsApi.BDAnalyticsResult>('/bd/analytics');
+}
+
 /** BD 用户获取公开任务列表 */
 export async function getBDPublicTaskList(
   params: BdPublicTaskApi.BdPublicTaskListParams,

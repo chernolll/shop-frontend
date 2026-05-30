@@ -8,7 +8,7 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 | 路由 | 视图 | 角色 | 行数 | 状态 |
 | --- | --- | --- | --- | --- |
-| `/bd/analytics` | `views/bd/analytics/index.vue` | BD | 5 | ⬜ 占位 |
+| `/bd/analytics` | `views/bd/analytics/index.vue` | BD | 1058 | ✅ 暗色模式+动画 |
 | `/bd/public-tasks` | `views/bd/public-tasks/index.vue` | BD | 145 | ✅ |
 | `/bd/tasks` | `views/bd/tasks/index.vue` | ADMIN | 895 | ✅ |
 | `/bd/my-tasks` | `views/bd/my-tasks/index.vue` | BD | 461 | ✅ |
