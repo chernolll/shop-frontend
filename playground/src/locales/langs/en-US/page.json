@@ -128,6 +128,68 @@
       "detail-card-title": "Detail Access Ready",
       "detail-card-description": "This page currently verifies that the independent review route, route params, and active-menu behavior are working."
     },
+    "publicTaskApplications": {
+      "list-title": "Public Task Application Review",
+      "empty": "No application records",
+      "filters": {
+        "task-id": "Task ID",
+        "bd-code": "Select BD",
+        "status": "Status",
+        "time-range": "Applied At"
+      },
+      "status-filter": {
+        "all": "All",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected"
+      },
+      "columns": {
+        "id": "Application ID",
+        "task-id": "Task ID",
+        "product-url": "Product URL",
+        "main-sku-name": "SKU Name",
+        "bd-code": "BD",
+        "status": "Status",
+        "created-at": "Applied At",
+        "reviewer-name": "Reviewer",
+        "audit-time": "Reviewed At",
+        "reason": "Review Remark",
+        "operation": "Action"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "unknown": "Unknown"
+      },
+      "actions": {
+        "batch-approve": "Approve Selected",
+        "batch-reject": "Reject Selected",
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "review-modal": {
+        "approve-title": "Approve Application",
+        "reject-title": "Reject Application",
+        "description-approve": "Approve {0} application(s)?",
+        "description-reject": "Reject {0} application(s)?",
+        "video-num-label": "Video Count",
+        "reject-reason-label": "Rejection Reason",
+        "reject-reason-required": "*",
+        "reject-reason-placeholder": "Please enter the rejection reason",
+        "application-summary": "Application #{0} — BD: {1} — Task: #{2}"
+      },
+      "messages": {
+        "select-records-first": "Please select at least one record first",
+        "no-pending-records": "No pending records among the selected items",
+        "reject-reason-required": "Please enter a rejection reason",
+        "video-num-required": "Video count must be greater than 0",
+        "review-success": "Operation successful, processed {0} application(s)",
+        "review-all-failed": "All operations failed, please check details",
+        "review-partial-success": "Partial success: {0} succeeded, {1} failed",
+        "review-failed": "Operation failed"
+      }
+    },
     "remittance": {
       "list-title": "Remittance Review",
       "empty": "No remittance review data",
@@ -897,9 +959,62 @@
         "product-listing-id-required": "Product listing must not be empty",
         "video-num-required": "Total videos must be greater than 0"
       },
-      "empty": "No task data"
+      "empty": "No task data",
+      "dispatch": {
+        "title": "Dispatch Public Task (Create Custom Task)",
+        "ok-text": "Confirm Dispatch",
+        "task-info": "Task Info",
+        "task-info-template": "Task ID: {0} | Commission: ¥{1} | Video Count: {2}",
+        "bd-codes-label": "Dispatch to BDs",
+        "bd-codes-placeholder": "Select BDs to dispatch",
+        "video-num-label": "Total Videos",
+        "commission-label": "Commission (leave empty to use the original task commission)",
+        "alert-message": "Dispatch will create a new custom task based on the public task. BDs will not be directly linked to the original public task.",
+        "select-bd-required": "Please select at least one BD",
+        "video-num-required": "Video count must be greater than 0",
+        "dispatch-success": "Dispatch successful, custom task created"
+      }
     },
-    "taskProgress": "Task Progress",
+    "publicTasks": {
+      "list-title": "Public Tasks",
+      "alert-message": "Below is the list of public tasks. Click \"Apply\" to submit an application. Once approved, a custom task will be created for you.",
+      "empty": "No public tasks available",
+      "columns": {
+        "task-id": "Task ID",
+        "product-url": "Product URL",
+        "main-sku-code": "SKU Code",
+        "main-sku-name": "SKU Name",
+        "commission": "Commission",
+        "video-num": "Videos",
+        "bd-count": "Assigned BDs",
+        "deadline": "Deadline",
+        "budget": "Budget",
+        "created-at": "Created At",
+        "operation": "Action"
+      },
+      "budget-text": {
+        "yes": "With Budget",
+        "no": "No Budget"
+      },
+      "deadline": {
+        "long-term": "Long-term",
+        "no-deadline": "Ongoing"
+      },
+      "apply-button": "Apply",
+      "apply-modal": {
+        "title": "Confirm Application",
+        "confirm-message": "Confirm application for the following public task?",
+        "task-id": "Task ID: ",
+        "sku": "SKU: ",
+        "commission": "Commission: ",
+        "video-num": "Videos: ",
+        "tip": "After submission, please wait for admin review. A custom task will be created for you upon approval."
+      },
+      "messages": {
+        "apply-success": "Application submitted. Please wait for admin review.",
+        "apply-failed": "Application failed. Please try again later."
+      }
+    },
     "my-task": {
       "title": "My Task",
       "columns": {

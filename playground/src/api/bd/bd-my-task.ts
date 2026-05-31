@@ -115,9 +115,9 @@ export namespace BdPublicTaskApi {
 
 export namespace BdAnalyticsApi {
   export interface KOLSalesRankItem {
+    gmv: number;
     kol_id: string;
     kol_name: string;
-    gmv: number;
     rank: number;
   }
 
@@ -129,12 +129,12 @@ export namespace BdAnalyticsApi {
   }
 
   export interface BDAnalyticsResult {
-    monthly_gmv: number;
-    monthly_completed_tasks: number;
-    deadline_14days_tasks: number;
-    total_kols: number;
-    kol_sales_ranking: KOLSalesRankItem[];
     bd_sales_ranking: BDSalesRankItem[];
+    deadline_14days_tasks: number;
+    kol_sales_ranking: KOLSalesRankItem[];
+    monthly_completed_tasks: number;
+    monthly_gmv: number;
+    total_kols: number;
   }
 }
 
@@ -169,4 +169,58 @@ export async function queryKolPrepareData(
   return requestClient.get<BdTaskApi.QueryKolPrepareResult>('bd/kol-prepare', {
     params,
   });
+}
+
+// --- BD Public Task Application ---
+
+export namespace BdPublicTaskApplicationApi {
+  export enum ApplicationStatus {
+    PENDING = 0,
+    APPROVED = 1,
+    REJECTED = 2,
+  }
+
+  export interface ApplyParams {
+    task_id: number;
+  }
+
+  export interface ApplicationItem {
+    bd_code: string;
+    created_at: number;
+    id: number;
+    status: number;
+    task_id: number;
+    updated_at: number;
+  }
+
+  export interface ListParams {
+    page: number;
+    pageSize: number;
+    status?: number;
+  }
+
+  export interface ListResult {
+    list: ApplicationItem[];
+    page: number;
+    page_size: number;
+    total: number;
+  }
+}
+
+/** BD申请参与公开任务 */
+export async function applyForPublicTask(data: { task_id: number }) {
+  return requestClient.post<BdPublicTaskApplicationApi.ApplicationItem>(
+    '/bd/public-tasks/apply',
+    data,
+  );
+}
+
+/** BD查看自己的公开任务申请记录 */
+export async function getMyPublicTaskApplications(
+  params: BdPublicTaskApplicationApi.ListParams,
+) {
+  return requestClient.get<BdPublicTaskApplicationApi.ListResult>(
+    '/bd/public-tasks/applications',
+    { params },
+  );
 }

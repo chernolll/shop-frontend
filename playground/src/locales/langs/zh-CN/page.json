@@ -128,6 +128,68 @@
       "detail-card-title": "详情访问已打通",
       "detail-card-description": "当前页面主要用于确认 review 独立路由、参数解析和菜单激活逻辑已生效。"
     },
+    "publicTaskApplications": {
+      "list-title": "公开任务申请审核",
+      "empty": "暂无申请记录",
+      "filters": {
+        "task-id": "任务ID",
+        "bd-code": "选择BD",
+        "status": "状态",
+        "time-range": "申请时间"
+      },
+      "status-filter": {
+        "all": "全部",
+        "pending": "待审核",
+        "approved": "已通过",
+        "rejected": "已驳回"
+      },
+      "columns": {
+        "id": "申请ID",
+        "task-id": "任务ID",
+        "product-url": "商品链接",
+        "main-sku-name": "SKU名称",
+        "bd-code": "BD",
+        "status": "状态",
+        "created-at": "申请时间",
+        "reviewer-name": "审核人",
+        "audit-time": "审核时间",
+        "reason": "审核备注",
+        "operation": "操作"
+      },
+      "status": {
+        "pending": "待审核",
+        "approved": "已通过",
+        "rejected": "已驳回",
+        "unknown": "未知"
+      },
+      "actions": {
+        "batch-approve": "批量通过",
+        "batch-reject": "批量驳回",
+        "approve": "通过",
+        "reject": "驳回"
+      },
+      "review-modal": {
+        "approve-title": "通过申请",
+        "reject-title": "驳回申请",
+        "description-approve": "确认通过 {0} 条申请？",
+        "description-reject": "确认驳回 {0} 条申请？",
+        "video-num-label": "视频数",
+        "reject-reason-label": "驳回备注",
+        "reject-reason-required": "*",
+        "reject-reason-placeholder": "请填写驳回原因",
+        "application-summary": "申请 #{0} — BD: {1} — 任务: #{2}"
+      },
+      "messages": {
+        "select-records-first": "请先选择申请记录",
+        "no-pending-records": "所选记录中没有待审核的申请",
+        "reject-reason-required": "驳回时请填写备注说明",
+        "video-num-required": "通过时视频数必须大于0",
+        "review-success": "操作成功，共处理 {0} 条申请",
+        "review-all-failed": "全部处理失败，请查看具体原因",
+        "review-partial-success": "部分成功：{0} 条通过，{1} 条失败",
+        "review-failed": "操作失败"
+      }
+    },
     "remittance": {
       "list-title": "汇款审核",
       "empty": "暂无汇款审核数据",
@@ -897,7 +959,61 @@
         "product-listing-id-required": "商品链接不能为空",
         "video-num-required": "视频总数必须大于 0"
       },
-      "empty": "暂无任务数据"
+      "empty": "暂无任务数据",
+      "dispatch": {
+        "title": "派送公开任务（创建定制任务）",
+        "ok-text": "确认派送",
+        "task-info": "任务信息",
+        "task-info-template": "任务ID: {0} | 佣金: ¥{1} | 视频数: {2}",
+        "bd-codes-label": "派送BD",
+        "bd-codes-placeholder": "请选择要派送的 BD",
+        "video-num-label": "总视频数",
+        "commission-label": "佣金（留空使用原任务佣金）",
+        "alert-message": "派送将在原公开任务基础上创建新的定制任务，BD 不会直接关联到该公开任务。",
+        "select-bd-required": "请选择至少一个 BD",
+        "video-num-required": "视频数必须大于 0",
+        "dispatch-success": "派送成功，已创建定制任务"
+      }
+    },
+    "publicTasks": {
+      "list-title": "公开任务",
+      "alert-message": "以下为公开任务列表。点击「申请参与」提交参与申请，管理员审核通过后将为您创建专属任务。",
+      "empty": "暂无公开任务",
+      "columns": {
+        "task-id": "任务ID",
+        "product-url": "商品链接",
+        "main-sku-code": "SKU编码",
+        "main-sku-name": "SKU名称",
+        "commission": "佣金",
+        "video-num": "视频数",
+        "bd-count": "已分配BD",
+        "deadline": "截止日期",
+        "budget": "预算",
+        "created-at": "创建时间",
+        "operation": "操作"
+      },
+      "budget-text": {
+        "yes": "有预算",
+        "no": "无预算"
+      },
+      "deadline": {
+        "long-term": "长期有效",
+        "no-deadline": "长期"
+      },
+      "apply-button": "申请参与",
+      "apply-modal": {
+        "title": "确认申请参与",
+        "confirm-message": "确认申请参与以下公开任务？",
+        "task-id": "任务ID：",
+        "sku": "SKU：",
+        "commission": "佣金：",
+        "video-num": "视频数：",
+        "tip": "提交后请等待管理员审核，审核通过后将为您创建专属定制任务。"
+      },
+      "messages": {
+        "apply-success": "申请已提交，请等待管理员审核",
+        "apply-failed": "申请失败，请稍后重试"
+      }
     },
     "taskProgress": "任务完成情况",
     "my-task": {

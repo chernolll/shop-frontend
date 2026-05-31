@@ -8,6 +8,7 @@ import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
 
 import {
+  Alert,
   Button,
   DatePicker,
   Drawer,
@@ -35,6 +36,7 @@ import {
   getAdminTaskList,
   getAdminTaskRelations,
 } from '#/api/bd/tasks';
+import { dispatchPublicTaskToBD } from '#/api/review/public-task-application';
 import { $t } from '#/locales';
 
 interface BdOption {
@@ -317,6 +319,65 @@ async function submitAssign() {
     await gridApi.query();
   } finally {
     assignSubmitting.value = false;
+  }
+}
+
+// --- Dispatch ---
+
+const dispatchModalOpen = ref(false);
+const dispatchSubmitting = ref(false);
+const dispatchTaskRow = ref<AdminTaskApi.ListItem | null>(null);
+const dispatchBdCodes = ref<string[]>([]);
+const dispatchVideoNum = ref<number>(1);
+const dispatchCommission = ref<number>(0);
+
+function openDispatchModal(row: AdminTaskApi.ListItem) {
+  dispatchTaskRow.value = row;
+  dispatchBdCodes.value = [];
+  dispatchVideoNum.value = row.video_num || 1;
+  dispatchCommission.value = row.commission;
+  void loadBdOptions();
+  dispatchModalOpen.value = true;
+}
+
+function closeDispatchModal() {
+  if (dispatchSubmitting.value) return;
+  dispatchModalOpen.value = false;
+}
+
+async function submitDispatch() {
+  if (!dispatchTaskRow.value) return;
+  const codes = [
+    ...new Set(
+      dispatchBdCodes.value
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .map((item) => item.toUpperCase()),
+    ),
+  ];
+  if (codes.length === 0) {
+    message.warning($t('page.bd.task-center.dispatch.select-bd-required'));
+    return;
+  }
+  if (dispatchVideoNum.value <= 0) {
+    message.warning($t('page.bd.task-center.dispatch.video-num-required'));
+    return;
+  }
+
+  try {
+    dispatchSubmitting.value = true;
+    await dispatchPublicTaskToBD({
+      bd_codes: codes,
+      commission: dispatchCommission.value || undefined,
+      deadline: undefined,
+      public_task_id: dispatchTaskRow.value.task_id,
+      video_num: dispatchVideoNum.value,
+    });
+    dispatchModalOpen.value = false;
+    message.success($t('page.bd.task-center.dispatch.dispatch-success'));
+    await gridApi.query();
+  } finally {
+    dispatchSubmitting.value = false;
   }
 }
 
@@ -739,6 +800,16 @@ const [Grid, gridApi] = useVbenVxeGrid({
             分配BD
           </Button>
           <Button
+            v-if="
+              row.type === AdminTaskApi.TaskType.PUBLIC && !isTaskAbandoned(row)
+            "
+            type="link"
+            size="small"
+            @click="openDispatchModal(row)"
+          >
+            派送
+          </Button>
+          <Button
             danger
             type="link"
             size="small"
@@ -965,6 +1036,85 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :precision="0"
           />
         </FormItem>
+      </Form>
+    </Modal>
+
+    <!-- Dispatch Modal -->
+    <Modal
+      :open="dispatchModalOpen"
+      :confirm-loading="dispatchSubmitting"
+      :ok-text="$t('page.bd.task-center.dispatch.ok-text')"
+      :cancel-text="$t('common.cancel')"
+      :title="$t('page.bd.task-center.dispatch.title')"
+      @cancel="closeDispatchModal"
+      @ok="submitDispatch"
+    >
+      <Form layout="vertical" class="pt-2">
+        <FormItem
+          v-if="dispatchTaskRow"
+          :label="$t('page.bd.task-center.dispatch.task-info')"
+        >
+          <div class="text-sm text-gray-500">
+            {{
+              $t('page.bd.task-center.dispatch.task-info-template', [
+                String(dispatchTaskRow.task_id),
+                String(dispatchTaskRow.commission),
+                String(dispatchTaskRow.video_num),
+              ])
+            }}
+          </div>
+        </FormItem>
+
+        <FormItem
+          :label="$t('page.bd.task-center.dispatch.bd-codes-label')"
+          required
+        >
+          <Select
+            v-model:value="dispatchBdCodes"
+            mode="multiple"
+            class="w-full"
+            :loading="bdOptionsLoading"
+            :options="bdOptions"
+            :placeholder="
+              $t('page.bd.task-center.dispatch.bd-codes-placeholder')
+            "
+            :filter-option="false"
+            show-search
+            @search="loadBdOptions"
+            @dropdown-visible-change="
+              (open) => {
+                if (open) {
+                  void loadBdOptions();
+                }
+              }
+            "
+          />
+        </FormItem>
+
+        <FormItem :label="$t('page.bd.task-center.dispatch.video-num-label')">
+          <InputNumber
+            v-model:value="dispatchVideoNum"
+            class="w-full"
+            :min="1"
+            :precision="0"
+          />
+        </FormItem>
+
+        <FormItem :label="$t('page.bd.task-center.dispatch.commission-label')">
+          <InputNumber
+            v-model:value="dispatchCommission"
+            class="w-full"
+            :min="0"
+            :precision="2"
+          />
+        </FormItem>
+
+        <Alert
+          type="info"
+          show-icon
+          :message="$t('page.bd.task-center.dispatch.alert-message')"
+          class="mt-2"
+        />
       </Form>
     </Modal>
   </Page>

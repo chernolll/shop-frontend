@@ -9,7 +9,7 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 | 路由 | 视图 | 角色 | 行数 | 状态 |
 | --- | --- | --- | --- | --- |
 | `/bd/analytics` | `views/bd/analytics/index.vue` | BD | 1058 | ✅ 暗色模式+动画 |
-| `/bd/public-tasks` | `views/bd/public-tasks/index.vue` | BD | 145 | ✅ |
+| `/bd/public-tasks` | `views/bd/public-tasks/index.vue` | BD | 280+ | ✅ 申请参与功能 |
 | `/bd/tasks` | `views/bd/tasks/index.vue` | ADMIN | 895 | ✅ |
 | `/bd/my-tasks` | `views/bd/my-tasks/index.vue` | BD | 461 | ✅ |
 | `/bd/kols` | `views/bd/kols/index.vue` | BD | 444 | ✅ |
@@ -43,6 +43,7 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 | `/review/budget` | `views/review/budget/index.vue` | 612 |
 | `/review/sample` | `views/review/sample/index.vue` | 934 |
 | `/review/remittance` | `views/review/remittance/index.vue` | 1379 |
+| `/review/public-task-applications` | `views/review/public-task-applications/index.vue` | 300+ |
 
 ### 视频模块 + 系统管理 — ADMIN 专用
 

@@ -2,11 +2,12 @@
 import type { BdAnalyticsApi } from '#/api';
 
 import { computed, onMounted, ref } from 'vue';
-import { Page } from '@vben/common-ui';
 
-import { usePreferences } from '@vben/preferences';
-import { Card, Empty, Skeleton } from 'ant-design-vue';
+import { Page } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
+import { usePreferences } from '@vben/preferences';
+
+import { Card, Empty, Skeleton } from 'ant-design-vue';
 
 import { getBDAnalytics } from '#/api';
 
@@ -65,7 +66,12 @@ function formatCompactCurrency(value: number): string {
         />
       </div>
       <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <Skeleton v-for="i in 2" :key="'sk-' + i" active :paragraph="{ rows: 6 }" />
+        <Skeleton
+          v-for="i in 2"
+          :key="`sk-${i}`"
+          active
+          :paragraph="{ rows: 6 }"
+        />
       </div>
     </div>
 
@@ -78,7 +84,11 @@ function formatCompactCurrency(value: number): string {
     </div>
 
     <!-- Dashboard content -->
-    <div v-else :class="{ 'animate-ready': mounted, dark: isDark }" class="analytics-root space-y-6">
+    <div
+      v-else
+      :class="{ 'animate-ready': mounted, dark: isDark }"
+      class="analytics-root space-y-6"
+    >
       <!-- Stat cards: mobile 2-col → lg 4-col -->
       <div class="stat-grid">
         <!-- Monthly GMV -->
@@ -172,7 +182,10 @@ function formatCompactCurrency(value: number): string {
               >
                 <div class="podium-header">
                   <div class="podium-medal medal-silver">2</div>
-                  <div class="podium-name" :title="kolRanking[1]?.kol_name || kolRanking[1]?.kol_id">
+                  <div
+                    class="podium-name"
+                    :title="kolRanking[1]?.kol_name || kolRanking[1]?.kol_id"
+                  >
                     {{ kolRanking[1]?.kol_name || kolRanking[1]?.kol_id }}
                   </div>
                   <div class="podium-gmv">
@@ -180,7 +193,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-silver">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">2</span>
                 </div>
               </div>
@@ -195,7 +208,10 @@ function formatCompactCurrency(value: number): string {
                     <IconifyIcon icon="mdi:crown" class="size-6" />
                   </div>
                   <div class="podium-medal medal-gold">1</div>
-                  <div class="podium-name podium-name-hero" :title="kolRanking[0]?.kol_name || kolRanking[0]?.kol_id">
+                  <div
+                    class="podium-name podium-name-hero"
+                    :title="kolRanking[0]?.kol_name || kolRanking[0]?.kol_id"
+                  >
                     {{ kolRanking[0]?.kol_name || kolRanking[0]?.kol_id }}
                   </div>
                   <div class="podium-gmv podium-gmv-hero">
@@ -203,7 +219,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-gold">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">1</span>
                 </div>
               </div>
@@ -216,7 +232,10 @@ function formatCompactCurrency(value: number): string {
               >
                 <div class="podium-header">
                   <div class="podium-medal medal-bronze">3</div>
-                  <div class="podium-name" :title="kolRanking[2]?.kol_name || kolRanking[2]?.kol_id">
+                  <div
+                    class="podium-name"
+                    :title="kolRanking[2]?.kol_name || kolRanking[2]?.kol_id"
+                  >
                     {{ kolRanking[2]?.kol_name || kolRanking[2]?.kol_id }}
                   </div>
                   <div class="podium-gmv">
@@ -224,7 +243,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-bronze">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">3</span>
                 </div>
               </div>
@@ -276,7 +295,10 @@ function formatCompactCurrency(value: number): string {
               >
                 <div class="podium-header">
                   <div class="podium-medal medal-silver">2</div>
-                  <div class="podium-name" :title="bdRanking[1]?.bd_name || bdRanking[1]?.bd_code">
+                  <div
+                    class="podium-name"
+                    :title="bdRanking[1]?.bd_name || bdRanking[1]?.bd_code"
+                  >
                     {{ bdRanking[1]?.bd_name || bdRanking[1]?.bd_code }}
                   </div>
                   <div class="podium-gmv">
@@ -284,7 +306,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-silver">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">2</span>
                 </div>
               </div>
@@ -299,7 +321,10 @@ function formatCompactCurrency(value: number): string {
                     <IconifyIcon icon="mdi:crown" class="size-6" />
                   </div>
                   <div class="podium-medal medal-gold">1</div>
-                  <div class="podium-name podium-name-hero" :title="bdRanking[0]?.bd_name || bdRanking[0]?.bd_code">
+                  <div
+                    class="podium-name podium-name-hero"
+                    :title="bdRanking[0]?.bd_name || bdRanking[0]?.bd_code"
+                  >
                     {{ bdRanking[0]?.bd_name || bdRanking[0]?.bd_code }}
                   </div>
                   <div class="podium-gmv podium-gmv-hero">
@@ -307,7 +332,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-gold">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">1</span>
                 </div>
               </div>
@@ -320,7 +345,10 @@ function formatCompactCurrency(value: number): string {
               >
                 <div class="podium-header">
                   <div class="podium-medal medal-bronze">3</div>
-                  <div class="podium-name" :title="bdRanking[2]?.bd_name || bdRanking[2]?.bd_code">
+                  <div
+                    class="podium-name"
+                    :title="bdRanking[2]?.bd_name || bdRanking[2]?.bd_code"
+                  >
                     {{ bdRanking[2]?.bd_name || bdRanking[2]?.bd_code }}
                   </div>
                   <div class="podium-gmv">
@@ -328,7 +356,7 @@ function formatCompactCurrency(value: number): string {
                   </div>
                 </div>
                 <div class="podium-block podium-block-bronze">
-                  <div class="podium-block-glare" />
+                  <div class="podium-block-glare"></div>
                   <span class="podium-block-num">3</span>
                 </div>
               </div>
@@ -362,8 +390,8 @@ function formatCompactCurrency(value: number): string {
   --podium-gold-stop-3: #d97706;
   --podium-gold-stop-4: #b45309;
   --podium-gold-glare: #fde68a;
-  --podium-gold-shadow: 0 4px 20px rgb(180 83 9 / 25%),
-    0 1px 0 rgb(255 255 255 / 25%) inset;
+  --podium-gold-shadow:
+    0 4px 20px rgb(180 83 9 / 25%), 0 1px 0 rgb(255 255 255 / 25%) inset;
 
   /* Podium block silver */
   --podium-silver-stop-1: #e2e8f0;
@@ -371,8 +399,8 @@ function formatCompactCurrency(value: number): string {
   --podium-silver-stop-3: #94a3b8;
   --podium-silver-stop-4: #64748b;
   --podium-silver-glare: #f1f5f9;
-  --podium-silver-shadow: 0 4px 16px rgb(100 116 139 / 20%),
-    0 1px 0 rgb(255 255 255 / 30%) inset;
+  --podium-silver-shadow:
+    0 4px 16px rgb(100 116 139 / 20%), 0 1px 0 rgb(255 255 255 / 30%) inset;
 
   /* Podium block bronze */
   --podium-bronze-stop-1: #fbbf7c;
@@ -380,8 +408,8 @@ function formatCompactCurrency(value: number): string {
   --podium-bronze-stop-3: #c2410c;
   --podium-bronze-stop-4: #9a3412;
   --podium-bronze-glare: #fed7aa;
-  --podium-bronze-shadow: 0 4px 16px rgb(154 52 18 / 22%),
-    0 1px 0 rgb(255 255 255 / 20%) inset;
+  --podium-bronze-shadow:
+    0 4px 16px rgb(154 52 18 / 22%), 0 1px 0 rgb(255 255 255 / 20%) inset;
 
   /* Medal badges */
   --medal-gold-from: #fbbf24;
@@ -415,7 +443,6 @@ function formatCompactCurrency(value: number): string {
   --icon-blue-fg: #60a5fa;
   --icon-amber-bg: #3d2e0a;
   --icon-amber-fg: #fbbf24;
-
   --card-border-color: #1e293b;
   --card-shadow: 0 1px 3px rgb(0 0 0 / 20%);
   --card-shadow-hover: 0 8px 24px rgb(0 0 0 / 40%);
@@ -426,8 +453,8 @@ function formatCompactCurrency(value: number): string {
   --podium-gold-stop-3: #f59e0b;
   --podium-gold-stop-4: #b45309;
   --podium-gold-glare: #fef3c7;
-  --podium-gold-shadow: 0 4px 24px rgb(251 191 36 / 35%),
-    0 1px 0 rgb(255 255 255 / 20%) inset;
+  --podium-gold-shadow:
+    0 4px 24px rgb(251 191 36 / 35%), 0 1px 0 rgb(255 255 255 / 20%) inset;
 
   /* Silver stays visible */
   --podium-silver-stop-1: #cbd5e1;
@@ -435,8 +462,8 @@ function formatCompactCurrency(value: number): string {
   --podium-silver-stop-3: #64748b;
   --podium-silver-stop-4: #475569;
   --podium-silver-glare: #e2e8f0;
-  --podium-silver-shadow: 0 4px 20px rgb(148 163 184 / 25%),
-    0 1px 0 rgb(255 255 255 / 15%) inset;
+  --podium-silver-shadow:
+    0 4px 20px rgb(148 163 184 / 25%), 0 1px 0 rgb(255 255 255 / 15%) inset;
 
   /* Bronze with brighter warmth */
   --podium-bronze-stop-1: #fed7aa;
@@ -444,16 +471,14 @@ function formatCompactCurrency(value: number): string {
   --podium-bronze-stop-3: #ea8c44;
   --podium-bronze-stop-4: #9a3412;
   --podium-bronze-glare: #ffedd5;
-  --podium-bronze-shadow: 0 4px 20px rgb(234 140 68 / 28%),
-    0 1px 0 rgb(255 255 255 / 15%) inset;
-
+  --podium-bronze-shadow:
+    0 4px 20px rgb(234 140 68 / 28%), 0 1px 0 rgb(255 255 255 / 15%) inset;
   --medal-gold-from: #fcd34d;
   --medal-gold-to: #f59e0b;
   --medal-silver-from: #cbd5e1;
   --medal-silver-to: #64748b;
   --medal-bronze-from: #fed7aa;
   --medal-bronze-to: #ea8c44;
-
   --text-label: #94a3b8;
   --text-value: #f1f5f9;
   --text-sub: #64748b;
@@ -463,7 +488,6 @@ function formatCompactCurrency(value: number): string {
   --text-podium-gmv-hero: #fbbf24;
   --text-ranking-name: #cbd5e1;
   --text-ranking-gmv: #94a3b8;
-
   --divider-color: #1e293b;
   --ranking-row-hover: #1e293b;
   --ranking-rank-bg: #1e293b;
@@ -508,12 +532,14 @@ function formatCompactCurrency(value: number): string {
    Card
    ================================================ */
 .analytics-card {
-  border-radius: 24px !important;
-  border: 1px solid var(--card-border-color) !important;
-  box-shadow: var(--card-shadow);
-  transition: box-shadow 0.25s ease-out, transform 0.25s ease-out;
-  cursor: pointer;
   overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--card-border-color) !important;
+  border-radius: 24px !important;
+  box-shadow: var(--card-shadow);
+  transition:
+    box-shadow 0.25s ease-out,
+    transform 0.25s ease-out;
 }
 
 .analytics-card:hover {
@@ -536,8 +562,8 @@ function formatCompactCurrency(value: number): string {
    ================================================ */
 .card-inner {
   display: flex;
-  align-items: flex-start;
   gap: 12px;
+  align-items: flex-start;
 }
 
 @media (min-width: 768px) {
@@ -548,12 +574,12 @@ function formatCompactCurrency(value: number): string {
 
 .card-icon {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  flex-shrink: 0;
 }
 
 @media (min-width: 768px) {
@@ -565,13 +591,13 @@ function formatCompactCurrency(value: number): string {
 }
 
 .card-icon-blue {
-  background: var(--icon-blue-bg);
   color: var(--icon-blue-fg);
+  background: var(--icon-blue-bg);
 }
 
 .card-icon-amber {
-  background: var(--icon-amber-bg);
   color: var(--icon-amber-fg);
+  background: var(--icon-amber-bg);
 }
 
 .card-text {
@@ -580,8 +606,8 @@ function formatCompactCurrency(value: number): string {
 
 .card-label {
   font-size: 12px;
-  color: var(--text-label);
   line-height: 1;
+  color: var(--text-label);
 }
 
 @media (min-width: 768px) {
@@ -591,11 +617,11 @@ function formatCompactCurrency(value: number): string {
 }
 
 .card-value {
+  margin-top: 6px;
   font-size: 22px;
   font-weight: 700;
-  color: var(--text-value);
   line-height: 1.2;
-  margin-top: 6px;
+  color: var(--text-value);
   letter-spacing: -0.5px;
 }
 
@@ -614,9 +640,9 @@ function formatCompactCurrency(value: number): string {
 }
 
 .card-sub {
+  margin-top: 2px;
   font-size: 10px;
   color: var(--text-sub);
-  margin-top: 2px;
   letter-spacing: 0.3px;
 }
 
@@ -630,8 +656,8 @@ function formatCompactCurrency(value: number): string {
    Ranking Card Shell
    ================================================ */
 .ranking-card-shell :deep(.ant-card-head) {
-  border-bottom: 1px solid var(--divider-color);
   padding: 14px 20px;
+  border-bottom: 1px solid var(--divider-color);
 }
 
 @media (min-width: 768px) {
@@ -663,9 +689,9 @@ function formatCompactCurrency(value: number): string {
 
 .empty-placeholder {
   display: flex;
-  min-height: 260px;
   align-items: center;
   justify-content: center;
+  min-height: 260px;
 }
 
 .podium-wrapper {
@@ -677,11 +703,11 @@ function formatCompactCurrency(value: number): string {
    ================================================ */
 .podium-stage {
   display: flex;
+  gap: 8px;
   align-items: flex-end;
   justify-content: center;
-  gap: 8px;
-  padding: 0 2px 8px;
   min-height: 240px;
+  padding: 0 2px 8px;
 }
 
 @media (min-width: 480px) {
@@ -707,9 +733,9 @@ function formatCompactCurrency(value: number): string {
 }
 
 .podium-col-center {
+  z-index: 2;
   width: 36%;
   max-width: 140px;
-  z-index: 2;
 }
 
 /* ================================================
@@ -731,8 +757,8 @@ function formatCompactCurrency(value: number): string {
 
 /* Crown */
 .podium-crown {
-  color: #f59e0b;
   margin-bottom: 2px;
+  color: #f59e0b;
   filter: drop-shadow(0 2px 4px rgb(245 158 11 / 35%));
 }
 
@@ -748,13 +774,13 @@ function formatCompactCurrency(value: number): string {
   justify-content: center;
   width: 26px;
   height: 26px;
-  border-radius: 50%;
+  margin-bottom: 4px;
   font-size: 12px;
   font-weight: 800;
   color: #fff;
-  margin-bottom: 4px;
-  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
   text-shadow: 0 1px 2px rgb(0 0 0 / 15%);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 15%);
 }
 
 @media (min-width: 480px) {
@@ -766,56 +792,68 @@ function formatCompactCurrency(value: number): string {
 }
 
 .medal-gold {
-  background: linear-gradient(135deg, var(--medal-gold-from), var(--medal-gold-to));
+  background: linear-gradient(
+    135deg,
+    var(--medal-gold-from),
+    var(--medal-gold-to)
+  );
 }
 
 .medal-silver {
-  background: linear-gradient(135deg, var(--medal-silver-from), var(--medal-silver-to));
+  background: linear-gradient(
+    135deg,
+    var(--medal-silver-from),
+    var(--medal-silver-to)
+  );
 }
 
 .medal-bronze {
-  background: linear-gradient(135deg, var(--medal-bronze-from), var(--medal-bronze-to));
+  background: linear-gradient(
+    135deg,
+    var(--medal-bronze-from),
+    var(--medal-bronze-to)
+  );
 }
 
 /* Name */
 .podium-name {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--text-podium-name);
   max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 500;
   line-height: 1.3;
+  color: var(--text-podium-name);
+  white-space: nowrap;
 }
 
 @media (min-width: 480px) {
   .podium-name {
-    font-size: 12px;
     max-width: 120px;
+    font-size: 12px;
   }
 }
 
 .podium-name-hero {
+  max-width: 120px;
   font-size: 12px;
   font-weight: 700;
   color: var(--text-podium-hero);
-  max-width: 120px;
 }
 
 @media (min-width: 480px) {
   .podium-name-hero {
-    font-size: 14px;
     max-width: 140px;
+    font-size: 14px;
   }
 }
 
 /* GMV */
 .podium-gmv {
+  margin-top: 1px;
   font-size: 11px;
   font-weight: 600;
   color: var(--text-podium-gmv);
-  margin-top: 1px;
 }
 
 .podium-gmv-hero {
@@ -829,12 +867,12 @@ function formatCompactCurrency(value: number): string {
    ================================================ */
 .podium-block {
   position: relative;
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px 8px 0 0;
+  width: 100%;
   overflow: hidden;
+  border-radius: 8px 8px 0 0;
 }
 
 @media (min-width: 480px) {
@@ -867,8 +905,8 @@ function formatCompactCurrency(value: number): string {
 .podium-block-glare {
   position: absolute;
   top: 0;
-  left: 10%;
   right: 10%;
+  left: 10%;
   height: 4px;
   border-radius: 0 0 6px 6px;
   opacity: 0.6;
@@ -928,8 +966,8 @@ function formatCompactCurrency(value: number): string {
   font-weight: 900;
   color: rgb(255 255 255 / 22%);
   letter-spacing: -2px;
-  user-select: none;
   text-shadow: 0 2px 4px rgb(0 0 0 / 8%);
+  user-select: none;
 }
 
 .podium-col-center .podium-block-num {
@@ -969,9 +1007,9 @@ function formatCompactCurrency(value: number): string {
    Ranking List (4-10)
    ================================================ */
 .ranking-list {
-  border-top: 1px solid var(--divider-color);
   padding-top: 12px;
   margin-top: 4px;
+  border-top: 1px solid var(--divider-color);
 }
 
 .ranking-row {
@@ -980,9 +1018,9 @@ function formatCompactCurrency(value: number): string {
   justify-content: space-between;
   padding: 8px 12px;
   border-radius: 10px;
-  transition: background-color 0.2s;
   opacity: 0;
   transform: translateY(12px);
+  transition: background-color 0.2s;
 }
 
 .animate-ready .ranking-row {
@@ -1002,40 +1040,40 @@ function formatCompactCurrency(value: number): string {
 
 .ranking-row-left {
   display: flex;
-  align-items: center;
   gap: 10px;
+  align-items: center;
   min-width: 0;
 }
 
 .ranking-row-rank {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 22px;
   height: 22px;
-  border-radius: 6px;
-  background: var(--ranking-rank-bg);
   font-size: 12px;
   font-weight: 600;
   color: var(--ranking-rank-fg);
-  flex-shrink: 0;
+  background: var(--ranking-rank-bg);
+  border-radius: 6px;
 }
 
 .ranking-row-name {
-  font-size: 13px;
-  color: var(--text-ranking-name);
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 13px;
+  color: var(--text-ranking-name);
   white-space: nowrap;
 }
 
 .ranking-row-gmv {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-ranking-gmv);
   flex-shrink: 0;
   margin-left: 12px;
+  font-size: 13px;
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
+  color: var(--text-ranking-gmv);
 }
 
 /* ================================================

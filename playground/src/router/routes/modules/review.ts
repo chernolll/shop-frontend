@@ -66,6 +66,17 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
+      {
+        name: 'Review-PublicTaskApplications',
+        path: '/review/public-task-applications',
+        component: () =>
+          import('#/views/review/public-task-applications/index.vue'),
+        meta: {
+          icon: 'lucide:file-check',
+          title: $t('page.review.publicTaskApplications.list-title'),
+          authority: [RoleEnum.ADMIN],
+        },
+      },
     ],
   },
 ];
