@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { SyncTrackingResult } from '#/api/review/sample';
 import type { ThailandAddress } from '#/views/bd/sop/detail/ThailandAddressSelect.vue';
 
 import { computed, h, reactive, ref } from 'vue';
@@ -30,6 +31,7 @@ import {
   getReviewSampleList,
   reviewSample,
   ReviewSampleApi,
+  syncTracking,
 } from '#/api/review/sample';
 import { $t } from '#/locales';
 import ThailandAddressSelect from '#/views/bd/sop/detail/ThailandAddressSelect.vue';
@@ -48,6 +50,10 @@ const reviewModalOpen = ref(false);
 const reviewSubmitting = ref(false);
 const reviewTargetRows = ref<ReviewSampleApi.ListItem[]>([]);
 const reviewModalMode = ref<ReviewModalMode>('review');
+
+const syncResultModalVisible = ref(false);
+const syncTrackingLoading = ref(false);
+const syncResultData = ref<null | SyncTrackingResult>(null);
 
 const reviewForm = reactive<{
   city: string;
@@ -533,8 +539,19 @@ async function handleExportOrders() {
   }
 }
 
-function handleSyncTracking() {
-  message.info('功能开发中');
+async function handleSyncTracking() {
+  if (syncTrackingLoading.value) return;
+  try {
+    syncTrackingLoading.value = true;
+    const result = await syncTracking();
+    syncResultData.value = result;
+    syncResultModalVisible.value = true;
+  } catch (error) {
+    console.error('同步物流号失败:', error);
+    message.error($t('page.review.sample.messages.sync-tracking-result-title'));
+  } finally {
+    syncTrackingLoading.value = false;
+  }
 }
 
 const formOptions: VbenFormProps = {
@@ -809,7 +826,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <Button @click="handleExportOrders">
             {{ $t('page.review.sample.actions.export-orders') }}
           </Button>
-          <Button @click="handleSyncTracking">
+          <Button :loading="syncTrackingLoading" @click="handleSyncTracking">
             {{ $t('page.review.sample.actions.sync-tracking') }}
           </Button>
         </Space>
@@ -1057,6 +1074,127 @@ const [Grid, gridApi] = useVbenVxeGrid({
       </div>
     </Modal>
   </Page>
+
+  <!-- 同步物流单号结果弹窗 -->
+  <Modal
+    :open="syncResultModalVisible"
+    :footer="null"
+    :title="$t('page.review.sample.messages.sync-tracking-result-title')"
+    width="650px"
+    @cancel="syncResultModalVisible = false"
+  >
+    <template v-if="syncResultData">
+      <div class="sync-result-body">
+        <div class="sync-result-summary">
+          {{
+            $t('page.review.sample.messages.sync-tracking-total', [
+              String(syncResultData.total),
+            ])
+          }}
+        </div>
+
+        <!-- 匹配成功 -->
+        <div
+          v-if="syncResultData.matched.length > 0"
+          class="sync-result-section"
+        >
+          <div class="sync-result-heading sync-result-matched">
+            {{
+              $t('page.review.sample.messages.sync-tracking-matched', [
+                String(syncResultData.matched.length),
+              ])
+            }}
+          </div>
+          <div class="sync-result-table">
+            <div class="sync-result-row sync-result-header">
+              <span>{{
+                $t('page.review.sample.messages.sync-tracking-order')
+              }}</span>
+              <span>{{
+                $t('page.review.sample.messages.sync-tracking-number')
+              }}</span>
+              <span>{{
+                $t('page.review.sample.messages.sync-tracking-logistics')
+              }}</span>
+            </div>
+            <div
+              v-for="item in syncResultData.matched"
+              :key="item.order_number"
+              class="sync-result-row"
+            >
+              <span class="font-mono text-sm">{{ item.order_number }}</span>
+              <span
+                class="font-mono text-sm text-green-600 dark:text-green-400"
+                >{{ item.tracking_number }}</span>
+              <span class="text-sm text-muted-foreground">{{
+                item.logistics_name || '-'
+              }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 未匹配 -->
+        <div
+          v-if="syncResultData.unmatched.length > 0"
+          class="sync-result-section"
+        >
+          <div class="sync-result-heading sync-result-unmatched">
+            {{
+              $t('page.review.sample.messages.sync-tracking-unmatched', [
+                String(syncResultData.unmatched.length),
+              ])
+            }}
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <Tag
+              v-for="orderNo in syncResultData.unmatched"
+              :key="orderNo"
+              color="orange"
+            >
+              {{ orderNo }}
+            </Tag>
+          </div>
+        </div>
+
+        <!-- 错误 -->
+        <div
+          v-if="syncResultData.errors.length > 0"
+          class="sync-result-section"
+        >
+          <div class="sync-result-heading sync-result-errors">
+            {{
+              $t('page.review.sample.messages.sync-tracking-errors', [
+                String(syncResultData.errors.length),
+              ])
+            }}
+          </div>
+          <div class="flex flex-col gap-1">
+            <div
+              v-for="(err, idx) in syncResultData.errors"
+              :key="idx"
+              class="rounded bg-red-50 px-3 py-1.5 text-sm text-red-600 dark:bg-red-900/30 dark:text-red-400"
+            >
+              {{ err }}
+            </div>
+          </div>
+        </div>
+
+        <!-- 无结果 -->
+        <div
+          v-if="syncResultData.total === 0"
+          class="py-8 text-center text-sm text-muted-foreground"
+        >
+          {{ $t('page.review.sample.messages.sync-tracking-no-result') }}
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <Button @click="syncResultModalVisible = false">
+          {{ $t('common.confirm') }}
+        </Button>
+      </div>
+    </template>
+  </Modal>
 </template>
 
 <style>
@@ -1074,5 +1212,81 @@ const [Grid, gridApi] = useVbenVxeGrid({
   padding-right: 8px;
   padding-bottom: 24px;
   overflow-y: auto;
+}
+
+.sync-result-summary {
+  margin-bottom: 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+html.dark .sync-result-summary {
+  color: #e5e7eb;
+}
+
+.sync-result-section {
+  margin-bottom: 16px;
+}
+
+.sync-result-heading {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sync-result-matched {
+  color: #16a34a;
+}
+
+.sync-result-unmatched {
+  color: #ea580c;
+}
+
+.sync-result-errors {
+  color: #dc2626;
+}
+
+.sync-result-table {
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+}
+
+html.dark .sync-result-table {
+  border-color: #374151;
+}
+
+.sync-result-row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+html.dark .sync-result-row {
+  border-bottom-color: #1f2937;
+}
+
+.sync-result-row:last-child {
+  border-bottom: none;
+}
+
+.sync-result-row span {
+  flex: 1;
+  min-width: 0;
+}
+
+.sync-result-header {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  background: #f9fafb;
+}
+
+html.dark .sync-result-header {
+  color: #9ca3af;
+  background: #1f2937;
 }
 </style>

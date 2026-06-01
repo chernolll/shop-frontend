@@ -494,7 +494,16 @@
         "review-success": "审核成功，共处理 {0} 条",
         "select-records-first": "请先选择至少 1 条记录",
         "status-required": "请选择目标状态",
-        "unknown-failure": "未知失败原因"
+        "unknown-failure": "未知失败原因",
+        "sync-tracking-result-title": "同步物流单号结果",
+        "sync-tracking-total": "本次共 {0} 条待同步记录",
+        "sync-tracking-matched": "✅ 匹配成功（{0} 条）",
+        "sync-tracking-unmatched": "⚠️ 未匹配到物流号（{0} 条）",
+        "sync-tracking-errors": "❌ 处理异常（{0} 条）",
+        "sync-tracking-order": "订单号",
+        "sync-tracking-number": "物流单号",
+        "sync-tracking-logistics": "物流方式",
+        "sync-tracking-no-result": "暂无待同步记录"
       }
     }
   },

@@ -37,11 +37,11 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 ### 审核模块 (`/review`) — ADMIN 专用
 
 | 路由 | 视图 | 行数 |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | `/review/kol-prepare` | `views/review/kol-prepare/index.vue` | 837 |
 | `/review/kol-prepare/:task_id` | `views/review/kol-prepare/detail.vue` | 70 隐藏路由 |
 | `/review/budget` | `views/review/budget/index.vue` | 612 |
-| `/review/sample` | `views/review/sample/index.vue` | 934 |
+| `/review/sample` | `views/review/sample/index.vue` | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
 | `/review/remittance` | `views/review/remittance/index.vue` | 1379 |
 | `/review/public-task-applications` | `views/review/public-task-applications/index.vue` | 300+ |
 

@@ -134,3 +134,23 @@ export async function exportSampleOrders(): Promise<Blob> {
   );
   return response.data as Blob;
 }
+
+/** 同步物流单号结果项 */
+export interface SyncTrackingItem {
+  logistics_name: string;
+  order_number: string;
+  tracking_number: string;
+}
+
+/** 同步物流单号结果 */
+export interface SyncTrackingResult {
+  errors: string[];
+  matched: SyncTrackingItem[];
+  total: number;
+  unmatched: string[];
+}
+
+/** Admin 同步物流单号（从 ERP 系统获取物流号并更新） */
+export async function syncTracking(): Promise<SyncTrackingResult> {
+  return requestClient.post('/admin/sop/sample/sync-tracking');
+}
