@@ -119,14 +119,18 @@ export async function reviewSample(data: ReviewSampleApi.ReviewParams) {
 }
 
 /** Admin 导出订单表格（返回 Excel 文件 blob，绕过 JSON 拦截器） */
-export async function exportSampleOrders() {
+export async function exportSampleOrders(): Promise<Blob> {
   const accessStore = useAccessStore();
-  return baseRequestClient.get('/admin/sop/sample/export-orders', {
-    headers: {
-      Authorization: accessStore.accessToken
-        ? `Bearer ${accessStore.accessToken}`
-        : undefined,
+  const response = await baseRequestClient.get(
+    '/admin/sop/sample/export-orders',
+    {
+      headers: {
+        Authorization: accessStore.accessToken
+          ? `Bearer ${accessStore.accessToken}`
+          : undefined,
+      },
+      responseType: 'blob',
     },
-    responseType: 'blob',
-  });
+  );
+  return response.data as Blob;
 }

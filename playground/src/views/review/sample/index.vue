@@ -527,7 +527,8 @@ async function handleExportOrders() {
     a.remove();
     URL.revokeObjectURL(url);
     message.success('导出成功');
-  } catch {
+  } catch (error) {
+    console.error('导出失败:', error);
     message.error('导出失败');
   }
 }
