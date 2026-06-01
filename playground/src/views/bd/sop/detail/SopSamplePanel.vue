@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { TableColumnsType } from 'ant-design-vue';
 
+import type { ThailandAddress } from './ThailandAddressSelect.vue';
+
 import { computed, h, reactive, ref, watch } from 'vue';
 
 import { formatDateTime } from '@vben/utils';
@@ -11,7 +13,6 @@ import {
   Card,
   Col,
   Empty,
-  Input,
   InputNumber,
   message,
   Modal,
@@ -31,6 +32,8 @@ import {
   getBDSopSampleRequests,
 } from '#/api/bd/sop';
 import { $t } from '#/locales';
+
+import ThailandAddressSelect from './ThailandAddressSelect.vue';
 
 const props = defineProps<{
   sopId: number;
@@ -56,10 +59,10 @@ const actionSubmittingIds = ref<number[]>([]);
 const confirmReceivedSubmitting = ref(false);
 
 const createForm = reactive<{
-  address: string;
+  address: ThailandAddress;
   quantity: number | undefined;
 }>({
-  address: '',
+  address: {},
   quantity: undefined,
 });
 
@@ -69,6 +72,35 @@ const isSampleStage = computed(
 const canCreateRequest = computed(
   () => Boolean(sampleDetail.value) && isSampleStage.value,
 );
+
+function formatAddressForCopy(detail?: BDSopApi.SampleDetail | null) {
+  if (!detail) return '';
+  const name = detail.contact_name ?? '';
+  const addr = detail.detail_address ?? detail.address ?? '';
+  const city = detail.city ?? '';
+  const province = detail.province ?? '';
+  const postcode = detail.postcode ?? '';
+  const phone = detail.contact_phone ?? '';
+  const lines = [
+    name,
+    addr,
+    [city, province].filter(Boolean).join(' '),
+    postcode,
+    phone,
+  ];
+  return lines.join('\n').trim();
+}
+
+async function copyAddressToClipboard(detail?: BDSopApi.SampleDetail | null) {
+  const text = formatAddressForCopy(detail);
+  if (!text) return;
+  try {
+    await navigator.clipboard.writeText(text);
+    message.success($t('page.bd.sop.detail.sample.copy-address-success'));
+  } catch {
+    message.error($t('page.bd.sop.detail.sample.copy-address-failed'));
+  }
+}
 const hasReceiptAddress = computed(() =>
   Boolean(sampleDetail.value?.address?.trim()),
 );
@@ -313,7 +345,7 @@ function extractErrorMessage(error: any, fallbackKey: string) {
 }
 
 function resetCreateForm() {
-  createForm.address = '';
+  createForm.address = {};
   createForm.quantity = undefined;
 }
 
@@ -389,9 +421,10 @@ async function handleCreateRequest() {
     return;
   }
 
-  const address = createForm.address.trim();
-  if (!address) {
-    message.warning($t('page.bd.sop.detail.sample.address-required'));
+  const addr = createForm.address;
+  const detailAddr = addr.detail_address?.trim();
+  if (!detailAddr) {
+    message.warning($t('page.bd.sop.detail.sample.detail-address-required'));
     return;
   }
 
@@ -404,7 +437,14 @@ async function handleCreateRequest() {
   try {
     createSubmitting.value = true;
     await createBDSopSampleRequest({
-      address,
+      address: detailAddr,
+      city: addr.city,
+      contact_name: addr.contact_name,
+      contact_phone: addr.contact_phone,
+      detail_address: addr.detail_address,
+      district: addr.district,
+      postcode: addr.postcode,
+      province: addr.province,
       quantity,
       task_sop_id: props.sopId,
     });
@@ -607,12 +647,75 @@ watch(
 
                     <div class="sm:col-span-2">
                       <div
-                        class="text-xs uppercase tracking-wide text-muted-foreground"
+                        class="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground"
                       >
-                        {{ $t('page.bd.sop.detail.sample.address-label') }}
+                        <span>{{
+                          $t('page.bd.sop.detail.sample.address-label')
+                        }}</span>
+                        <Button
+                          type="link"
+                          size="small"
+                          @click="copyAddressToClipboard(sampleDetail)"
+                        >
+                          {{ $t('page.bd.sop.detail.sample.copy-address') }}
+                        </Button>
                       </div>
-                      <div class="mt-1 whitespace-pre-wrap text-foreground">
-                        {{ sampleDetail.address || '-' }}
+                      <div
+                        class="mt-1 whitespace-pre-wrap text-sm leading-6 text-foreground"
+                      >
+                        <template v-if="sampleDetail">
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t('page.bd.sop.detail.sample.contact-name-label')
+                            }}</span>:
+                            {{ sampleDetail.contact_name || '-' }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t('page.bd.sop.detail.sample.postcode-label')
+                            }}</span>:
+                            {{ sampleDetail.postcode || '-' }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t('page.bd.sop.detail.sample.district-label')
+                            }}</span>:
+                            {{ sampleDetail.district || '-' }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t('page.bd.sop.detail.sample.city-label')
+                            }}</span>:
+                            {{ sampleDetail.city || '-' }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t('page.bd.sop.detail.sample.province-label')
+                            }}</span>:
+                            {{ sampleDetail.province || '-' }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t(
+                                'page.bd.sop.detail.sample.detail-address-label',
+                              )
+                            }}</span>:
+                            {{
+                              sampleDetail.detail_address ||
+                              sampleDetail.address ||
+                              '-'
+                            }}
+                          </div>
+                          <div>
+                            <span class="text-muted-foreground">{{
+                              $t(
+                                'page.bd.sop.detail.sample.contact-phone-label',
+                              )
+                            }}</span>:
+                            {{ sampleDetail.contact_phone || '-' }}
+                          </div>
+                        </template>
+                        <template v-else>-</template>
                       </div>
                     </div>
 
@@ -807,16 +910,7 @@ watch(
       @ok="handleCreateRequest"
     >
       <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="space-y-2">
-          <div class="text-sm font-medium text-foreground">
-            {{ $t('page.bd.sop.detail.sample.address-label') }}
-          </div>
-          <Input.TextArea
-            v-model:value="createForm.address"
-            :auto-size="{ minRows: 3, maxRows: 6 }"
-            :placeholder="$t('page.bd.sop.detail.sample.address-placeholder')"
-          />
-        </div>
+        <ThailandAddressSelect v-model="createForm.address" />
 
         <div class="space-y-2">
           <div class="text-sm font-medium text-foreground">

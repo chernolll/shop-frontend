@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
+import type { ThailandAddress } from '#/views/bd/sop/detail/ThailandAddressSelect.vue';
 
 import { computed, h, reactive, ref } from 'vue';
 
@@ -30,6 +31,7 @@ import {
   ReviewSampleApi,
 } from '#/api/review/sample';
 import { $t } from '#/locales';
+import ThailandAddressSelect from '#/views/bd/sop/detail/ThailandAddressSelect.vue';
 import {
   resolveDateRange,
   toOptionalNumber,
@@ -47,9 +49,15 @@ const reviewTargetRows = ref<ReviewSampleApi.ListItem[]>([]);
 const reviewModalMode = ref<ReviewModalMode>('review');
 
 const reviewForm = reactive<{
-  address: string;
+  city: string;
+  contact_name: string;
+  contact_phone: string;
   delivered_at: string | undefined;
+  detail_address: string;
+  district: string;
   package_received: 0 | 1 | undefined;
+  postcode: string;
+  province: string;
   quantity: number | undefined;
   reason: string;
   status:
@@ -59,9 +67,15 @@ const reviewForm = reactive<{
     | undefined;
   tracking_number: string;
 }>({
-  address: '',
+  city: '',
+  contact_name: '',
+  contact_phone: '',
   delivered_at: undefined,
+  detail_address: '',
+  district: '',
   package_received: 0,
+  postcode: '',
+  province: '',
   quantity: undefined,
   reason: '',
   status: ReviewSampleApi.RequestStatus.APPROVED,
@@ -69,6 +83,28 @@ const reviewForm = reactive<{
 });
 
 const selectedCount = computed(() => selectedRows.value.length);
+const thailandAddress = computed<ThailandAddress>({
+  get() {
+    return {
+      postcode: reviewForm.postcode || undefined,
+      district: reviewForm.district || undefined,
+      city: reviewForm.city || undefined,
+      province: reviewForm.province || undefined,
+      detail_address: reviewForm.detail_address || undefined,
+      contact_name: reviewForm.contact_name || undefined,
+      contact_phone: reviewForm.contact_phone || undefined,
+    };
+  },
+  set(val) {
+    reviewForm.postcode = val.postcode ?? '';
+    reviewForm.district = val.district ?? '';
+    reviewForm.city = val.city ?? '';
+    reviewForm.province = val.province ?? '';
+    reviewForm.detail_address = val.detail_address ?? '';
+    reviewForm.contact_name = val.contact_name ?? '';
+    reviewForm.contact_phone = val.contact_phone ?? '';
+  },
+});
 const isBatchMode = computed(() => reviewTargetRows.value.length > 1);
 const isUpdateMode = computed(() => reviewModalMode.value === 'update');
 const isRejecting = computed(
@@ -269,9 +305,15 @@ function clearSelections() {
 }
 
 function resetReviewForm() {
-  reviewForm.address = '';
+  reviewForm.city = '';
+  reviewForm.contact_name = '';
+  reviewForm.contact_phone = '';
   reviewForm.delivered_at = undefined;
+  reviewForm.detail_address = '';
+  reviewForm.district = '';
   reviewForm.package_received = 0;
+  reviewForm.postcode = '';
+  reviewForm.province = '';
   reviewForm.quantity = undefined;
   reviewForm.reason = '';
   reviewForm.status = ReviewSampleApi.RequestStatus.APPROVED;
@@ -279,11 +321,17 @@ function resetReviewForm() {
 }
 
 function seedReviewForm(row?: ReviewSampleApi.ListItem) {
-  reviewForm.address = row?.address ?? '';
+  reviewForm.city = row?.city ?? '';
+  reviewForm.contact_name = row?.contact_name ?? '';
+  reviewForm.contact_phone = row?.contact_phone ?? '';
   reviewForm.delivered_at = row?.delivered_at
     ? String(row.delivered_at)
     : undefined;
+  reviewForm.detail_address = row?.detail_address ?? '';
+  reviewForm.district = row?.district ?? '';
   reviewForm.package_received = row?.package_received ?? 0;
+  reviewForm.postcode = row?.postcode ?? '';
+  reviewForm.province = row?.province ?? '';
   reviewForm.quantity = row?.quantity ? Number(row.quantity) : undefined;
   reviewForm.reason = row?.review_reason ?? '';
   reviewForm.status = ReviewSampleApi.RequestStatus.APPROVED;
@@ -384,9 +432,15 @@ async function submitReview() {
       list: reviewTargetRows.value.map((row) => {
         if (isUpdateMode.value) {
           return {
-            address: reviewForm.address.trim() || undefined,
+            city: reviewForm.city.trim() || undefined,
+            contact_name: reviewForm.contact_name.trim() || undefined,
+            contact_phone: reviewForm.contact_phone.trim() || undefined,
             delivered_at: toOptionalNumber(reviewForm.delivered_at),
+            detail_address: reviewForm.detail_address.trim() || undefined,
+            district: reviewForm.district.trim() || undefined,
             package_received: reviewForm.package_received,
+            postcode: reviewForm.postcode.trim() || undefined,
+            province: reviewForm.province.trim() || undefined,
             quantity: reviewForm.quantity,
             request_id: row.request_id,
             tracking_number: reviewForm.tracking_number.trim() || undefined,
@@ -402,9 +456,15 @@ async function submitReview() {
         }
 
         return {
-          address: reviewForm.address.trim() || undefined,
+          city: reviewForm.city.trim() || undefined,
+          contact_name: reviewForm.contact_name.trim() || undefined,
+          contact_phone: reviewForm.contact_phone.trim() || undefined,
           delivered_at: toOptionalNumber(reviewForm.delivered_at),
+          detail_address: reviewForm.detail_address.trim() || undefined,
+          district: reviewForm.district.trim() || undefined,
           package_received: reviewForm.package_received,
+          postcode: reviewForm.postcode.trim() || undefined,
+          province: reviewForm.province.trim() || undefined,
           quantity: reviewForm.quantity,
           reason: reason || undefined,
           request_id: row.request_id,
@@ -541,9 +601,39 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
       title: $t('page.review.sample.columns.kol-id'),
     },
     {
-      field: 'address',
-      minWidth: 220,
-      title: $t('page.review.sample.columns.address'),
+      field: 'postcode',
+      minWidth: 100,
+      title: $t('page.review.sample.columns.postcode'),
+    },
+    {
+      field: 'district',
+      minWidth: 140,
+      title: $t('page.review.sample.columns.district'),
+    },
+    {
+      field: 'city',
+      minWidth: 130,
+      title: $t('page.review.sample.columns.city'),
+    },
+    {
+      field: 'province',
+      minWidth: 130,
+      title: $t('page.review.sample.columns.province'),
+    },
+    {
+      field: 'detail_address',
+      minWidth: 200,
+      title: $t('page.review.sample.columns.detail-address'),
+    },
+    {
+      field: 'contact_name',
+      minWidth: 120,
+      title: $t('page.review.sample.columns.contact-name'),
+    },
+    {
+      field: 'contact_phone',
+      minWidth: 130,
+      title: $t('page.review.sample.columns.contact-phone'),
     },
     {
       field: 'quantity',
@@ -552,7 +642,7 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
     },
     {
       field: 'status',
-      minWidth: 120,
+      minWidth: 140,
       slots: { default: 'status' },
       title: $t('page.review.sample.columns.status'),
     },
@@ -573,12 +663,6 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
       minWidth: 180,
       slots: { default: 'delivered_at' },
       title: $t('page.review.sample.columns.delivered-at'),
-    },
-    {
-      field: 'package_received',
-      minWidth: 130,
-      slots: { default: 'package_received' },
-      title: $t('page.review.sample.columns.package-received'),
     },
     {
       field: 'review_reason',
@@ -713,9 +797,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
       </template>
 
       <template #status="{ row }">
-        <Tag :color="getRequestStatusColor(row.status)">
-          {{ getRequestStatusText(row.status) }}
-        </Tag>
+        <Space size="small">
+          <Tag :color="getRequestStatusColor(row.status)">
+            {{ getRequestStatusText(row.status) }}
+          </Tag>
+          <Tag
+            v-if="row.status === ReviewSampleApi.RequestStatus.APPROVED"
+            :color="getPackageReceivedColor(row.package_received)"
+          >
+            {{ getPackageReceivedText(row.package_received) }}
+          </Tag>
+        </Space>
       </template>
 
       <template #sop_status="{ row }">
@@ -730,12 +822,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       <template #delivered_at="{ row }">
         <span>{{ formatTimestamp(row.delivered_at) }}</span>
-      </template>
-
-      <template #package_received="{ row }">
-        <Tag :color="getPackageReceivedColor(row.package_received)">
-          {{ getPackageReceivedText(row.package_received) }}
-        </Tag>
       </template>
 
       <template #review_reason="{ row }">
@@ -795,140 +881,155 @@ const [Grid, gridApi] = useVbenVxeGrid({
       "
       :cancel-text="$t('common.cancel')"
       :title="reviewModalTitle"
+      class="review-sample-modal"
+      width="55%"
       @cancel="closeReviewModal"
       @ok="submitReview"
     >
-      <Form layout="vertical" class="pt-2">
-        <div class="mb-4 text-sm leading-6 text-muted-foreground">
-          {{
-            isUpdateMode
-              ? $t('page.review.sample.update-modal.description')
-              : $t('page.review.sample.review-modal.description', [
-                  String(reviewTargetRows.length),
+      <div class="review-form-scroll">
+        <Form layout="vertical" class="pt-2">
+          <div class="mb-4 text-sm leading-6 text-muted-foreground">
+            {{
+              isUpdateMode
+                ? $t('page.review.sample.update-modal.description')
+                : $t('page.review.sample.review-modal.description', [
+                    String(reviewTargetRows.length),
+                  ])
+            }}
+          </div>
+
+          <div
+            v-if="reviewTargetRows.length === 1 && !isUpdateMode"
+            class="mb-4 rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
+          >
+            <div>
+              {{
+                $t('page.review.sample.review-modal.single-kol', [
+                  reviewTargetRows[0]?.kol_id ?? '-',
                 ])
-          }}
-        </div>
-
-        <div
-          v-if="reviewTargetRows.length === 1"
-          class="mb-4 rounded-xl border border-border bg-muted/40 p-4 text-sm leading-6"
-        >
-          <div>
-            {{
-              $t('page.review.sample.review-modal.single-kol', [
-                reviewTargetRows[0]?.kol_id ?? '-',
-              ])
-            }}
+              }}
+            </div>
+            <div>
+              {{
+                $t('page.review.sample.review-modal.single-quantity', [
+                  String(reviewTargetRows[0]?.quantity ?? '-'),
+                ])
+              }}
+            </div>
           </div>
-          <div>
-            {{
-              $t('page.review.sample.review-modal.single-quantity', [
-                String(reviewTargetRows[0]?.quantity ?? '-'),
-              ])
-            }}
-          </div>
-        </div>
 
-        <FormItem
-          v-if="!isUpdateMode"
-          :label="$t('page.review.sample.review-modal.status-label')"
-        >
-          <Select
-            v-model:value="reviewForm.status"
-            class="w-full"
-            :options="reviewStatusOptions"
-            :placeholder="
-              $t('page.review.sample.review-modal.status-placeholder')
-            "
-          />
-        </FormItem>
-
-        <template v-if="!isBatchMode">
           <FormItem
-            :label="$t('page.review.sample.review-modal.address-label')"
+            v-if="!isUpdateMode"
+            :label="$t('page.review.sample.review-modal.status-label')"
+          >
+            <Select
+              v-model:value="reviewForm.status"
+              class="w-full"
+              :options="reviewStatusOptions"
+              :placeholder="
+                $t('page.review.sample.review-modal.status-placeholder')
+              "
+            />
+          </FormItem>
+
+          <template v-if="!isBatchMode">
+            <ThailandAddressSelect
+              v-model="thailandAddress"
+              label-prefix="page.review.sample.review-modal"
+            />
+
+            <FormItem
+              :label="$t('page.review.sample.review-modal.quantity-label')"
+            >
+              <InputNumber
+                v-model:value="reviewForm.quantity"
+                class="w-full"
+                :min="1"
+                :precision="0"
+                :placeholder="
+                  $t('page.review.sample.review-modal.quantity-placeholder')
+                "
+              />
+            </FormItem>
+
+            <FormItem
+              :label="
+                $t('page.review.sample.review-modal.tracking-number-label')
+              "
+            >
+              <Input
+                v-model:value="reviewForm.tracking_number"
+                :maxlength="100"
+                :placeholder="
+                  $t(
+                    'page.review.sample.review-modal.tracking-number-placeholder',
+                  )
+                "
+              />
+            </FormItem>
+
+            <FormItem
+              :label="$t('page.review.sample.review-modal.delivered-at-label')"
+            >
+              <DatePicker
+                v-model:value="reviewForm.delivered_at"
+                class="w-full"
+                show-time
+                value-format="x"
+              />
+            </FormItem>
+
+            <FormItem
+              :label="
+                $t('page.review.sample.review-modal.package-received-label')
+              "
+            >
+              <Select
+                v-model:value="reviewForm.package_received"
+                class="w-full"
+                :options="packageReceivedOptions"
+              />
+            </FormItem>
+          </template>
+
+          <FormItem
+            v-if="!isUpdateMode"
+            :label="$t('page.review.sample.review-modal.reason-label')"
           >
             <Input.TextArea
-              v-model:value="reviewForm.address"
-              :auto-size="{ minRows: 3, maxRows: 6 }"
+              v-model:value="reviewForm.reason"
+              :auto-size="{ minRows: 4, maxRows: 8 }"
               :maxlength="500"
               :placeholder="
-                $t('page.review.sample.review-modal.address-placeholder')
+                isRejecting
+                  ? $t(
+                      'page.review.sample.review-modal.reject-reason-placeholder',
+                    )
+                  : $t('page.review.sample.review-modal.reason-placeholder')
               "
               show-count
             />
           </FormItem>
-
-          <FormItem
-            :label="$t('page.review.sample.review-modal.quantity-label')"
-          >
-            <InputNumber
-              v-model:value="reviewForm.quantity"
-              class="w-full"
-              :min="1"
-              :precision="0"
-              :placeholder="
-                $t('page.review.sample.review-modal.quantity-placeholder')
-              "
-            />
-          </FormItem>
-
-          <FormItem
-            :label="$t('page.review.sample.review-modal.tracking-number-label')"
-          >
-            <Input
-              v-model:value="reviewForm.tracking_number"
-              :maxlength="100"
-              :placeholder="
-                $t(
-                  'page.review.sample.review-modal.tracking-number-placeholder',
-                )
-              "
-            />
-          </FormItem>
-
-          <FormItem
-            :label="$t('page.review.sample.review-modal.delivered-at-label')"
-          >
-            <DatePicker
-              v-model:value="reviewForm.delivered_at"
-              class="w-full"
-              show-time
-              value-format="x"
-            />
-          </FormItem>
-
-          <FormItem
-            :label="
-              $t('page.review.sample.review-modal.package-received-label')
-            "
-          >
-            <Select
-              v-model:value="reviewForm.package_received"
-              class="w-full"
-              :options="packageReceivedOptions"
-            />
-          </FormItem>
-        </template>
-
-        <FormItem
-          v-if="!isUpdateMode"
-          :label="$t('page.review.sample.review-modal.reason-label')"
-        >
-          <Input.TextArea
-            v-model:value="reviewForm.reason"
-            :auto-size="{ minRows: 4, maxRows: 8 }"
-            :maxlength="500"
-            :placeholder="
-              isRejecting
-                ? $t(
-                    'page.review.sample.review-modal.reject-reason-placeholder',
-                  )
-                : $t('page.review.sample.review-modal.reason-placeholder')
-            "
-            show-count
-          />
-        </FormItem>
-      </Form>
+        </Form>
+      </div>
     </Modal>
   </Page>
 </template>
+
+<style>
+.review-sample-modal {
+  min-width: 520px;
+}
+
+.review-sample-modal .ant-modal-body {
+  padding-bottom: 0;
+  overflow-y: hidden;
+}
+
+.review-form-scroll {
+  max-height: calc(80vh - 180px);
+  padding-right: 8px;
+  padding-bottom: 24px;
+  overflow-y: auto;
+}
+</style>

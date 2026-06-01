@@ -244,10 +244,8 @@ function formatCurrency(value: number): string {
       <template #deadline="{ row }">
         <span v-if="row.deadline">{{ formatDate(row.deadline) }}</span>
         <Tag v-else color="green">
-{{
-          $t('page.bd.publicTasks.deadline.long-term')
-        }}
-</Tag>
+          {{ $t('page.bd.publicTasks.deadline.long-term') }}
+        </Tag>
       </template>
       <template #budget="{ row }">
         <Tag :color="row.budget === 1 ? 'green' : 'default'">

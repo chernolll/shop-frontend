@@ -103,10 +103,17 @@ export namespace BDSopApi {
 
   export interface SampleDetail {
     address: string;
+    city: null | string;
+    contact_name: null | string;
+    contact_phone: null | string;
     delivered_at: null | number;
+    detail_address: null | string;
+    district: null | string;
     has_budget: 0 | 1;
     package_received: 0 | 1;
+    postcode: null | string;
     product_url: null | string;
+    province: null | string;
     quantity: number;
     sop_status: Status;
     task_sop_id: number;
@@ -120,8 +127,15 @@ export namespace BDSopApi {
 
   export interface SampleRequestItem {
     address: string;
+    city: null | string;
+    contact_name: null | string;
+    contact_phone: null | string;
     created_at: number;
+    detail_address: null | string;
+    district: null | string;
+    postcode: null | string;
     product_listing_id: number;
+    province: null | string;
     quantity: number;
     request_id: number;
     review_reason: null | string;
@@ -140,8 +154,15 @@ export namespace BDSopApi {
   }
 
   export interface CreateSampleRequestParams {
-    address: string;
+    address?: string;
+    city?: string;
+    contact_name?: string;
+    contact_phone?: string;
+    detail_address?: string;
+    district?: string;
     package_received?: 0 | 1;
+    postcode?: string;
+    province?: string;
     quantity: number;
     task_sop_id: number | string;
   }

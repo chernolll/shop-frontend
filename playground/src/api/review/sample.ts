@@ -30,12 +30,19 @@ export namespace ReviewSampleApi {
   export interface ListItem {
     address: string;
     bd_code: string;
+    city: null | string;
+    contact_name: null | string;
+    contact_phone: null | string;
     created_at: number;
     delivered_at: null | number;
+    detail_address: null | string;
+    district: null | string;
     kol_id: string;
     package_received: 0 | 1;
+    postcode: null | string;
     product_listing_id: number;
     product_url: string;
+    province: null | string;
     quantity: number;
     request_id: number;
     review_reason: null | string;
@@ -60,8 +67,15 @@ export namespace ReviewSampleApi {
 
   export interface ReviewItem {
     address?: string;
+    city?: string;
+    contact_name?: string;
+    contact_phone?: string;
     delivered_at?: number;
+    detail_address?: string;
+    district?: string;
     package_received?: 0 | 1;
+    postcode?: string;
+    province?: string;
     quantity?: number;
     reason?: string;
     request_id: number | string;
