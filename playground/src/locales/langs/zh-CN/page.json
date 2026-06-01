@@ -398,6 +398,7 @@
         "district": "区",
         "kol-id": "达人 ID",
         "operation": "操作",
+        "order-number": "订单号",
         "package-received": "是否寄样",
         "postcode": "邮编",
         "product-url": "商品链接",
@@ -435,7 +436,9 @@
         "confirm-update": "确认更新",
         "confirm-submit": "确认提交",
         "review": "审核",
-        "update-logistics": "补充物流"
+        "update-logistics": "补充物流",
+        "export-orders": "导出订单表格",
+        "sync-tracking": "同步物流单号"
       },
       "review-modal": {
         "address-label": "收样地址",

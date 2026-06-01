@@ -398,6 +398,7 @@
         "district": "District",
         "kol-id": "KOL ID",
         "operation": "Action",
+        "order-number": "Order No.",
         "package-received": "Sample Sent",
         "postcode": "Postcode",
         "product-url": "Product URL",
@@ -435,7 +436,9 @@
         "confirm-update": "Confirm Update",
         "confirm-submit": "Confirm Submit",
         "review": "Review",
-        "update-logistics": "Update Logistics"
+        "update-logistics": "Update Logistics",
+        "export-orders": "Export Orders",
+        "sync-tracking": "Sync Tracking"
       },
       "review-modal": {
         "address-label": "Shipping Address",

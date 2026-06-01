@@ -1,4 +1,6 @@
-import { requestClient } from '../request';
+import { useAccessStore } from '@vben/stores';
+
+import { baseRequestClient, requestClient } from '../request';
 
 export namespace ReviewSampleApi {
   export enum RequestStatus {
@@ -38,6 +40,7 @@ export namespace ReviewSampleApi {
     detail_address: null | string;
     district: null | string;
     kol_id: string;
+    order_number: null | string;
     package_received: 0 | 1;
     postcode: null | string;
     product_listing_id: number;
@@ -113,4 +116,17 @@ export async function reviewSample(data: ReviewSampleApi.ReviewParams) {
     '/admin/sop/sample/review',
     data,
   );
+}
+
+/** Admin 导出订单表格（返回 Excel 文件 blob，绕过 JSON 拦截器） */
+export async function exportSampleOrders() {
+  const accessStore = useAccessStore();
+  return baseRequestClient.get('/admin/sop/sample/export-orders', {
+    headers: {
+      Authorization: accessStore.accessToken
+        ? `Bearer ${accessStore.accessToken}`
+        : undefined,
+    },
+    responseType: 'blob',
+  });
 }

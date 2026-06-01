@@ -26,6 +26,7 @@ import {
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getBriefAccessUrl } from '#/api/core';
 import {
+  exportSampleOrders,
   getReviewSampleList,
   reviewSample,
   ReviewSampleApi,
@@ -508,6 +509,33 @@ async function submitReview() {
   }
 }
 
+async function handleExportOrders() {
+  try {
+    const blob = (await exportSampleOrders()) as unknown as Blob;
+    if (!blob || blob.size === 0) {
+      message.warning('没有需要导出的记录');
+      return;
+    }
+
+    // 下载文件
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `orders_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    document.body.append(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    message.success('导出成功');
+  } catch {
+    message.error('导出失败');
+  }
+}
+
+function handleSyncTracking() {
+  message.info('功能开发中');
+}
+
 const formOptions: VbenFormProps = {
   collapsed: true,
   collapsedRows: 1,
@@ -599,6 +627,12 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
       field: 'kol_id',
       minWidth: 140,
       title: $t('page.review.sample.columns.kol-id'),
+    },
+    {
+      field: 'order_number',
+      minWidth: 160,
+      slots: { default: 'order_number' },
+      title: $t('page.review.sample.columns.order-number'),
     },
     {
       field: 'postcode',
@@ -771,6 +805,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
           >
             {{ $t('page.review.sample.actions.batch-review') }}
           </Button>
+          <Button @click="handleExportOrders">
+            {{ $t('page.review.sample.actions.export-orders') }}
+          </Button>
+          <Button @click="handleSyncTracking">
+            {{ $t('page.review.sample.actions.sync-tracking') }}
+          </Button>
         </Space>
       </template>
 
@@ -796,18 +836,20 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </a>
       </template>
 
+      <template #order_number="{ row }">
+        <span>{{ row.order_number || '-' }}</span>
+      </template>
+
       <template #status="{ row }">
-        <Space size="small">
-          <Tag :color="getRequestStatusColor(row.status)">
-            {{ getRequestStatusText(row.status) }}
-          </Tag>
-          <Tag
-            v-if="row.status === ReviewSampleApi.RequestStatus.APPROVED"
-            :color="getPackageReceivedColor(row.package_received)"
-          >
-            {{ getPackageReceivedText(row.package_received) }}
-          </Tag>
-        </Space>
+        <Tag
+          v-if="row.status === ReviewSampleApi.RequestStatus.APPROVED"
+          :color="getPackageReceivedColor(row.package_received)"
+        >
+          {{ getPackageReceivedText(row.package_received) }}
+        </Tag>
+        <Tag v-else :color="getRequestStatusColor(row.status)">
+          {{ getRequestStatusText(row.status) }}
+        </Tag>
       </template>
 
       <template #sop_status="{ row }">
