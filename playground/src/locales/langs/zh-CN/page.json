@@ -997,7 +997,7 @@
     },
     "taskProgress": "任务完成情况",
     "my-task": {
-      "title": "我的任务",
+      "title": "任务管理",
       "columns": {
         "action": "操作",
         "brief-url": "产品PDF链接",
@@ -1179,7 +1179,7 @@
     },
     "sop": {
       "title": "SOP",
-      "list-title": "SOP 列表",
+      "list-title": "SOP 管理",
       "list-complete-action": "完成SOP",
       "list-complete-confirm-content": "确认直接完成这条 SOP 吗？后端会根据当前流程状态进行校验。",
       "list-complete-confirm-title": "确认完成 SOP",

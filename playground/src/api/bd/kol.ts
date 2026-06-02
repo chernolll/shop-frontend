@@ -134,9 +134,9 @@ export namespace BdKolLibraryApi {
     kol_link: null | string;
     notes: null | string;
     participated_task_count: number;
-    task_codes: null | string;
     score: number;
     status: number;
+    task_codes: null | string;
     updated_at: number;
   }
 

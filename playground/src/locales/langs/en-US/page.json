@@ -996,7 +996,7 @@
       }
     },
     "my-task": {
-      "title": "My Task",
+      "title": "Task Management",
       "columns": {
         "action": "Action",
         "brief-url": "Brief PDF URL",
@@ -1178,7 +1178,7 @@
     },
     "sop": {
       "title": "SOP",
-      "list-title": "SOP List",
+      "list-title": "SOP Management",
       "list-complete-action": "Complete SOP",
       "list-complete-confirm-content": "Confirm completing this SOP directly? The backend will validate the current workflow state.",
       "list-complete-confirm-title": "Confirm SOP Completion",
