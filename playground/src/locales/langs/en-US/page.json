@@ -1707,6 +1707,17 @@
       "create-success": "Shop created successfully",
       "update-success": "Shop updated successfully",
       "delete-success": "Shop {0} deleted successfully"
+    },
+    "country": {
+      "TH": "Thailand",
+      "CN": "China",
+      "VN": "Vietnam",
+      "ID": "Indonesia",
+      "MY": "Malaysia",
+      "PH": "Philippines",
+      "SG": "Singapore",
+      "US": "United States",
+      "UK": "United Kingdom"
     }
   }
 }

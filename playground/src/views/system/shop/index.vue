@@ -52,17 +52,11 @@ const statusOptions = [
   { label: $t('page.shop.status.frozen'), value: 3 },
 ];
 
-const countryOptions = [
-  { label: 'TH', value: 'TH' },
-  { label: 'CN', value: 'CN' },
-  { label: 'VN', value: 'VN' },
-  { label: 'ID', value: 'ID' },
-  { label: 'MY', value: 'MY' },
-  { label: 'PH', value: 'PH' },
-  { label: 'SG', value: 'SG' },
-  { label: 'US', value: 'US' },
-  { label: 'UK', value: 'UK' },
-];
+const countryCodes = ['TH', 'CN', 'VN', 'ID', 'MY', 'PH', 'SG', 'US', 'UK'] as const;
+const countryOptions = countryCodes.map((code) => ({
+  label: `${code} - ${$t(`page.shop.country.${code}`)}`,
+  value: code,
+}));
 
 function getPlatformText(platform: number) {
   const opt = platformOptions.find((p) => p.value === platform);
@@ -318,8 +312,12 @@ const gridOptions: VxeTableGridOptions<AdminShopApi.ShopItem> = {
     },
     {
       field: 'country',
-      minWidth: 90,
+      minWidth: 160,
       title: $t('page.shop.columns.country'),
+      formatter: ({ cellValue }: { cellValue: string }) => {
+        const opt = countryOptions.find((c) => c.value === cellValue);
+        return opt?.label ?? cellValue;
+      },
     },
     {
       field: 'status',
