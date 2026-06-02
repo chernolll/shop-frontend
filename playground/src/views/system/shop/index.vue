@@ -52,6 +52,18 @@ const statusOptions = [
   { label: $t('page.shop.status.frozen'), value: 3 },
 ];
 
+const countryOptions = [
+  { label: 'TH', value: 'TH' },
+  { label: 'CN', value: 'CN' },
+  { label: 'VN', value: 'VN' },
+  { label: 'ID', value: 'ID' },
+  { label: 'MY', value: 'MY' },
+  { label: 'PH', value: 'PH' },
+  { label: 'SG', value: 'SG' },
+  { label: 'US', value: 'US' },
+  { label: 'UK', value: 'UK' },
+];
+
 function getPlatformText(platform: number) {
   const opt = platformOptions.find((p) => p.value === platform);
   return opt?.label ?? '-';
@@ -170,7 +182,7 @@ async function submitForm() {
     message.warning($t('page.shop.messages.shop-name-required'));
     return;
   }
-  if (!formState.country.trim()) {
+  if (!formState.country) {
     message.warning($t('page.shop.messages.country-required'));
     return;
   }
@@ -184,7 +196,7 @@ async function submitForm() {
         shop_type: formState.shop_type,
         platform_shop_id: formState.platform_shop_id.trim(),
         shop_name: formState.shop_name.trim(),
-        country: formState.country.trim().toUpperCase(),
+        country: formState.country,
         owner_user_id: formState.owner_user_id ?? null,
         status: formState.status ?? 1,
       });
@@ -195,7 +207,7 @@ async function submitForm() {
         shop_type: formState.shop_type,
         platform_shop_id: formState.platform_shop_id.trim(),
         shop_name: formState.shop_name.trim(),
-        country: formState.country.trim().toUpperCase(),
+        country: formState.country,
         owner_user_id: formState.owner_user_id ?? null,
         status: formState.status ?? 1,
       });
@@ -255,7 +267,11 @@ const formOptions: VbenFormProps = {
       label: $t('page.shop.filters.shop-type'),
     },
     {
-      component: 'Input',
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: countryOptions,
+      },
       fieldName: 'country',
       label: $t('page.shop.filters.country'),
     },
@@ -343,7 +359,7 @@ const gridOptions: VxeTableGridOptions<AdminShopApi.ShopItem> = {
           shop_name: formValues.shop_name?.trim() || undefined,
           platform: formValues.platform || undefined,
           shop_type: formValues.shop_type || undefined,
-          country: formValues.country?.trim() || undefined,
+          country: formValues.country || undefined,
           status: formValues.status || undefined,
           page: page.currentPage,
           page_size: page.pageSize,
@@ -439,9 +455,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </Form.Item>
 
         <Form.Item :label="$t('page.shop.form.country')" required>
-          <Input
+          <Select
             v-model:value="formState.country"
             :placeholder="$t('page.shop.form.country-placeholder')"
+            :options="countryOptions"
           />
         </Form.Item>
 
