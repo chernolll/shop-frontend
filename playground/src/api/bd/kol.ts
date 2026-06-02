@@ -122,20 +122,21 @@ export namespace BdKolLibraryApi {
   }
 
   export interface ListItem {
-    kol_id: string;
-    kol_link: null | string;
+    belong_bd_code: null | string;
+    completed_task_count: number;
+    contact_info: null | string;
+    cooperation_fee: number;
+    created_at: number;
+    entry_time: number;
     followers: number;
     is_paid: number;
-    cooperation_fee: number;
-    contact_info: null | string;
-    belong_bd_code: null | string;
-    participated_task_count: number;
-    completed_task_count: number;
-    status: number;
-    score: number;
+    kol_id: string;
+    kol_link: null | string;
     notes: null | string;
-    entry_time: number;
-    created_at: number;
+    participated_task_count: number;
+    task_codes: null | string;
+    score: number;
+    status: number;
     updated_at: number;
   }
 
@@ -148,9 +149,7 @@ export namespace BdKolLibraryApi {
 }
 
 /** BD 查询达人库（自己的正常达人，来自 kol 表） */
-export async function getBdKolLibraryList(
-  params: BdKolLibraryApi.ListParams,
-) {
+export async function getBdKolLibraryList(params: BdKolLibraryApi.ListParams) {
   return requestClient.get<BdKolLibraryApi.ListResult>('/bd/kol-library', {
     params,
   });

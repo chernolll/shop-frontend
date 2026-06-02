@@ -112,6 +112,11 @@ const gridOptions: VxeTableGridOptions<BdKolLibraryApi.ListItem> = {
         cellValue ? String(cellValue) : '-',
     },
     {
+      field: 'task_codes',
+      minWidth: 200,
+      title: $t('page.bd.kolLibrary.columns.task-codes'),
+    },
+    {
       field: 'participated_task_count',
       minWidth: 130,
       title: $t('page.bd.kolLibrary.columns.participated-task-count'),
@@ -182,7 +187,9 @@ const [Grid] = useVbenVxeGrid({
             stroke-linejoin="round"
             class="size-5"
           >
-            <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a2.5 2.5 0 0 1 0-5H20" />
+            <path
+              d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a2.5 2.5 0 0 1 0-5H20"
+            />
             <path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20" />
             <path d="M8 7h6" />
             <path d="M8 11h8" />
@@ -229,41 +236,41 @@ const [Grid] = useVbenVxeGrid({
   display: flex;
   align-items: stretch;
   margin-bottom: 16px;
+  overflow: hidden;
   background: hsl(var(--background));
   border: 1px solid hsl(var(--border));
   border-radius: 16px;
-  overflow: hidden;
   box-shadow: 0 1px 3px rgb(0 0 0 / 4%);
 }
 
 .page-header-accent {
-  width: 4px;
   flex-shrink: 0;
+  width: 4px;
   background: linear-gradient(180deg, #3b82f6, #6366f1);
 }
 
 .page-header-content {
   display: flex;
-  align-items: center;
   gap: 14px;
+  align-items: center;
   padding: 20px 24px;
 }
 
 .page-header-icon {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  border-radius: 12px;
   color: #3b82f6;
   background: #eff6ff;
-  flex-shrink: 0;
+  border-radius: 12px;
 }
 
 .dark .page-header-icon {
-  background: #1e3a5f;
   color: #60a5fa;
+  background: #1e3a5f;
 }
 
 .page-header-title {
@@ -277,7 +284,7 @@ const [Grid] = useVbenVxeGrid({
 .page-header-desc {
   margin: 2px 0 0;
   font-size: 13px;
-  color: hsl(var(--muted-foreground));
   line-height: 1.4;
+  color: hsl(var(--muted-foreground));
 }
 </style>

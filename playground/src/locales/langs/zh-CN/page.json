@@ -1532,7 +1532,8 @@
         "score": "评分",
         "participated-task-count": "参与任务数",
         "completed-task-count": "完成任务数",
-        "entry-time": "录入时间"
+        "entry-time": "录入时间",
+        "task-codes": "参与任务代号"
       },
       "status": {
         "normal": "正常",

@@ -1532,7 +1532,8 @@
         "score": "Score",
         "participated-task-count": "Tasks Participated",
         "completed-task-count": "Tasks Completed",
-        "entry-time": "Entry Time"
+        "entry-time": "Entry Time",
+        "task-codes": "Task Codes"
       },
       "status": {
         "normal": "Normal",
