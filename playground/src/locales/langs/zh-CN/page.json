@@ -314,7 +314,8 @@
         "upload-failed": "付款截图上传失败",
         "upload-file-invalid": "无效的上传文件",
         "upload-required": "请至少上传 1 张付款截图",
-        "upload-type-invalid": "仅支持上传 jpg / jpeg / png 图片"
+        "upload-type-invalid": "仅支持上传 jpg / jpeg / png 图片",
+        "no-data": "暂无数据"
       }
     },
     "budget": {

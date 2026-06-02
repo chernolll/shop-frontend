@@ -314,7 +314,8 @@
         "upload-failed": "Failed to upload the payment screenshot",
         "upload-file-invalid": "Invalid upload file",
         "upload-required": "Please upload at least one payment screenshot",
-        "upload-type-invalid": "Only jpg / jpeg / png images are allowed"
+        "upload-type-invalid": "Only jpg / jpeg / png images are allowed",
+        "no-data": "No data"
       }
     },
     "budget": {

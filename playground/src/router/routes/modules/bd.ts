@@ -42,7 +42,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('#/views/bd/public-tasks/index.vue'),
         meta: {
           icon: 'lucide:megaphone',
-          title: '公开任务',
+          title: $t('page.bd.publicTasks.list-title'),
           authority: [RoleEnum.BD],
         },
       },

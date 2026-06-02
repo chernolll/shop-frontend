@@ -18,7 +18,7 @@ export namespace ReviewRemittanceApi {
   }
 
   export interface ListParams {
-    bd_code?: string;
+    bd_code?: string | string[];
     kol_id?: string;
     page: number;
     page_size: number;

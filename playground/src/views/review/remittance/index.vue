@@ -383,7 +383,10 @@ const formOptions: VbenFormProps = {
   schema: [
     {
       component: 'Select',
-      componentProps: bdCodeSelectProps.value,
+      componentProps: () => ({
+        ...bdCodeSelectProps.value,
+        mode: 'multiple' as const,
+      }),
       fieldName: 'bd_code',
       label: $t('page.review.remittance.columns.bd-code'),
     },
@@ -575,7 +578,9 @@ const gridOptions: VxeTableGridOptions<ReviewRemittanceApi.ListItem> = {
         selectedRows.value = [];
         const submitTimeRange = resolveDateRange(formValues.submit_time_range);
         const result = await getReviewRemittanceList({
-          bd_code: formValues.bd_code?.trim() || undefined,
+          bd_code: Array.isArray(formValues.bd_code)
+            ? formValues.bd_code.join(',')
+            : formValues.bd_code?.trim() || undefined,
           kol_id: formValues.kol_id?.trim() || undefined,
           page: page.currentPage,
           page_size: page.pageSize,
