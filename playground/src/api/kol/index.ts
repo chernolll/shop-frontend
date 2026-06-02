@@ -51,6 +51,7 @@ export namespace AdminKolApi {
     kol_id: string;
     kol_link: null | string;
     notes: null | string;
+    participated_task_codes: null | string;
     participated_task_count: number;
     recent_two_month_gmv: number;
     recent_two_month_video_count: number;

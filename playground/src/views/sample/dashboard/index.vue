@@ -124,14 +124,14 @@ watch(
       class="dash-root"
     >
       <!-- Section header -->
-      <div class="dash-header">
+      <!-- <div class="dash-header">
         <h2 class="dash-title">
           {{ $t('page.sample.dashboard-title') }}
         </h2>
         <p class="dash-subtitle">
           {{ $t('page.sample.list-title') }}
         </p>
-      </div>
+      </div> -->
 
       <!-- Stat cards: mobile 2-col, tablet 3-col -->
       <div class="dash-grid">

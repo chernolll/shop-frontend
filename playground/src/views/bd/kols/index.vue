@@ -333,7 +333,7 @@ const gridOptions: VxeTableGridOptions<BdKolListApi.ListItem> = {
       title: $t('page.bd.kols.columns.is-duplicate'),
     },
     {
-      field: 'prepared_bd_name',
+      field: 'prepared_bd_code',
       minWidth: 140,
       title: $t('page.bd.kols.columns.prepared-bd'),
     },

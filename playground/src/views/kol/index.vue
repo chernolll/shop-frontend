@@ -620,7 +620,7 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
     },
     {
       field: 'contact_info',
-      minWidth: 180,
+      minWidth: 200,
       slots: { default: 'contact_info' },
       title: $t('page.kol.columns.contact-info'),
     },
@@ -631,10 +631,10 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
       title: $t('page.kol.columns.belong-bd-code'),
     },
     {
-      field: 'current_prepare_bd_code',
-      minWidth: 180,
-      slots: { default: 'current_prepare_bd_code' },
-      title: $t('page.kol.columns.current-prepare-bd-code'),
+      field: 'participated_task_codes',
+      minWidth: 200,
+      slots: { default: 'participated_task_codes' },
+      title: $t('page.kol.columns.participated-task-codes'),
     },
     {
       field: 'status',
@@ -685,19 +685,19 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
     },
     {
       field: 'notes',
-      minWidth: 180,
+      minWidth: 200,
       slots: { default: 'notes' },
       title: $t('page.kol.columns.notes'),
     },
     {
       field: 'entry_time',
-      minWidth: 180,
+      minWidth: 200,
       slots: { default: 'entry_time' },
       title: $t('page.kol.columns.entry-time'),
     },
     {
       field: 'updated_at',
-      minWidth: 180,
+      minWidth: 200,
       slots: { default: 'updated_at' },
       title: $t('page.kol.columns.updated-at'),
     },
@@ -719,8 +719,6 @@ const gridOptions: VxeTableGridOptions<AdminKolApi.ListItem> = {
         const scoreRange = resolveNumberRange(formValues.score_range);
         const result = await getAdminKolList({
           belong_bd_code: formValues.belong_bd_code?.trim() || undefined,
-          current_prepare_bd_code:
-            formValues.current_prepare_bd_code?.trim() || undefined,
           entry_time_end: entryTimeRange.end,
           entry_time_start: entryTimeRange.start,
           followers_max: followersRange.end,
@@ -817,19 +815,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <template #belong_bd_code="{ row }">
         <span>
           {{ row.belong_bd_code || '-' }}
-          <template v-if="row.belong_bd_name">
-            / {{ row.belong_bd_name }}
-          </template>
         </span>
       </template>
 
-      <template #current_prepare_bd_code="{ row }">
-        <span>
-          {{ row.current_prepare_bd_code || '-' }}
-          <template v-if="row.current_prepare_bd_name">
-            / {{ row.current_prepare_bd_name }}
-          </template>
-        </span>
+      <template #participated_task_codes="{ row }">
+        <span>{{ row.participated_task_codes || '-' }}</span>
       </template>
 
       <template #status="{ row }">
