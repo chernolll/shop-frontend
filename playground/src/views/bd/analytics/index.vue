@@ -10,6 +10,7 @@ import { usePreferences } from '@vben/preferences';
 import { Card, Empty, Skeleton } from 'ant-design-vue';
 
 import { getBDAnalytics } from '#/api';
+import { $t } from '#/locales';
 
 const { isDark } = usePreferences();
 const loading = ref(true);
@@ -80,7 +81,7 @@ function formatCompactCurrency(value: number): string {
       v-else-if="!data"
       class="flex min-h-[400px] items-center justify-center"
     >
-      <Empty description="数据加载失败，请稍后重试" />
+      <Empty :description="$t('page.bd.analytics.load-failed')" />
     </div>
 
     <!-- Dashboard content -->
@@ -98,11 +99,11 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:currency-usd" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">月度GMV</div>
+              <div class="card-label">{{ $t('page.bd.analytics.monthly-gmv') }}</div>
               <div class="card-value">
                 {{ formatCurrency(data.monthly_gmv) }}
               </div>
-              <div class="card-sub">GMV MTH.</div>
+              <div class="card-sub">{{ $t('page.bd.analytics.monthly-gmv-sub') }}</div>
             </div>
           </div>
         </Card>
@@ -114,11 +115,11 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:check-circle-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">月度任务完成数</div>
+              <div class="card-label">{{ $t('page.bd.analytics.monthly-tasks') }}</div>
               <div class="card-value">
                 {{ data.monthly_completed_tasks }}
               </div>
-              <div class="card-sub">Tasks completed MTH.</div>
+              <div class="card-sub">{{ $t('page.bd.analytics.monthly-tasks-sub') }}</div>
             </div>
           </div>
         </Card>
@@ -130,11 +131,11 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:clock-alert-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">14天内到期任务</div>
+              <div class="card-label">{{ $t('page.bd.analytics.deadline-14d') }}</div>
               <div class="card-value card-value-amber">
                 {{ data.deadline_14days_tasks }}
               </div>
-              <div class="card-sub">Deadline 14 days Tasks</div>
+              <div class="card-sub">{{ $t('page.bd.analytics.deadline-14d-sub') }}</div>
             </div>
           </div>
         </Card>
@@ -146,11 +147,11 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:account-group-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">达人总数</div>
+              <div class="card-label">{{ $t('page.bd.analytics.total-kols') }}</div>
               <div class="card-value">
                 {{ data.total_kols }}
               </div>
-              <div class="card-sub">Total KOL</div>
+              <div class="card-sub">{{ $t('page.bd.analytics.total-kols-sub') }}</div>
             </div>
           </div>
         </Card>
@@ -161,15 +162,15 @@ function formatCompactCurrency(value: number): string {
         <!-- KOL Sales Ranking -->
         <Card
           :bordered="false"
-          title="KOL 月度销售额排名"
+          :title="$t('page.bd.analytics.kol-ranking-title')"
           class="analytics-card ranking-card-shell"
         >
           <template #extra>
-            <span class="card-extra">Top 10 · 当月</span>
+            <span class="card-extra">{{ $t('page.bd.analytics.kol-ranking-extra') }}</span>
           </template>
 
           <div v-if="kolRanking.length === 0" class="empty-placeholder">
-            <Empty description="本月暂无销售数据" />
+            <Empty :description="$t('page.bd.analytics.no-sales-data')" />
           </div>
           <div v-else class="podium-wrapper">
             <!-- Podium: top 3 -->
@@ -274,15 +275,15 @@ function formatCompactCurrency(value: number): string {
         <!-- BD Sales Ranking -->
         <Card
           :bordered="false"
-          title="BD 月度销售额排名"
+          :title="$t('page.bd.analytics.bd-ranking-title')"
           class="analytics-card ranking-card-shell"
         >
           <template #extra>
-            <span class="card-extra">Top 3 · 当月</span>
+            <span class="card-extra">{{ $t('page.bd.analytics.bd-ranking-extra') }}</span>
           </template>
 
           <div v-if="bdRanking.length === 0" class="empty-placeholder">
-            <Empty description="本月暂无销售数据" />
+            <Empty :description="$t('page.bd.analytics.no-sales-data')" />
           </div>
           <div v-else class="podium-wrapper">
             <!-- Podium: top 3 -->
