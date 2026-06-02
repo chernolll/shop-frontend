@@ -42,9 +42,15 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 | `/review/kol-prepare` | `views/review/kol-prepare/index.vue` | 850+ | ✅ 审核状态列前置固定 + 已审核禁用按钮 |
 | `/review/kol-prepare/:task_id` | `views/review/kol-prepare/detail.vue` | 70 隐藏路由 |
 | `/review/budget` | `views/review/budget/index.vue` | 612 |
-| `/review/sample` | `views/review/sample/index.vue` | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
 | `/review/remittance` | `views/review/remittance/index.vue` | 1380+ | ✅ 修复附件图片显示为 base64 的问题 |
 | `/review/public-task-applications` | `views/review/public-task-applications/index.vue` | 300+ |
+
+### 寄样模块 (`/sample`) — ADMIN 专用
+
+| 路由 | 视图 | 行数 |
+| --- | --- | --- |
+| `/sample/list` | `views/sample/list/index.vue` | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
+| `/sample/dashboard` | `views/sample/dashboard/index.vue` | 占位 | 🚧 寄样看板 |
 
 ### 视频模块 + 系统管理 — ADMIN 专用
 
@@ -63,7 +69,7 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 - `playground/src/router/routes/modules/kol.ts` — KOL 管理
 - `playground/src/router/routes/modules/product.ts` — 商品管理
 - `playground/src/router/routes/modules/review.ts` — 审核模块
-- `playground/src/router/routes/modules/video.ts` — 视频管理
+- `playground/src/router/routes/modules/sample.ts` — 寄样模块- `playground/src/router/routes/modules/video.ts` — 视频管理
 - `playground/src/router/routes/modules/system.ts` — 系统管理
 
 ## SOP 详情现状

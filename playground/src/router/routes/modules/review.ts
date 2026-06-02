@@ -35,16 +35,6 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
-        name: 'Review-Sample',
-        path: '/review/sample',
-        component: () => import('#/views/review/sample/index.vue'),
-        meta: {
-          icon: 'lucide:package-search',
-          title: $t('page.review.sample.list-title'),
-          authority: [RoleEnum.ADMIN],
-        },
-      },
-      {
         name: 'Review-KolPrepare-Detail',
         path: '/review/kol-prepare/:task_id',
         component: () => import('#/views/review/kol-prepare/detail.vue'),

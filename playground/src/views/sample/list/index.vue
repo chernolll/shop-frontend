@@ -119,35 +119,35 @@ const isRejecting = computed(
 );
 const reviewModalTitle = computed(() => {
   if (isUpdateMode.value) {
-    return $t('page.review.sample.update-modal.title');
+    return $t('page.sample.update-modal.title');
   }
   return isBatchMode.value
-    ? $t('page.review.sample.review-modal.batch-title')
-    : $t('page.review.sample.review-modal.single-title');
+    ? $t('page.sample.review-modal.batch-title')
+    : $t('page.sample.review-modal.single-title');
 });
 
 const reviewStatusOptions = [
   {
-    label: $t('page.review.sample.status.approved'),
+    label: $t('page.sample.status.approved'),
     value: ReviewSampleApi.RequestStatus.APPROVED,
   },
   {
-    label: $t('page.review.sample.status.rejected'),
+    label: $t('page.sample.status.rejected'),
     value: ReviewSampleApi.RequestStatus.REJECTED,
   },
   {
-    label: $t('page.review.sample.status.abandoned'),
+    label: $t('page.sample.status.abandoned'),
     value: ReviewSampleApi.RequestStatus.ABANDONED,
   },
 ];
 
 const packageReceivedOptions = [
   {
-    label: $t('page.review.sample.package-received.no'),
+    label: $t('page.sample.package-received.no'),
     value: 0,
   },
   {
-    label: $t('page.review.sample.package-received.yes'),
+    label: $t('page.sample.package-received.yes'),
     value: 1,
   },
 ];
@@ -159,16 +159,16 @@ function formatTimestamp(value?: null | number) {
 function getRequestStatusText(status?: number) {
   switch (status) {
     case ReviewSampleApi.RequestStatus.ABANDONED: {
-      return $t('page.review.sample.status.abandoned');
+      return $t('page.sample.status.abandoned');
     }
     case ReviewSampleApi.RequestStatus.APPROVED: {
-      return $t('page.review.sample.status.approved');
+      return $t('page.sample.status.approved');
     }
     case ReviewSampleApi.RequestStatus.REJECTED: {
-      return $t('page.review.sample.status.rejected');
+      return $t('page.sample.status.rejected');
     }
     default: {
-      return $t('page.review.sample.status.pending');
+      return $t('page.sample.status.pending');
     }
   }
 }
@@ -193,22 +193,22 @@ function getRequestStatusColor(status?: number) {
 function getSopStatusText(status?: number) {
   switch (status) {
     case ReviewSampleApi.SopStatus.COMPLETED: {
-      return $t('page.review.sample.sop-status.completed');
+      return $t('page.sample.sop-status.completed');
     }
     case ReviewSampleApi.SopStatus.CONTACT: {
-      return $t('page.review.sample.sop-status.contact');
+      return $t('page.sample.sop-status.contact');
     }
     case ReviewSampleApi.SopStatus.RECOVER: {
-      return $t('page.review.sample.sop-status.recover');
+      return $t('page.sample.sop-status.recover');
     }
     case ReviewSampleApi.SopStatus.REMITTANCE: {
-      return $t('page.review.sample.sop-status.remittance');
+      return $t('page.sample.sop-status.remittance');
     }
     case ReviewSampleApi.SopStatus.SAMPLE: {
-      return $t('page.review.sample.sop-status.sample');
+      return $t('page.sample.sop-status.sample');
     }
     case ReviewSampleApi.SopStatus.TERMINATED: {
-      return $t('page.review.sample.sop-status.terminated');
+      return $t('page.sample.sop-status.terminated');
     }
     default: {
       return '-';
@@ -244,8 +244,8 @@ function getSopStatusColor(status?: number) {
 
 function getPackageReceivedText(value?: 0 | 1) {
   return value === 1
-    ? $t('page.review.sample.package-received.yes')
-    : $t('page.review.sample.package-received.no');
+    ? $t('page.sample.package-received.yes')
+    : $t('page.sample.package-received.no');
 }
 
 function getPackageReceivedColor(value?: 0 | 1) {
@@ -273,7 +273,7 @@ function isBriefLoading(row: ReviewSampleApi.ListItem) {
 async function openBriefPreview(row: ReviewSampleApi.ListItem) {
   const productListingId = Number(row.product_listing_id ?? 0);
   if (productListingId <= 0) {
-    message.warning($t('page.review.sample.messages.preview-pdf-unavailable'));
+    message.warning($t('page.sample.messages.preview-pdf-unavailable'));
     return;
   }
 
@@ -349,7 +349,7 @@ function openReviewModal(rows = selectedRows.value) {
   const targetRows = rows.filter((element) => canBatchReviewRow(element));
 
   if (targetRows.length === 0) {
-    message.warning($t('page.review.sample.messages.select-records-first'));
+    message.warning($t('page.sample.messages.select-records-first'));
     return;
   }
 
@@ -388,7 +388,7 @@ function showReviewFailures(result: ReviewSampleApi.ReviewResultItem[]) {
 
   Modal.warning({
     okText: $t('common.confirm'),
-    title: $t('page.review.sample.messages.partial-failed-title'),
+    title: $t('page.sample.messages.partial-failed-title'),
     content: h(
       'div',
       { class: 'space-y-2 text-sm leading-6' },
@@ -396,7 +396,7 @@ function showReviewFailures(result: ReviewSampleApi.ReviewResultItem[]) {
         h(
           'div',
           { key: item.request_id },
-          `#${item.request_id} ${item.reason || $t('page.review.sample.messages.unknown-failure')}`,
+          `#${item.request_id} ${item.reason || $t('page.sample.messages.unknown-failure')}`,
         ),
       ),
     ),
@@ -409,7 +409,7 @@ async function submitReview() {
   }
 
   if (!isUpdateMode.value && reviewForm.status === undefined) {
-    message.warning($t('page.review.sample.messages.status-required'));
+    message.warning($t('page.sample.messages.status-required'));
     return;
   }
 
@@ -419,7 +419,7 @@ async function submitReview() {
     reviewForm.status === ReviewSampleApi.RequestStatus.REJECTED &&
     !reason
   ) {
-    message.warning($t('page.review.sample.messages.reject-reason-required'));
+    message.warning($t('page.sample.messages.reject-reason-required'));
     return;
   }
 
@@ -428,7 +428,7 @@ async function submitReview() {
     reviewForm.quantity !== undefined &&
     reviewForm.quantity < 1
   ) {
-    message.warning($t('page.review.sample.messages.quantity-required'));
+    message.warning($t('page.sample.messages.quantity-required'));
     return;
   }
 
@@ -486,19 +486,19 @@ async function submitReview() {
 
     if (failedCount === 0) {
       message.success(
-        $t('page.review.sample.messages.review-success', [
+        $t('page.sample.messages.review-success', [
           String(successCount),
         ]),
       );
     } else if (successCount === 0) {
       message.warning(
-        $t('page.review.sample.messages.review-all-failed', [
+        $t('page.sample.messages.review-all-failed', [
           String(failedCount),
         ]),
       );
     } else {
       message.warning(
-        $t('page.review.sample.messages.review-partial-success', [
+        $t('page.sample.messages.review-partial-success', [
           String(successCount),
           String(failedCount),
         ]),
@@ -548,7 +548,7 @@ async function handleSyncTracking() {
     syncResultModalVisible.value = true;
   } catch (error) {
     console.error('同步物流号失败:', error);
-    message.error($t('page.review.sample.messages.sync-tracking-result-title'));
+    message.error($t('page.sample.messages.sync-tracking-result-title'));
   } finally {
     syncTrackingLoading.value = false;
   }
@@ -563,12 +563,12 @@ const formOptions: VbenFormProps = {
       component: 'Select',
       componentProps: () => bdCodeSelectProps.value,
       fieldName: 'bd_code',
-      label: $t('page.review.sample.filters.bd-code'),
+      label: $t('page.sample.filters.bd-code'),
     },
     {
       component: 'Input',
       fieldName: 'kol_id',
-      label: $t('page.review.sample.filters.kol-id'),
+      label: $t('page.sample.filters.kol-id'),
     },
     {
       component: 'Select',
@@ -576,7 +576,7 @@ const formOptions: VbenFormProps = {
         allowClear: true,
         options: [
           {
-            label: $t('page.review.sample.filters.all-status'),
+            label: $t('page.sample.filters.all-status'),
             value: undefined,
           },
           {
@@ -600,7 +600,7 @@ const formOptions: VbenFormProps = {
         ],
       },
       fieldName: 'status',
-      label: $t('page.review.sample.filters.status'),
+      label: $t('page.sample.filters.status'),
     },
     {
       component: 'RangePicker',
@@ -608,7 +608,7 @@ const formOptions: VbenFormProps = {
         valueFormat: 'x',
       },
       fieldName: 'created_time_range',
-      label: $t('page.review.sample.filters.created-time-range'),
+      label: $t('page.sample.filters.created-time-range'),
     },
   ],
   submitOnChange: false,
@@ -628,135 +628,135 @@ const gridOptions: VxeTableGridOptions<ReviewSampleApi.ListItem> = {
       field: 'brief',
       minWidth: 100,
       slots: { default: 'brief' },
-      title: $t('page.review.sample.columns.brief-url'),
+      title: $t('page.sample.columns.brief-url'),
     },
     {
       field: 'product_url',
       minWidth: 220,
       slots: { default: 'product_url' },
-      title: $t('page.review.sample.columns.product-url'),
+      title: $t('page.sample.columns.product-url'),
     },
     {
       field: 'bd_code',
       minWidth: 120,
-      title: $t('page.review.sample.columns.bd-code'),
+      title: $t('page.sample.columns.bd-code'),
     },
     {
       field: 'kol_id',
       minWidth: 140,
-      title: $t('page.review.sample.columns.kol-id'),
+      title: $t('page.sample.columns.kol-id'),
     },
     {
       field: 'order_number',
       minWidth: 160,
       slots: { default: 'order_number' },
-      title: $t('page.review.sample.columns.order-number'),
+      title: $t('page.sample.columns.order-number'),
     },
     {
       field: 'postcode',
       minWidth: 100,
-      title: $t('page.review.sample.columns.postcode'),
+      title: $t('page.sample.columns.postcode'),
     },
     {
       field: 'district',
       minWidth: 140,
-      title: $t('page.review.sample.columns.district'),
+      title: $t('page.sample.columns.district'),
     },
     {
       field: 'city',
       minWidth: 130,
-      title: $t('page.review.sample.columns.city'),
+      title: $t('page.sample.columns.city'),
     },
     {
       field: 'province',
       minWidth: 130,
-      title: $t('page.review.sample.columns.province'),
+      title: $t('page.sample.columns.province'),
     },
     {
       field: 'detail_address',
       minWidth: 200,
-      title: $t('page.review.sample.columns.detail-address'),
+      title: $t('page.sample.columns.detail-address'),
     },
     {
       field: 'contact_name',
       minWidth: 120,
-      title: $t('page.review.sample.columns.contact-name'),
+      title: $t('page.sample.columns.contact-name'),
     },
     {
       field: 'contact_phone',
       minWidth: 130,
-      title: $t('page.review.sample.columns.contact-phone'),
+      title: $t('page.sample.columns.contact-phone'),
     },
     {
       field: 'quantity',
       minWidth: 100,
-      title: $t('page.review.sample.columns.quantity'),
+      title: $t('page.sample.columns.quantity'),
     },
     {
       field: 'status',
       minWidth: 140,
       slots: { default: 'status' },
-      title: $t('page.review.sample.columns.status'),
+      title: $t('page.sample.columns.status'),
     },
     {
       field: 'sop_status',
       minWidth: 120,
       slots: { default: 'sop_status' },
-      title: $t('page.review.sample.columns.sop-status'),
+      title: $t('page.sample.columns.sop-status'),
     },
     {
       field: 'tracking_number',
       minWidth: 160,
       slots: { default: 'tracking_number' },
-      title: $t('page.review.sample.columns.tracking-number'),
+      title: $t('page.sample.columns.tracking-number'),
     },
     {
       field: 'delivered_at',
       minWidth: 180,
       slots: { default: 'delivered_at' },
-      title: $t('page.review.sample.columns.delivered-at'),
+      title: $t('page.sample.columns.delivered-at'),
     },
     {
       field: 'review_reason',
       minWidth: 180,
       slots: { default: 'review_reason' },
-      title: $t('page.review.sample.columns.review-reason'),
+      title: $t('page.sample.columns.review-reason'),
     },
     {
       field: 'reviewer_name',
       minWidth: 120,
-      title: $t('page.review.sample.columns.reviewer-name'),
+      title: $t('page.sample.columns.reviewer-name'),
     },
     {
       field: 'reviewed_at',
       minWidth: 180,
       slots: { default: 'reviewed_at' },
-      title: $t('page.review.sample.columns.reviewed-at'),
+      title: $t('page.sample.columns.reviewed-at'),
     },
     {
       field: 'created_at',
       minWidth: 180,
       slots: { default: 'created_at' },
-      title: $t('page.review.sample.columns.created-at'),
+      title: $t('page.sample.columns.created-at'),
     },
     {
       field: 'updated_at',
       minWidth: 180,
       slots: { default: 'updated_at' },
-      title: $t('page.review.sample.columns.updated-at'),
+      title: $t('page.sample.columns.updated-at'),
     },
     {
       field: 'terminate_remark',
       minWidth: 180,
       slots: { default: 'terminate_remark' },
-      title: $t('page.review.sample.columns.terminate-remark'),
+      title: $t('page.sample.columns.terminate-remark'),
     },
     {
       field: 'operation',
       fixed: 'right',
       minWidth: 120,
       slots: { default: 'operation' },
-      title: $t('page.review.sample.columns.operation'),
+      title: $t('page.sample.columns.operation'),
     },
   ],
   height: 'auto',
@@ -808,12 +808,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('page.review.sample.list-title')">
+    <Grid :table-title="$t('page.sample.list-title')">
       <template #toolbar-tools>
         <Space wrap>
           <Tag color="processing">
             {{
-              $t('page.review.sample.selected-count', [String(selectedCount)])
+              $t('page.sample.selected-count', [String(selectedCount)])
             }}
           </Tag>
           <Button
@@ -821,13 +821,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :disabled="selectedCount === 0"
             @click="openReviewModal()"
           >
-            {{ $t('page.review.sample.actions.batch-review') }}
+            {{ $t('page.sample.actions.batch-review') }}
           </Button>
           <Button @click="handleExportOrders">
-            {{ $t('page.review.sample.actions.export-orders') }}
+            {{ $t('page.sample.actions.export-orders') }}
           </Button>
           <Button :loading="syncTrackingLoading" @click="handleSyncTracking">
-            {{ $t('page.review.sample.actions.sync-tracking') }}
+            {{ $t('page.sample.actions.sync-tracking') }}
           </Button>
         </Space>
       </template>
@@ -912,7 +912,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
             size="small"
             @click="openReviewModal([row])"
           >
-            {{ $t('page.review.sample.actions.review') }}
+            {{ $t('page.sample.actions.review') }}
           </Button>
           <Button
             v-else-if="canUpdateRow(row)"
@@ -920,14 +920,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
             size="small"
             @click="openUpdateModal(row)"
           >
-            {{ $t('page.review.sample.actions.update-logistics') }}
+            {{ $t('page.sample.actions.update-logistics') }}
           </Button>
           <span v-else>-</span>
         </Space>
       </template>
 
       <template #empty>
-        <Empty :description="$t('page.review.sample.empty')" />
+        <Empty :description="$t('page.sample.empty')" />
       </template>
     </Grid>
 
@@ -936,8 +936,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
       :confirm-loading="reviewSubmitting"
       :ok-text="
         isUpdateMode
-          ? $t('page.review.sample.actions.confirm-update')
-          : $t('page.review.sample.actions.confirm-submit')
+          ? $t('page.sample.actions.confirm-update')
+          : $t('page.sample.actions.confirm-submit')
       "
       :cancel-text="$t('common.cancel')"
       :title="reviewModalTitle"
@@ -951,8 +951,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <div class="mb-4 text-sm leading-6 text-muted-foreground">
             {{
               isUpdateMode
-                ? $t('page.review.sample.update-modal.description')
-                : $t('page.review.sample.review-modal.description', [
+                ? $t('page.sample.update-modal.description')
+                : $t('page.sample.review-modal.description', [
                     String(reviewTargetRows.length),
                   ])
             }}
@@ -964,14 +964,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
           >
             <div>
               {{
-                $t('page.review.sample.review-modal.single-kol', [
+                $t('page.sample.review-modal.single-kol', [
                   reviewTargetRows[0]?.kol_id ?? '-',
                 ])
               }}
             </div>
             <div>
               {{
-                $t('page.review.sample.review-modal.single-quantity', [
+                $t('page.sample.review-modal.single-quantity', [
                   String(reviewTargetRows[0]?.quantity ?? '-'),
                 ])
               }}
@@ -980,14 +980,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
           <FormItem
             v-if="!isUpdateMode"
-            :label="$t('page.review.sample.review-modal.status-label')"
+            :label="$t('page.sample.review-modal.status-label')"
           >
             <Select
               v-model:value="reviewForm.status"
               class="w-full"
               :options="reviewStatusOptions"
               :placeholder="
-                $t('page.review.sample.review-modal.status-placeholder')
+                $t('page.sample.review-modal.status-placeholder')
               "
             />
           </FormItem>
@@ -995,11 +995,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <template v-if="!isBatchMode">
             <ThailandAddressSelect
               v-model="thailandAddress"
-              label-prefix="page.review.sample.review-modal"
+              label-prefix="page.sample.review-modal"
             />
 
             <FormItem
-              :label="$t('page.review.sample.review-modal.quantity-label')"
+              :label="$t('page.sample.review-modal.quantity-label')"
             >
               <InputNumber
                 v-model:value="reviewForm.quantity"
@@ -1007,14 +1007,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
                 :min="1"
                 :precision="0"
                 :placeholder="
-                  $t('page.review.sample.review-modal.quantity-placeholder')
+                  $t('page.sample.review-modal.quantity-placeholder')
                 "
               />
             </FormItem>
 
             <FormItem
               :label="
-                $t('page.review.sample.review-modal.tracking-number-label')
+                $t('page.sample.review-modal.tracking-number-label')
               "
             >
               <Input
@@ -1022,14 +1022,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
                 :maxlength="100"
                 :placeholder="
                   $t(
-                    'page.review.sample.review-modal.tracking-number-placeholder',
+                    'page.sample.review-modal.tracking-number-placeholder',
                   )
                 "
               />
             </FormItem>
 
             <FormItem
-              :label="$t('page.review.sample.review-modal.delivered-at-label')"
+              :label="$t('page.sample.review-modal.delivered-at-label')"
             >
               <DatePicker
                 v-model:value="reviewForm.delivered_at"
@@ -1041,7 +1041,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
             <FormItem
               :label="
-                $t('page.review.sample.review-modal.package-received-label')
+                $t('page.sample.review-modal.package-received-label')
               "
             >
               <Select
@@ -1054,7 +1054,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
           <FormItem
             v-if="!isUpdateMode"
-            :label="$t('page.review.sample.review-modal.reason-label')"
+            :label="$t('page.sample.review-modal.reason-label')"
           >
             <Input.TextArea
               v-model:value="reviewForm.reason"
@@ -1063,9 +1063,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
               :placeholder="
                 isRejecting
                   ? $t(
-                      'page.review.sample.review-modal.reject-reason-placeholder',
+                      'page.sample.review-modal.reject-reason-placeholder',
                     )
-                  : $t('page.review.sample.review-modal.reason-placeholder')
+                  : $t('page.sample.review-modal.reason-placeholder')
               "
               show-count
             />
@@ -1079,7 +1079,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
   <Modal
     :open="syncResultModalVisible"
     :footer="null"
-    :title="$t('page.review.sample.messages.sync-tracking-result-title')"
+    :title="$t('page.sample.messages.sync-tracking-result-title')"
     width="650px"
     @cancel="syncResultModalVisible = false"
   >
@@ -1087,7 +1087,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <div class="sync-result-body">
         <div class="sync-result-summary">
           {{
-            $t('page.review.sample.messages.sync-tracking-total', [
+            $t('page.sample.messages.sync-tracking-total', [
               String(syncResultData.total),
             ])
           }}
@@ -1100,7 +1100,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           <div class="sync-result-heading sync-result-matched">
             {{
-              $t('page.review.sample.messages.sync-tracking-matched', [
+              $t('page.sample.messages.sync-tracking-matched', [
                 String(syncResultData.matched.length),
               ])
             }}
@@ -1108,13 +1108,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <div class="sync-result-table">
             <div class="sync-result-row sync-result-header">
               <span>{{
-                $t('page.review.sample.messages.sync-tracking-order')
+                $t('page.sample.messages.sync-tracking-order')
               }}</span>
               <span>{{
-                $t('page.review.sample.messages.sync-tracking-number')
+                $t('page.sample.messages.sync-tracking-number')
               }}</span>
               <span>{{
-                $t('page.review.sample.messages.sync-tracking-logistics')
+                $t('page.sample.messages.sync-tracking-logistics')
               }}</span>
             </div>
             <div
@@ -1140,7 +1140,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           <div class="sync-result-heading sync-result-unmatched">
             {{
-              $t('page.review.sample.messages.sync-tracking-unmatched', [
+              $t('page.sample.messages.sync-tracking-unmatched', [
                 String(syncResultData.unmatched.length),
               ])
             }}
@@ -1163,7 +1163,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           <div class="sync-result-heading sync-result-errors">
             {{
-              $t('page.review.sample.messages.sync-tracking-errors', [
+              $t('page.sample.messages.sync-tracking-errors', [
                 String(syncResultData.errors.length),
               ])
             }}
@@ -1184,7 +1184,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           v-if="syncResultData.total === 0"
           class="py-8 text-center text-sm text-muted-foreground"
         >
-          {{ $t('page.review.sample.messages.sync-tracking-no-result') }}
+          {{ $t('page.sample.messages.sync-tracking-no-result') }}
         </div>
       </div>
 

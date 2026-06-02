@@ -52,7 +52,17 @@ const statusOptions = [
   { label: $t('page.shop.status.frozen'), value: 3 },
 ];
 
-const countryCodes = ['TH', 'CN', 'VN', 'ID', 'MY', 'PH', 'SG', 'US', 'UK'] as const;
+const countryCodes = [
+  'TH',
+  'CN',
+  'VN',
+  'ID',
+  'MY',
+  'PH',
+  'SG',
+  'US',
+  'UK',
+] as const;
 const countryOptions = countryCodes.map((code) => ({
   label: `${code} - ${$t(`page.shop.country.${code}`)}`,
   value: code,
