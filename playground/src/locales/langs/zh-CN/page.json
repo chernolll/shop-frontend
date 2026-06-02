@@ -642,6 +642,38 @@
       "score-invalid": "权重分不能小于 0",
       "unbind-success": "达人 {0} 解绑成功",
       "update-success": "达人信息保存成功"
+    },
+    "kolCandidate": {
+      "title": "达人筹备表",
+      "list-title": "筹备表列表",
+      "description": "查看所有BD提交的达人筹备记录。",
+      "filters": {
+        "bd-code": "BD 编码",
+        "kol-id": "达人 ID",
+        "prepared-bd-code": "Selected BD"
+      },
+      "columns": {
+        "kol-id": "达人 ID",
+        "kol-link": "达人主页链接",
+        "bd-code": "BD 编码",
+        "is-duplicate": "是否重复",
+        "prepared-bd": "Selected BD",
+        "has-belong-bd": "已有所属BD",
+        "followers": "粉丝数",
+        "status": "达人状态",
+        "entry-time": "录入时间",
+        "created-at": "提交时间"
+      },
+      "is-duplicate": {
+        "yes": "重复提交"
+      },
+      "has-belong-bd": {
+        "yes": "已有所属BD"
+      },
+      "status": {
+        "blacklist": "黑名单",
+        "lost": "流失"
+      }
     }
   },
   "product": {
@@ -823,63 +855,53 @@
     "title": "BD",
     "dashboard": "数据面板",
     "kols": {
-      "title": "达人列表",
-      "list-title": "达人列表",
-      "description": "支持查看我的达人与未归属达人，并可对可认领达人执行认领。",
-      "tabs": {
-        "my-kols": "我的达人",
-        "unassigned-kols": "未归属达人"
-      },
+      "title": "达人筹备表",
+      "list-title": "筹备表列表",
+      "description": "查看我提交的达人筹备记录。",
       "filters": {
-        "all-status": "全部达人状态",
         "kol-id": "达人 ID",
-        "status": "达人状态"
+        "prepared-bd-code": "Selected BD"
       },
       "columns": {
-        "belong-bd-code": "所属 BD",
-        "can-claim": "是否可认领",
-        "claim-block-reason": "不可认领原因",
-        "completed-task-count": "历史完成任务数",
-        "contact-info": "联系方式",
-        "cooperation-fee": "合作费",
-        "entry-time": "录入时间",
-        "followers": "粉丝数",
-        "is-paid": "是否付费",
         "kol-id": "达人 ID",
         "kol-link": "达人主页链接",
-        "notes": "备注",
-        "operation": "操作",
-        "participated-task-count": "历史参与任务数",
-        "score": "权重分",
+        "is-duplicate": "是否重复",
+        "prepared-bd": "Selected BD",
+        "has-belong-bd": "已有所属BD",
+        "followers": "粉丝数",
         "status": "达人状态",
-        "updated-at": "更新时间"
+        "entry-time": "录入时间",
+        "created-at": "提交时间",
+        "operation": "操作"
       },
       "actions": {
-        "claim": "认领",
-        "unbind": "解绑"
+        "create": "提交候选达人",
+        "delete": "移除候选"
+      },
+      "is-duplicate": {
+        "yes": "重复提交"
+      },
+      "has-belong-bd": {
+        "yes": "已有所属BD"
       },
       "status": {
         "blacklist": "黑名单",
-        "lost": "流失",
-        "normal": "正常"
+        "lost": "流失"
       },
-      "paid": {
-        "no": "否",
-        "yes": "是"
+      "delete": {
+        "confirm-title": "确认移除候选达人",
+        "confirm-content": "确认移除候选达人 {0} 吗？移除后该条记录将被删除。"
       },
-      "claim": {
-        "can-claim": "可认领",
-        "cannot-claim": "不可认领",
-        "confirm-content": "确认认领达人 {0} 吗？",
-        "confirm-title": "确认认领达人"
-      },
-      "unbind": {
-        "confirm-content": "确认解绑达人 {0} 吗？",
-        "confirm-title": "确认解绑达人"
+      "create": {
+        "title": "提交候选达人",
+        "kol-id-placeholder": "请输入达人ID",
+        "kol-link-placeholder": "请输入达人主页链接（可选）"
       },
       "messages": {
-        "claim-success": "达人 {0} 认领成功",
-        "unbind-success": "达人 {0} 解绑成功"
+        "create-success": "达人 {0} 提交成功",
+        "create-duplicate": "达人 {0} 已提交过（标记为重复）",
+        "delete-success": "候选达人已移除",
+        "kol-id-required": "请输入达人 ID"
       }
     },
     "videos": {
@@ -1147,7 +1169,6 @@
           "kol-link": "达人链接",
           "kol-status": "达人状态",
           "prepare-status": "历史审核",
-          "prepared-bd-code": "筹备BD",
           "reason": "校验结果",
           "record-status": "审核状态",
           "reviewer-name": "审核人"

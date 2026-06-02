@@ -25,6 +25,16 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'KOL-Candidate',
+        path: '/kol/candidate',
+        component: () => import('#/views/kol/candidate.vue'),
+        meta: {
+          icon: 'lucide:clipboard-list',
+          title: $t('page.kol.kolCandidate.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+      },
+      {
         name: 'KOL-Detail',
         path: '/kol/:kol_id',
         component: () => import('#/views/kol/detail.vue'),

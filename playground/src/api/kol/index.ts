@@ -110,17 +110,17 @@ export namespace AdminKolApi {
   }
 
   export interface CreateParams {
-    kol_id: string;
-    kol_link?: string;
+    belong_bd_code?: string;
+    contact_info?: string;
+    cooperation_fee?: number;
+    entry_time?: number;
     followers?: number;
     is_paid?: PaidStatus;
-    cooperation_fee?: number;
-    contact_info?: string;
-    belong_bd_code?: string;
-    status?: KolStatus;
-    score?: number;
+    kol_id: string;
+    kol_link?: string;
     notes?: string;
-    entry_time?: number;
+    score?: number;
+    status?: KolStatus;
     tag_names?: string[];
   }
 
@@ -170,5 +170,55 @@ export async function unbindAdminKol(data: AdminKolApi.UnbindParams) {
 
 /** Admin 新增达人 */
 export async function createAdminKol(data: AdminKolApi.CreateParams) {
-  return requestClient.post<AdminKolApi.DetailResult>('/admin/kols/create', data);
+  return requestClient.post<AdminKolApi.DetailResult>(
+    '/admin/kols/create',
+    data,
+  );
+}
+
+export namespace AdminKolCandidateApi {
+  export interface ListParams {
+    bd_code?: string;
+    kol_id?: string;
+    page: number;
+    page_size: number;
+    prepared_bd_code?: string;
+  }
+
+  export interface ListItem {
+    bd_code: string;
+    created_at: number;
+    entry_time: number;
+    has_belong_bd: 0 | 1;
+    id: number;
+    is_duplicate: 0 | 1;
+    kol_contact_info?: null | string;
+    kol_cooperation_fee?: null | number;
+    kol_followers?: null | number;
+    kol_id: string;
+    kol_is_paid?: null | number;
+    kol_link: null | string;
+    kol_score?: null | number;
+    kol_status?: null | number;
+    prepared_bd_code: null | string;
+    prepared_bd_name: null | string;
+    updated_at: number;
+  }
+
+  export interface ListResult {
+    list: ListItem[];
+    page: number;
+    page_size: number;
+    total: number;
+  }
+}
+
+/** Admin 查询达人筹备表 */
+export async function getAdminKolCandidateList(
+  params: AdminKolCandidateApi.ListParams,
+) {
+  return requestClient.get<AdminKolCandidateApi.ListResult>(
+    '/admin/kol-candidates',
+    { params },
+  );
 }

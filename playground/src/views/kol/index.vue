@@ -242,17 +242,17 @@ function resetEditForm() {
 const createDrawerOpen = ref(false);
 const createSubmitting = ref(false);
 const createForm = reactive<{
-  kol_id: string;
-  kol_link: string;
+  belong_bd_code: string | undefined;
+  contact_info: string;
+  cooperation_fee: number | undefined;
+  entry_time: number | undefined;
   followers: number | undefined;
   is_paid: AdminKolApi.PaidStatus;
-  cooperation_fee: number | undefined;
-  contact_info: string;
-  belong_bd_code: string | undefined;
-  status: AdminKolApi.KolStatus;
-  score: number | undefined;
+  kol_id: string;
+  kol_link: string;
   notes: string;
-  entry_time: number | undefined;
+  score: number | undefined;
+  status: AdminKolApi.KolStatus;
   tag_names: string[];
 }>({
   kol_id: '',
@@ -287,10 +287,7 @@ function resetCreateForm() {
 async function openCreateDrawer() {
   resetCreateForm();
   createDrawerOpen.value = true;
-  await Promise.all([
-    loadBdOptions(''),
-    loadTagOptions(),
-  ]);
+  await Promise.all([loadBdOptions(''), loadTagOptions()]);
 }
 
 function closeCreateDrawer() {
@@ -1034,9 +1031,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     >
       <Space direction="vertical" :size="16" class="w-full">
         <Form layout="vertical">
-          <Form.Item
-            :label="$t('page.kol.columns.kol-id')"
-          >
+          <Form.Item :label="$t('page.kol.columns.kol-id')">
             <Input
               v-model:value="createForm.kol_id"
               :placeholder="$t('page.kol.create.kol-id-placeholder')"
@@ -1135,7 +1130,11 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </Form>
 
         <Space>
-          <Button type="primary" :loading="createSubmitting" @click="submitCreate">
+          <Button
+            type="primary"
+            :loading="createSubmitting"
+            @click="submitCreate"
+          >
             {{ $t('page.kol.actions.create') }}
           </Button>
           <Button @click="closeCreateDrawer">

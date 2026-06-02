@@ -642,6 +642,38 @@
       "score-invalid": "Score cannot be less than 0",
       "unbind-success": "KOL {0} unbound successfully",
       "update-success": "KOL saved successfully"
+    },
+    "kolCandidate": {
+      "title": "KOL Preparation",
+      "list-title": "Preparation List",
+      "description": "View all BD KOL preparation records.",
+      "filters": {
+        "bd-code": "BD Code",
+        "kol-id": "KOL ID",
+        "prepared-bd-code": "Selected BD"
+      },
+      "columns": {
+        "kol-id": "KOL ID",
+        "kol-link": "KOL Link",
+        "bd-code": "BD Code",
+        "is-duplicate": "Duplicate",
+        "prepared-bd": "Selected BD",
+        "has-belong-bd": "Has Owner BD",
+        "followers": "Followers",
+        "status": "KOL Status",
+        "entry-time": "Entry Time",
+        "created-at": "Submitted At"
+      },
+      "is-duplicate": {
+        "yes": "Duplicate"
+      },
+      "has-belong-bd": {
+        "yes": "Has Owner BD"
+      },
+      "status": {
+        "blacklist": "Blacklist",
+        "lost": "Lost"
+      }
     }
   },
   "product": {
@@ -823,63 +855,53 @@
     "title": "BD",
     "dashboard": "Dashboard",
     "kols": {
-      "title": "KOL List",
-      "list-title": "KOL List",
-      "description": "View my KOLs and unassigned KOLs, and claim available KOLs.",
-      "tabs": {
-        "my-kols": "My KOLs",
-        "unassigned-kols": "Unassigned KOLs"
-      },
+      "title": "KOL Preparation",
+      "list-title": "Preparation List",
+      "description": "View KOL preparation records submitted by me.",
       "filters": {
-        "all-status": "All KOL Statuses",
         "kol-id": "KOL ID",
-        "status": "KOL Status"
+        "prepared-bd-code": "Selected BD"
       },
       "columns": {
-        "belong-bd-code": "Owner BD",
-        "can-claim": "Claimable",
-        "claim-block-reason": "Block Reason",
-        "completed-task-count": "Completed Tasks",
-        "contact-info": "Contact Info",
-        "cooperation-fee": "Cooperation Fee",
-        "entry-time": "Entry Time",
-        "followers": "Followers",
-        "is-paid": "Paid",
         "kol-id": "KOL ID",
         "kol-link": "KOL Link",
-        "notes": "Notes",
-        "operation": "Action",
-        "participated-task-count": "Participated Tasks",
-        "score": "Score",
+        "is-duplicate": "Duplicate",
+        "prepared-bd": "Selected BD",
+        "has-belong-bd": "Has Owner BD",
+        "followers": "Followers",
         "status": "KOL Status",
-        "updated-at": "Updated At"
+        "entry-time": "Entry Time",
+        "created-at": "Submitted At",
+        "operation": "Action"
       },
       "actions": {
-        "claim": "Claim",
-        "unbind": "Unbind"
+        "create": "Submit KOL",
+        "delete": "Remove"
+      },
+      "is-duplicate": {
+        "yes": "Duplicate"
+      },
+      "has-belong-bd": {
+        "yes": "Has Owner BD"
       },
       "status": {
         "blacklist": "Blacklist",
-        "lost": "Lost",
-        "normal": "Normal"
+        "lost": "Lost"
       },
-      "paid": {
-        "no": "No",
-        "yes": "Yes"
+      "delete": {
+        "confirm-title": "Confirm Remove Candidate",
+        "confirm-content": "Are you sure you want to remove candidate KOL {0}? This record will be deleted."
       },
-      "claim": {
-        "can-claim": "Claimable",
-        "cannot-claim": "Unavailable",
-        "confirm-content": "Are you sure you want to claim KOL {0}?",
-        "confirm-title": "Confirm Claim KOL"
-      },
-      "unbind": {
-        "confirm-content": "Are you sure you want to unbind KOL {0}?",
-        "confirm-title": "Confirm Unbind KOL"
+      "create": {
+        "title": "Submit KOL Candidate",
+        "kol-id-placeholder": "Enter KOL ID",
+        "kol-link-placeholder": "Enter KOL profile link (optional)"
       },
       "messages": {
-        "claim-success": "KOL {0} claimed successfully",
-        "unbind-success": "KOL {0} unbound successfully"
+        "create-success": "KOL {0} submitted successfully",
+        "create-duplicate": "KOL {0} was previously submitted (marked as duplicate)",
+        "delete-success": "Candidate KOL removed",
+        "kol-id-required": "Please enter a KOL ID"
       }
     },
     "videos": {
@@ -1146,7 +1168,6 @@
           "kol-link": "KOL Link",
           "kol-status": "KOL Status",
           "prepare-status": "Review History",
-          "prepared-bd-code": "Prepared By",
           "reason": "Validation Result",
           "record-status": "Review Status",
           "reviewer-name": "Reviewer"

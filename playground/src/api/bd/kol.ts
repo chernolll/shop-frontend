@@ -21,47 +21,30 @@ export namespace KolApi {
 }
 
 export namespace BdKolListApi {
-  export enum ViewType {
-    MY_KOLS = 1,
-    UNASSIGNED_KOLS = 2,
-  }
-
-  export enum KolStatus {
-    NORMAL = 1,
-    LOST = 2,
-    BLACKLIST = 3,
-  }
-
-  export enum PaidStatus {
-    NO = 0,
-    YES = 1,
-  }
-
   export interface ListParams {
     kol_id?: string;
     page: number;
     page_size: number;
-    status?: KolStatus;
-    view_type: ViewType;
+    prepared_bd_code?: string;
   }
 
   export interface ListItem {
-    belong_bd_code: null | string;
-    can_claim: 0 | 1;
-    claim_block_reason: null | string;
-    completed_task_count: number;
-    contact_info: null | string;
-    cooperation_fee: number;
+    bd_code: string;
     created_at: number;
     entry_time: number;
-    followers: number;
-    is_paid: PaidStatus;
+    has_belong_bd: 0 | 1;
+    id: number;
+    is_duplicate: 0 | 1;
+    kol_contact_info?: null | string;
+    kol_cooperation_fee?: null | number;
+    kol_followers?: null | number;
     kol_id: string;
+    kol_is_paid?: null | number;
     kol_link: null | string;
-    notes: null | string;
-    participated_task_count: number;
-    score: number;
-    status: KolStatus;
+    kol_score?: null | number;
+    kol_status?: null | number;
+    prepared_bd_code: null | string;
+    prepared_bd_name: null | string;
     updated_at: number;
   }
 
@@ -72,17 +55,21 @@ export namespace BdKolListApi {
     total: number;
   }
 
-  export interface ClaimParams {
+  export interface CreateParams {
+    items: { kol_id: string; kol_link: string }[];
+  }
+
+  export interface CreateResultItem {
+    is_duplicate: 0 | 1;
     kol_id: string;
   }
 
-  export interface ClaimResult {
-    belong_bd_code: string;
-    kol_id: string;
+  export interface DeleteParams {
+    id: number;
   }
 
-  export interface UnbindParams {
-    kol_id: string;
+  export interface DeleteResult {
+    id: number;
   }
 
   export interface UnbindResult {
@@ -99,19 +86,30 @@ export async function queryKolPrepareState(data: KolApi.ValidKolStateParams) {
   );
 }
 
-/** BD 查询达人列表 */
+/** BD 查询达人列表（来自候选表） */
 export async function getBdKolList(params: BdKolListApi.ListParams) {
   return requestClient.get<BdKolListApi.ListResult>('/bd/kols', {
     params,
   });
 }
 
-/** BD 认领达人 */
-export async function claimBdKol(data: BdKolListApi.ClaimParams) {
-  return requestClient.put<BdKolListApi.ClaimResult>('/bd/kols/claim', data);
+/** BD 新增候选达人 */
+export async function createKolCandidate(data: BdKolListApi.CreateParams) {
+  return requestClient.post<BdKolListApi.CreateResultItem[]>(
+    '/bd/kol-candidate/create',
+    data,
+  );
 }
 
-/** BD 解绑达人 */
-export async function unbindBdKol(data: BdKolListApi.UnbindParams) {
+/** BD 删除候选达人 */
+export async function deleteKolCandidate(data: BdKolListApi.DeleteParams) {
+  return requestClient.put<BdKolListApi.DeleteResult>(
+    '/bd/kol-candidate/delete',
+    data,
+  );
+}
+
+/** BD 解绑达人（已废弃，保留接口兼容） */
+export async function unbindBdKol(data: BdKolListApi.DeleteParams) {
   return requestClient.put<BdKolListApi.UnbindResult>('/bd/kols/unbind', data);
 }
