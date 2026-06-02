@@ -10,6 +10,7 @@ import { formatDateTime } from '@vben/utils';
 
 import {
   Button,
+  DatePicker,
   Descriptions,
   Drawer,
   Empty,
@@ -28,6 +29,7 @@ import {
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   AdminKolApi,
+  createAdminKol,
   deleteAdminKol,
   getAdminKolList,
   getAdminKolTagList,
@@ -235,6 +237,133 @@ function resetEditForm() {
   editForm.score = undefined;
   editForm.status = AdminKolApi.KolStatus.NORMAL;
   editForm.tag_names = [];
+}
+
+const createDrawerOpen = ref(false);
+const createSubmitting = ref(false);
+const createForm = reactive<{
+  kol_id: string;
+  kol_link: string;
+  followers: number | undefined;
+  is_paid: AdminKolApi.PaidStatus;
+  cooperation_fee: number | undefined;
+  contact_info: string;
+  belong_bd_code: string | undefined;
+  status: AdminKolApi.KolStatus;
+  score: number | undefined;
+  notes: string;
+  entry_time: number | undefined;
+  tag_names: string[];
+}>({
+  kol_id: '',
+  kol_link: '',
+  followers: undefined,
+  is_paid: AdminKolApi.PaidStatus.NO,
+  cooperation_fee: undefined,
+  contact_info: '',
+  belong_bd_code: undefined,
+  status: AdminKolApi.KolStatus.NORMAL,
+  score: undefined,
+  notes: '',
+  entry_time: undefined,
+  tag_names: [],
+});
+
+function resetCreateForm() {
+  createForm.kol_id = '';
+  createForm.kol_link = '';
+  createForm.followers = undefined;
+  createForm.is_paid = AdminKolApi.PaidStatus.NO;
+  createForm.cooperation_fee = undefined;
+  createForm.contact_info = '';
+  createForm.belong_bd_code = undefined;
+  createForm.status = AdminKolApi.KolStatus.NORMAL;
+  createForm.score = undefined;
+  createForm.notes = '';
+  createForm.entry_time = undefined;
+  createForm.tag_names = [];
+}
+
+async function openCreateDrawer() {
+  resetCreateForm();
+  createDrawerOpen.value = true;
+  await Promise.all([
+    loadBdOptions(''),
+    loadTagOptions(),
+  ]);
+}
+
+function closeCreateDrawer() {
+  if (createSubmitting.value) {
+    return;
+  }
+  createDrawerOpen.value = false;
+  resetCreateForm();
+}
+
+async function submitCreate() {
+  const trimmedKolId = createForm.kol_id.trim();
+  if (!trimmedKolId) {
+    message.warning($t('page.kol.messages.kol-id-required'));
+    return;
+  }
+
+  if (
+    createForm.followers !== undefined &&
+    (!Number.isFinite(Number(createForm.followers)) ||
+      Number(createForm.followers) < 0)
+  ) {
+    message.warning($t('page.kol.messages.followers-invalid'));
+    return;
+  }
+
+  if (
+    createForm.cooperation_fee !== undefined &&
+    (!Number.isFinite(Number(createForm.cooperation_fee)) ||
+      Number(createForm.cooperation_fee) < 0)
+  ) {
+    message.warning($t('page.kol.messages.cooperation-fee-invalid'));
+    return;
+  }
+
+  if (
+    createForm.score !== undefined &&
+    (!Number.isFinite(Number(createForm.score)) || Number(createForm.score) < 0)
+  ) {
+    message.warning($t('page.kol.messages.score-invalid'));
+    return;
+  }
+
+  try {
+    createSubmitting.value = true;
+    await createAdminKol({
+      belong_bd_code:
+        createForm.belong_bd_code === undefined
+          ? ''
+          : createForm.belong_bd_code.trim(),
+      contact_info: createForm.contact_info.trim(),
+      cooperation_fee: createForm.cooperation_fee,
+      entry_time: createForm.entry_time,
+      followers: createForm.followers,
+      is_paid: createForm.is_paid,
+      kol_id: trimmedKolId,
+      kol_link: createForm.kol_link.trim(),
+      notes: createForm.notes.trim(),
+      score: createForm.score,
+      status: createForm.status,
+      tag_names: [
+        ...new Set(
+          createForm.tag_names.map((item) => item.trim()).filter(Boolean),
+        ),
+      ],
+    });
+    message.success($t('page.kol.messages.create-success'));
+    createDrawerOpen.value = false;
+    resetCreateForm();
+    await gridApi.query();
+  } finally {
+    createSubmitting.value = false;
+  }
 }
 
 async function openEditDrawer(row: AdminKolApi.ListItem) {
@@ -641,6 +770,12 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('page.kol.list-title')">
+      <template #toolbar-tools>
+        <Button type="primary" @click="openCreateDrawer">
+          {{ $t('page.kol.actions.create') }}
+        </Button>
+      </template>
+
       <template #kol_link="{ row }">
         <a
           v-if="row.kol_link"
@@ -884,6 +1019,126 @@ const [Grid, gridApi] = useVbenVxeGrid({
             {{ $t('page.kol.actions.save') }}
           </Button>
           <Button @click="closeEditDrawer">
+            {{ $t('common.cancel') }}
+          </Button>
+        </Space>
+      </Space>
+    </Drawer>
+
+    <Drawer
+      :open="createDrawerOpen"
+      :title="$t('page.kol.create.title')"
+      :width="560"
+      destroy-on-close
+      @close="closeCreateDrawer"
+    >
+      <Space direction="vertical" :size="16" class="w-full">
+        <Form layout="vertical">
+          <Form.Item
+            :label="$t('page.kol.columns.kol-id')"
+          >
+            <Input
+              v-model:value="createForm.kol_id"
+              :placeholder="$t('page.kol.create.kol-id-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.status')">
+            <Select
+              v-model:value="createForm.status"
+              :options="editStatusOptions"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.score')">
+            <InputNumber
+              v-model:value="createForm.score"
+              :min="0"
+              :precision="2"
+              class="w-full"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.notes')">
+            <Input
+              v-model:value="createForm.notes"
+              :placeholder="$t('page.kol.edit.notes-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.tags')">
+            <Select
+              v-model:value="createForm.tag_names"
+              mode="tags"
+              class="w-full"
+              :loading="tagOptionsLoading"
+              :options="tagOptions"
+              :placeholder="$t('page.kol.edit.tags-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.belong-bd-code')">
+            <Select
+              v-model:value="createForm.belong_bd_code"
+              v-bind="bdSelectProps"
+              :placeholder="$t('page.kol.edit.belong-bd-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.followers')">
+            <InputNumber
+              v-model:value="createForm.followers"
+              :min="0"
+              :precision="0"
+              class="w-full"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.cooperation-fee')">
+            <InputNumber
+              v-model:value="createForm.cooperation_fee"
+              :min="0"
+              :precision="2"
+              class="w-full"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.is-paid')">
+            <Select
+              v-model:value="createForm.is_paid"
+              :options="editPaidOptions"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.contact-info')">
+            <Input
+              v-model:value="createForm.contact_info"
+              :placeholder="$t('page.kol.edit.contact-info-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.kol-link')">
+            <Input
+              v-model:value="createForm.kol_link"
+              :placeholder="$t('page.kol.edit.kol-link-placeholder')"
+            />
+          </Form.Item>
+
+          <Form.Item :label="$t('page.kol.edit.entry-time')">
+            <DatePicker
+              v-model:value="createForm.entry_time"
+              value-format="x"
+              :placeholder="$t('page.kol.edit.entry-time-placeholder')"
+              class="w-full"
+            />
+          </Form.Item>
+        </Form>
+
+        <Space>
+          <Button type="primary" :loading="createSubmitting" @click="submitCreate">
+            {{ $t('page.kol.actions.create') }}
+          </Button>
+          <Button @click="closeCreateDrawer">
             {{ $t('common.cancel') }}
           </Button>
         </Space>

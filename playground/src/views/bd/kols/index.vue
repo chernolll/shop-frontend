@@ -2,7 +2,7 @@
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
@@ -13,7 +13,6 @@ import {
   message,
   Modal,
   Space,
-  Tabs,
   Tag,
   Tooltip,
 } from 'ant-design-vue';
@@ -21,30 +20,12 @@ import {
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   BdKolListApi,
-  claimBdKol,
   getBdKolList,
   unbindBdKol,
 } from '#/api/bd/kol';
 import { $t } from '#/locales';
 
-const activeTab = ref(String(BdKolListApi.ViewType.MY_KOLS));
-const claimingKolId = ref('');
 const unbindingKolId = ref('');
-
-const tabItems = [
-  {
-    key: String(BdKolListApi.ViewType.MY_KOLS),
-    label: $t('page.bd.kols.tabs.my-kols'),
-  },
-  {
-    key: String(BdKolListApi.ViewType.UNASSIGNED_KOLS),
-    label: $t('page.bd.kols.tabs.unassigned-kols'),
-  },
-];
-
-const isUnassignedView = computed(
-  () => Number(activeTab.value) === BdKolListApi.ViewType.UNASSIGNED_KOLS,
-);
 
 function getStatusText(status?: number) {
   switch (status) {
@@ -95,49 +76,11 @@ function formatFollowers(value?: null | number) {
   return new Intl.NumberFormat('en-US').format(value);
 }
 
-function isClaiming(row: BdKolListApi.ListItem) {
-  return claimingKolId.value === row.kol_id;
-}
-
 function isUnbinding(row: BdKolListApi.ListItem) {
   return unbindingKolId.value === row.kol_id;
 }
 
-async function onTabChange() {
-  await gridApi.query();
-}
-
-function confirmClaim(row: BdKolListApi.ListItem) {
-  if (!isUnassignedView.value || row.can_claim !== 1) {
-    return;
-  }
-
-  Modal.confirm({
-    okText: $t('common.confirm'),
-    title: $t('page.bd.kols.claim.confirm-title'),
-    content: $t('page.bd.kols.claim.confirm-content', [row.kol_id]),
-    async onOk() {
-      try {
-        claimingKolId.value = row.kol_id;
-        const result = await claimBdKol({
-          kol_id: row.kol_id,
-        });
-        message.success(
-          $t('page.bd.kols.messages.claim-success', [result.kol_id]),
-        );
-        await gridApi.query();
-      } finally {
-        claimingKolId.value = '';
-      }
-    },
-  });
-}
-
 function confirmUnbind(row: BdKolListApi.ListItem) {
-  if (isUnassignedView.value) {
-    return;
-  }
-
   Modal.confirm({
     okText: $t('common.confirm'),
     title: $t('page.bd.kols.unbind.confirm-title'),
@@ -301,7 +244,7 @@ const gridOptions: VxeTableGridOptions<BdKolListApi.ListItem> = {
             formValues.status === '' || formValues.status === undefined
               ? undefined
               : Number(formValues.status),
-          view_type: Number(activeTab.value),
+          view_type: BdKolListApi.ViewType.MY_KOLS,
         });
 
         return {
@@ -340,16 +283,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </div>
       </div>
     </Card>
-
-    <div class="mt-4">
-      <Tabs v-model:active-key="activeTab" @change="onTabChange">
-        <Tabs.TabPane
-          v-for="item in tabItems"
-          :key="item.key"
-          :tab="item.label"
-        />
-      </Tabs>
-    </div>
 
     <Grid :table-title="$t('page.bd.kols.list-title')">
       <template #kol_link="{ row }">
@@ -408,27 +341,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       <template #operation="{ row }">
         <Space size="small">
-          <Tooltip
-            v-if="
-              isUnassignedView && row.can_claim !== 1 && row.claim_block_reason
-            "
-            :title="row.claim_block_reason"
-          >
-            <Button type="link" size="small" disabled>
-              {{ $t('page.bd.kols.actions.claim') }}
-            </Button>
-          </Tooltip>
           <Button
-            v-else-if="isUnassignedView"
-            type="link"
-            size="small"
-            :loading="isClaiming(row)"
-            @click="confirmClaim(row)"
-          >
-            {{ $t('page.bd.kols.actions.claim') }}
-          </Button>
-          <Button
-            v-else
             danger
             type="link"
             size="small"

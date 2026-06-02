@@ -163,7 +163,7 @@ const [BaseForm, baseFormApi] = useVbenForm({
       },
       fieldName: 'number',
       label: '数字(带后缀)',
-      suffix: () => '¥',
+      suffix: () => '฿',
     },
     {
       component: 'IconPicker',

@@ -109,6 +109,21 @@ export namespace AdminKolApi {
     kol_id: string;
   }
 
+  export interface CreateParams {
+    kol_id: string;
+    kol_link?: string;
+    followers?: number;
+    is_paid?: PaidStatus;
+    cooperation_fee?: number;
+    contact_info?: string;
+    belong_bd_code?: string;
+    status?: KolStatus;
+    score?: number;
+    notes?: string;
+    entry_time?: number;
+    tag_names?: string[];
+  }
+
   export interface TagListResult {
     list: TagItem[];
   }
@@ -151,4 +166,9 @@ export async function unbindAdminKol(data: AdminKolApi.UnbindParams) {
     '/admin/kols/unbind',
     data,
   );
+}
+
+/** Admin 新增达人 */
+export async function createAdminKol(data: AdminKolApi.CreateParams) {
+  return requestClient.post<AdminKolApi.DetailResult>('/admin/kols/create', data);
 }

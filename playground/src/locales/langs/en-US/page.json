@@ -564,6 +564,7 @@
     },
     "actions": {
       "back-to-list": "Back to List",
+      "create": "Create KOL",
       "delete": "Delete",
       "edit": "Edit",
       "save": "Save",
@@ -589,6 +590,9 @@
       "contact-info": "Contact Info",
       "contact-info-placeholder": "Leave empty to clear",
       "cooperation-fee": "Cooperation Fee",
+      "entry-time": "Entry Time",
+      "entry-time-placeholder": "Select entry time",
+      "followers": "Followers",
       "hint": "Saving will submit all editable fields in the current form. Leave text fields empty if you want to clear them.",
       "is-paid": "Paid",
       "kol-link": "KOL Link",
@@ -599,8 +603,11 @@
       "status": "KOL Status",
       "tags": "Tags",
       "tags-placeholder": "Enter a new tag and press Enter to create",
-      "title": "Edit KOL",
-      "followers": "Followers"
+      "title": "Edit KOL"
+    },
+    "create": {
+      "kol-id-placeholder": "Enter KOL ID",
+      "title": "Create KOL"
     },
     "delete": {
       "confirm-content": "Are you sure you want to delete KOL {0}? ",
@@ -627,9 +634,11 @@
     "empty": "No KOL data",
     "messages": {
       "cooperation-fee-invalid": "Cooperation fee cannot be less than 0",
+      "create-success": "KOL created successfully",
       "delete-success": "KOL {0} deleted successfully",
       "detail-empty": "No KOL detail found",
       "followers-invalid": "Followers cannot be less than 0",
+      "kol-id-required": "Please enter a KOL ID",
       "score-invalid": "Score cannot be less than 0",
       "unbind-success": "KOL {0} unbound successfully",
       "update-success": "KOL saved successfully"
@@ -1011,7 +1020,7 @@
         "title": "Dispatch Public Task (Create Custom Task)",
         "ok-text": "Confirm Dispatch",
         "task-info": "Task Info",
-        "task-info-template": "Task ID: {0} | Commission: ¥{1} | Video Count: {2}",
+        "task-info-template": "Task ID: {0} | Commission: ฿{1} | Video Count: {2}",
         "bd-codes-label": "Dispatch to BDs",
         "bd-codes-placeholder": "Select BDs to dispatch",
         "video-num-label": "Total Videos",

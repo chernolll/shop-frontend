@@ -1000,7 +1000,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <Form layout="vertical" class="pt-2">
         <FormItem v-if="assignTaskRow" label="任务信息">
           <div class="text-sm text-gray-500">
-            任务ID: {{ assignTaskRow.task_id }} | 佣金: ¥{{
+            任务ID: {{ assignTaskRow.task_id }} | 佣金: ฿{{
               assignTaskRow.commission
             }}
             | 视频数: {{ assignTaskRow.video_num }}

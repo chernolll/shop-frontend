@@ -564,6 +564,7 @@
     },
     "actions": {
       "back-to-list": "返回列表",
+      "create": "新增达人",
       "delete": "删除",
       "edit": "编辑",
       "save": "保存",
@@ -589,6 +590,9 @@
       "contact-info": "联系方式",
       "contact-info-placeholder": "可留空，留空表示清空",
       "cooperation-fee": "合作费",
+      "entry-time": "录入时间",
+      "entry-time-placeholder": "选择录入时间",
+      "followers": "粉丝数",
       "hint": "保存时会提交当前表单中的全部可编辑字段。若要清空文本字段，直接留空即可。",
       "is-paid": "是否付费",
       "kol-link": "达人主页链接",
@@ -599,8 +603,11 @@
       "status": "达人状态",
       "tags": "标签",
       "tags-placeholder": "可输入新标签，回车后创建",
-      "title": "编辑达人",
-      "followers": "粉丝数"
+      "title": "编辑达人"
+    },
+    "create": {
+      "kol-id-placeholder": "请输入达人ID",
+      "title": "新增达人"
     },
     "delete": {
       "confirm-content": "确认删除达人 {0} 吗？",
@@ -627,9 +634,11 @@
     "empty": "暂无达人数据",
     "messages": {
       "cooperation-fee-invalid": "合作费不能小于 0",
+      "create-success": "新增成功",
       "delete-success": "达人 {0} 删除成功",
       "detail-empty": "未查询到达人详情",
       "followers-invalid": "粉丝数不能小于 0",
+      "kol-id-required": "请输入达人ID",
       "score-invalid": "权重分不能小于 0",
       "unbind-success": "达人 {0} 解绑成功",
       "update-success": "达人信息保存成功"
@@ -1011,7 +1020,7 @@
         "title": "派送公开任务（创建定制任务）",
         "ok-text": "确认派送",
         "task-info": "任务信息",
-        "task-info-template": "任务ID: {0} | 佣金: ¥{1} | 视频数: {2}",
+        "task-info-template": "任务ID: {0} | 佣金: ฿{1} | 视频数: {2}",
         "bd-codes-label": "派送BD",
         "bd-codes-placeholder": "请选择要派送的 BD",
         "video-num-label": "总视频数",

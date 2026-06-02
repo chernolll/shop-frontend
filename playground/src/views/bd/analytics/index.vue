@@ -36,19 +36,19 @@ const kolRest = computed(() => kolRanking.value.slice(3));
 
 function formatCurrency(value: number): string {
   if (value >= 10_000) {
-    return `¥${(value / 10_000).toFixed(1)}万`;
+    return `฿${(value / 10_000).toFixed(1)}万`;
   }
-  return `¥${value.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  return `฿${value.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
 }
 
 function formatCompactCurrency(value: number): string {
   if (value >= 1_000_000) {
-    return `¥${(value / 1_000_000).toFixed(1)}M`;
+    return `฿${(value / 1_000_000).toFixed(1)}M`;
   }
   if (value >= 10_000) {
-    return `¥${(value / 1000).toFixed(1)}K`;
+    return `฿${(value / 1000).toFixed(1)}K`;
   }
-  return `¥${value.toLocaleString('zh-CN', { maximumFractionDigits: 0 })}`;
+  return `฿${value.toLocaleString('zh-CN', { maximumFractionDigits: 0 })}`;
 }
 </script>
 

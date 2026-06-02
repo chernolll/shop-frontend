@@ -48,7 +48,7 @@ const [QueryForm] = useVbenForm({
       },
       fieldName: 'number',
       label: '数字(带后缀)',
-      suffix: () => '¥',
+      suffix: () => '฿',
     },
     {
       component: 'Select',
@@ -116,7 +116,7 @@ const [InlineForm] = useVbenForm({
       },
       fieldName: 'number',
       label: '数字(带后缀)',
-      suffix: () => '¥',
+      suffix: () => '฿',
     },
     {
       component: 'Select',
@@ -228,7 +228,7 @@ const [QueryForm2] = useVbenForm({
       },
       fieldName: 'number',
       label: '数字(带后缀)',
-      suffix: () => '¥',
+      suffix: () => '฿',
     },
     {
       component: 'DatePicker',

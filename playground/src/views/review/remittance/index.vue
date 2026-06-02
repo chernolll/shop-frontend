@@ -228,7 +228,6 @@ function getRemittanceStatusColor(status?: number) {
   }
 }
 
-
 function canReviewRow(row: ReviewRemittanceApi.ListItem): boolean {
   return (
     row.status === ReviewRemittanceApi.RemittanceStatus.PENDING &&
@@ -334,8 +333,6 @@ function handlePreviewImage(url: string, title: string) {
   previewImageTitle.value = title;
   previewModalOpen.value = true;
 }
-
-
 
 async function beforeUpload(file: UploadFile) {
   const isValidMime = allowedUploadMimeTypes.has(file.type as string);
