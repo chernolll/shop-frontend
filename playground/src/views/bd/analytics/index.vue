@@ -99,11 +99,15 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:currency-usd" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">{{ $t('page.bd.analytics.monthly-gmv') }}</div>
+              <div class="card-label">
+                {{ $t('page.bd.analytics.monthly-gmv') }}
+              </div>
               <div class="card-value">
                 {{ formatCurrency(data.monthly_gmv) }}
               </div>
-              <div class="card-sub">{{ $t('page.bd.analytics.monthly-gmv-sub') }}</div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.monthly-gmv-sub') }}
+              </div>
             </div>
           </div>
         </Card>
@@ -115,11 +119,15 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:check-circle-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">{{ $t('page.bd.analytics.monthly-tasks') }}</div>
+              <div class="card-label">
+                {{ $t('page.bd.analytics.monthly-tasks') }}
+              </div>
               <div class="card-value">
                 {{ data.monthly_completed_tasks }}
               </div>
-              <div class="card-sub">{{ $t('page.bd.analytics.monthly-tasks-sub') }}</div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.monthly-tasks-sub') }}
+              </div>
             </div>
           </div>
         </Card>
@@ -131,11 +139,15 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:clock-alert-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">{{ $t('page.bd.analytics.deadline-14d') }}</div>
+              <div class="card-label">
+                {{ $t('page.bd.analytics.deadline-14d') }}
+              </div>
               <div class="card-value card-value-amber">
                 {{ data.deadline_14days_tasks }}
               </div>
-              <div class="card-sub">{{ $t('page.bd.analytics.deadline-14d-sub') }}</div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.deadline-14d-sub') }}
+              </div>
             </div>
           </div>
         </Card>
@@ -147,11 +159,15 @@ function formatCompactCurrency(value: number): string {
               <IconifyIcon icon="mdi:account-group-outline" class="size-5" />
             </div>
             <div class="card-text">
-              <div class="card-label">{{ $t('page.bd.analytics.total-kols') }}</div>
+              <div class="card-label">
+                {{ $t('page.bd.analytics.total-kols') }}
+              </div>
               <div class="card-value">
                 {{ data.total_kols }}
               </div>
-              <div class="card-sub">{{ $t('page.bd.analytics.total-kols-sub') }}</div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.total-kols-sub') }}
+              </div>
             </div>
           </div>
         </Card>
@@ -166,7 +182,9 @@ function formatCompactCurrency(value: number): string {
           class="analytics-card ranking-card-shell"
         >
           <template #extra>
-            <span class="card-extra">{{ $t('page.bd.analytics.kol-ranking-extra') }}</span>
+            <span class="card-extra">{{
+              $t('page.bd.analytics.kol-ranking-extra')
+            }}</span>
           </template>
 
           <div v-if="kolRanking.length === 0" class="empty-placeholder">
@@ -279,7 +297,9 @@ function formatCompactCurrency(value: number): string {
           class="analytics-card ranking-card-shell"
         >
           <template #extra>
-            <span class="card-extra">{{ $t('page.bd.analytics.bd-ranking-extra') }}</span>
+            <span class="card-extra">{{
+              $t('page.bd.analytics.bd-ranking-extra')
+            }}</span>
           </template>
 
           <div v-if="bdRanking.length === 0" class="empty-placeholder">
