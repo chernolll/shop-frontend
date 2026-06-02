@@ -3,7 +3,7 @@ import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { BdKolListApi } from '#/api/bd/kol';
 
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
@@ -11,12 +11,16 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Card,
+  Drawer,
   Input,
   message,
   Modal,
   Space,
+  Tabs,
   Tag,
+  Upload,
 } from 'ant-design-vue';
+import * as XLSX from 'xlsx';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
@@ -28,9 +32,37 @@ import { $t } from '#/locales';
 
 const deletingId = ref(0);
 const createDrawerOpen = ref(false);
-const createSubmitting = ref(false);
-const createKolId = ref('');
-const createKolLink = ref('');
+const activeTab = ref('manual');
+
+// --- Manual single entry ---
+const manualSubmitting = ref(false);
+const manualKolId = ref('');
+const manualKolLink = ref('');
+
+// --- Excel import ---
+const excelSubmitting = ref(false);
+const excelRows = ref<{ kol_id: string; kol_link: string }[]>([]);
+const excelParsedCount = computed(() => excelRows.value.length);
+
+// --- Batch paste ---
+const batchText = ref('');
+const batchSubmitting = ref(false);
+const parsedBatchRows = computed(() => {
+  return batchText.value
+    .split('\n')
+    .map((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return null;
+      // Support "kol_id, kol_link" or just "kol_id"
+      const parts = trimmed.split(',').map((s) => s.trim());
+      return { kol_id: parts[0], kol_link: parts[1] || '' };
+    })
+    .filter(
+      (r): r is { kol_id: string; kol_link: string } =>
+        r !== null && !!r.kol_id,
+    );
+});
+const batchParsedCount = computed(() => parsedBatchRows.value.length);
 
 function formatTimestamp(value?: null | number) {
   return value ? formatDateTime(value) : '-';
@@ -65,27 +97,31 @@ function confirmDelete(row: BdKolListApi.ListItem) {
   });
 }
 
-function resetCreateForm() {
-  createKolId.value = '';
-  createKolLink.value = '';
-}
-
 function openCreateDrawer() {
-  resetCreateForm();
+  activeTab.value = 'manual';
+  resetManualForm();
+  resetExcel();
+  resetBatch();
   createDrawerOpen.value = true;
 }
 
-async function submitCreate() {
-  const kolId = createKolId.value.trim();
+// --- Manual ---
+function resetManualForm() {
+  manualKolId.value = '';
+  manualKolLink.value = '';
+}
+
+async function submitManual() {
+  const kolId = manualKolId.value.trim();
   if (!kolId) {
     message.warning($t('page.bd.kols.messages.kol-id-required'));
     return;
   }
 
-  createSubmitting.value = true;
+  manualSubmitting.value = true;
   try {
     const results = await createKolCandidate({
-      items: [{ kol_id: kolId, kol_link: createKolLink.value.trim() }],
+      items: [{ kol_id: kolId, kol_link: manualKolLink.value.trim() }],
     });
 
     if (results && results.length > 0) {
@@ -104,10 +140,126 @@ async function submitCreate() {
     createDrawerOpen.value = false;
     await gridApi.query();
   } finally {
-    createSubmitting.value = false;
+    manualSubmitting.value = false;
   }
 }
 
+// --- Excel ---
+function resetExcel() {
+  excelRows.value = [];
+}
+
+function downloadTemplate() {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['kol_id', 'kol_link'],
+    ['example_kol_001', 'https://www.example.com/example_kol_001'],
+  ]);
+  ws['!cols'] = [{ wch: 24 }, { wch: 48 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Template');
+  XLSX.writeFile(wb, 'bd-prepare-template.xlsx');
+}
+
+async function handleExcelFile(file: File) {
+  const data = new Uint8Array(await file.arrayBuffer());
+  const wb = XLSX.read(data, { type: 'array' });
+  const ws = wb.Sheets[wb.SheetNames[0] as string];
+  const rows = XLSX.utils.sheet_to_json<string[]>(ws as string[][], {
+    header: 1,
+  });
+  if (rows.length <= 1) {
+    throw new Error($t('page.bd.kols.messages.file-empty'));
+  }
+
+  const header = (rows[0] as string[]).map((h) => String(h ?? '').trim());
+  const kolIdIndex = header.indexOf('kol_id');
+  const kolLinkIndex = header.indexOf('kol_link');
+  if (kolIdIndex === -1) {
+    throw new Error($t('page.bd.kols.messages.missing-kol-id-column'));
+  }
+
+  const parsed = rows
+    .slice(1)
+    .map((row) => {
+      const kolId = String(row[kolIdIndex] ?? '').trim();
+      const kolLink =
+        kolLinkIndex === -1 ? '' : String(row[kolLinkIndex] ?? '').trim();
+      return { kol_id: kolId, kol_link: kolLink };
+    })
+    .filter((row) => row.kol_id);
+
+  if (parsed.length === 0) {
+    throw new Error($t('page.bd.kols.messages.no-valid-kol-id-in-excel'));
+  }
+
+  excelRows.value = parsed;
+}
+
+async function submitExcel() {
+  if (excelRows.value.length === 0) {
+    message.warning($t('page.bd.kols.messages.no-data-to-import'));
+    return;
+  }
+
+  excelSubmitting.value = true;
+  try {
+    const results = await createKolCandidate({
+      items: excelRows.value,
+    });
+
+    const duplicateCount = results.filter((r) => r.is_duplicate).length;
+    const successCount = results.length - duplicateCount;
+    message.success(
+      $t('page.bd.kols.messages.import-result', [
+        String(successCount),
+        String(duplicateCount),
+      ]),
+    );
+
+    createDrawerOpen.value = false;
+    await gridApi.query();
+  } catch (error: any) {
+    message.error(error?.message || $t('page.bd.kols.messages.import-failed'));
+  } finally {
+    excelSubmitting.value = false;
+  }
+}
+
+// --- Batch ---
+function resetBatch() {
+  batchText.value = '';
+}
+
+async function submitBatch() {
+  const items = parsedBatchRows.value;
+  if (items.length === 0) {
+    message.warning($t('page.bd.kols.messages.no-data-to-import'));
+    return;
+  }
+
+  batchSubmitting.value = true;
+  try {
+    const results = await createKolCandidate({ items });
+
+    const duplicateCount = results.filter((r) => r.is_duplicate).length;
+    const successCount = results.length - duplicateCount;
+    message.success(
+      $t('page.bd.kols.messages.import-result', [
+        String(successCount),
+        String(duplicateCount),
+      ]),
+    );
+
+    createDrawerOpen.value = false;
+    await gridApi.query();
+  } catch (error: any) {
+    message.error(error?.message || $t('page.bd.kols.messages.import-failed'));
+  } finally {
+    batchSubmitting.value = false;
+  }
+}
+
+// --- Form & Grid ---
 const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
@@ -128,6 +280,9 @@ const formOptions: VbenFormProps = {
 
 function getKolStatusText(status?: null | number) {
   switch (status) {
+    case 1: {
+      return $t('page.bd.kols.status.normal');
+    }
     case 2: {
       return $t('page.bd.kols.status.lost');
     }
@@ -135,13 +290,16 @@ function getKolStatusText(status?: null | number) {
       return $t('page.bd.kols.status.blacklist');
     }
     default: {
-      return '-';
+      return $t('page.bd.kols.status.unrecorded');
     }
   }
 }
 
 function getKolStatusColor(status?: null | number) {
   switch (status) {
+    case 1: {
+      return 'success';
+    }
     case 2: {
       return 'warning';
     }
@@ -290,7 +448,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <Tag v-if="row.is_duplicate" color="warning">
           {{ $t('page.bd.kols.is-duplicate.yes') }}
         </Tag>
-        <span v-else>-</span>
+        <Tag v-else color="default">
+          {{ $t('page.bd.kols.is-duplicate.no') }}
+        </Tag>
       </template>
 
       <template #has_belong_bd="{ row }">
@@ -333,35 +493,176 @@ const [Grid, gridApi] = useVbenVxeGrid({
       </template>
     </Grid>
 
-    <!-- 新增候选筹备记录 Drawer -->
-    <Modal
+    <!-- 新增候选达人 Drawer (多方式上传) -->
+    <Drawer
       :open="createDrawerOpen"
       :title="$t('page.bd.kols.create.title')"
-      :confirm-loading="createSubmitting"
-      @ok="submitCreate"
-      @cancel="createDrawerOpen = false"
+      :width="640"
+      @close="createDrawerOpen = false"
     >
-      <div class="space-y-4">
-        <div>
-          <div class="mb-1 text-sm font-medium">
-            {{ $t('page.bd.kols.columns.kol-id') }}
-            <span class="text-red-500">*</span>
+      <Tabs v-model:active-key="activeTab">
+        <!-- Tab 1: 手动输入 -->
+        <Tabs.TabPane key="manual" :tab="$t('page.bd.kols.create.tabs.manual')">
+          <div class="space-y-4 pt-2">
+            <div>
+              <div class="mb-1 text-sm font-medium">
+                {{ $t('page.bd.kols.columns.kol-id') }}
+                <span class="text-red-500">*</span>
+              </div>
+              <Input
+                v-model:value="manualKolId"
+                :placeholder="$t('page.bd.kols.create.kol-id-placeholder')"
+              />
+            </div>
+            <div>
+              <div class="mb-1 text-sm font-medium">
+                {{ $t('page.bd.kols.columns.kol-link') }}
+              </div>
+              <Input
+                v-model:value="manualKolLink"
+                :placeholder="$t('page.bd.kols.create.kol-link-placeholder')"
+              />
+            </div>
+            <div class="pt-2">
+              <Button
+                type="primary"
+                :loading="manualSubmitting"
+                @click="submitManual"
+              >
+                {{ $t('page.bd.kols.actions.create') }}
+              </Button>
+            </div>
           </div>
-          <Input
-            v-model:value="createKolId"
-            :placeholder="$t('page.bd.kols.create.kol-id-placeholder')"
-          />
-        </div>
-        <div>
-          <div class="mb-1 text-sm font-medium">
-            {{ $t('page.bd.kols.columns.kol-link') }}
+        </Tabs.TabPane>
+
+        <!-- Tab 2: Excel 导入 -->
+        <Tabs.TabPane key="excel" :tab="$t('page.bd.kols.create.tabs.excel')">
+          <div class="space-y-4 pt-2">
+            <div class="flex flex-wrap gap-2">
+              <Button @click="downloadTemplate">
+                {{ $t('page.bd.kols.create.excel.download-template') }}
+              </Button>
+              <Upload
+                accept=".xlsx,.xls"
+                :before-upload="
+                  (file: File) => {
+                    handleExcelFile(file)
+                      .then(() => {
+                        message.success(
+                          $t('page.bd.kols.messages.file-parsed', [
+                            String(excelParsedCount),
+                          ]),
+                        );
+                      })
+                      .catch((err: Error) => {
+                        message.error(err.message);
+                      });
+                    return false;
+                  }
+                "
+                :show-upload-list="false"
+              >
+                <Button type="primary">
+                  {{ $t('page.bd.kols.create.excel.upload') }}
+                </Button>
+              </Upload>
+            </div>
+
+            <div v-if="excelRows.length > 0">
+              <div class="mb-2 text-sm text-muted-foreground">
+                {{
+                  $t('page.bd.kols.create.excel.preview', [
+                    String(excelParsedCount),
+                  ])
+                }}
+              </div>
+              <div
+                class="max-h-64 overflow-y-auto rounded-lg border border-border"
+              >
+                <table class="w-full text-sm">
+                  <thead class="bg-muted/50 sticky top-0">
+                    <tr class="border-b border-border">
+                      <th class="px-3 py-2 text-left font-medium">#</th>
+                      <th class="px-3 py-2 text-left font-medium">
+                        {{ $t('page.bd.kols.columns.kol-id') }}
+                      </th>
+                      <th class="px-3 py-2 text-left font-medium">
+                        {{ $t('page.bd.kols.columns.kol-link') }}
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(row, idx) in excelRows"
+                      :key="idx"
+                      class="border-b border-border last:border-0 hover:bg-muted/30"
+                    >
+                      <td class="px-3 py-1.5 text-muted-foreground">
+                        {{ idx + 1 }}
+                      </td>
+                      <td class="px-3 py-1.5">{{ row.kol_id }}</td>
+                      <td class="px-3 py-1.5 max-w-52 truncate">
+                        {{ row.kol_link || '-' }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="pt-3">
+                <Button
+                  type="primary"
+                  :loading="excelSubmitting"
+                  @click="submitExcel"
+                >
+                  {{ $t('page.bd.kols.create.excel.import') }}
+                </Button>
+              </div>
+            </div>
+
+            <div v-else class="py-8 text-center text-sm text-muted-foreground">
+              {{ $t('page.bd.kols.create.excel.no-data') }}
+            </div>
           </div>
-          <Input
-            v-model:value="createKolLink"
-            :placeholder="$t('page.bd.kols.create.kol-link-placeholder')"
-          />
-        </div>
-      </div>
-    </Modal>
+        </Tabs.TabPane>
+
+        <!-- Tab 3: 批量粘贴 -->
+        <Tabs.TabPane key="batch" :tab="$t('page.bd.kols.create.tabs.batch')">
+          <div class="space-y-4 pt-2">
+            <div>
+              <div class="mb-1 text-sm font-medium">
+                {{ $t('page.bd.kols.create.batch.label') }}
+              </div>
+              <Input.TextArea
+                v-model:value="batchText"
+                :auto-size="{ minRows: 6, maxRows: 14 }"
+                :placeholder="$t('page.bd.kols.create.batch.placeholder')"
+              />
+            </div>
+
+            <div
+              v-if="batchParsedCount > 0"
+              class="text-sm text-muted-foreground"
+            >
+              {{
+                $t('page.bd.kols.create.batch.parsed', [
+                  String(batchParsedCount),
+                ])
+              }}
+            </div>
+
+            <div class="pt-2">
+              <Button
+                type="primary"
+                :loading="batchSubmitting"
+                :disabled="batchParsedCount === 0"
+                @click="submitBatch"
+              >
+                {{ $t('page.bd.kols.create.batch.submit') }}
+              </Button>
+            </div>
+          </div>
+        </Tabs.TabPane>
+      </Tabs>
+    </Drawer>
   </Page>
 </template>

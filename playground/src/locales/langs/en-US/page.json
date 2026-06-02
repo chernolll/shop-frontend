@@ -667,7 +667,8 @@
         "created-at": "Submitted At"
       },
       "is-duplicate": {
-        "yes": "Duplicate"
+        "yes": "Duplicate",
+        "no": "No"
       },
       "has-belong-bd": {
         "yes": "Has Owner BD"
@@ -881,14 +882,17 @@
         "delete": "Remove"
       },
       "is-duplicate": {
-        "yes": "Duplicate"
+        "yes": "Duplicate",
+        "no": "No"
       },
       "has-belong-bd": {
         "yes": "Has Owner BD"
       },
       "status": {
         "blacklist": "Blacklist",
-        "lost": "Lost"
+        "lost": "Lost",
+        "normal": "Normal",
+        "unrecorded": "Unrecorded"
       },
       "delete": {
         "confirm-title": "Confirm Remove Candidate",
@@ -897,13 +901,38 @@
       "create": {
         "title": "Submit KOL Candidate",
         "kol-id-placeholder": "Enter KOL ID",
-        "kol-link-placeholder": "Enter KOL profile link (optional)"
+        "kol-link-placeholder": "Enter KOL profile link (optional)",
+        "tabs": {
+          "manual": "Manual Entry",
+          "excel": "Excel Import",
+          "batch": "Batch Paste"
+        },
+        "excel": {
+          "download-template": "Download Template",
+          "upload": "Upload Excel",
+          "import": "Import to Preparation",
+          "preview": "Preview ({0} records)",
+          "no-data": "Upload an Excel file to begin"
+        },
+        "batch": {
+          "label": "KOL ID List",
+          "placeholder": "Enter one KOL ID per line, supports kol_id, kol_link format",
+          "parsed": "{0} KOL(s) parsed",
+          "submit": "Batch Create"
+        }
       },
       "messages": {
         "create-success": "KOL {0} submitted successfully",
         "create-duplicate": "KOL {0} was previously submitted (marked as duplicate)",
         "delete-success": "Candidate KOL removed",
-        "kol-id-required": "Please enter a KOL ID"
+        "kol-id-required": "Please enter a KOL ID",
+        "file-empty": "File is empty",
+        "file-parsed": "{0} record(s) parsed",
+        "missing-kol-id-column": "Missing kol_id column",
+        "no-valid-kol-id-in-excel": "No valid KOL IDs found in the Excel file",
+        "no-data-to-import": "No data to import",
+        "import-result": "Import completed: {0} new, {1} duplicate(s)",
+        "import-failed": "Import failed"
       }
     },
     "videos": {

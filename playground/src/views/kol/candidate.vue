@@ -203,7 +203,9 @@ const [Grid] = useVbenVxeGrid({
         <Tag v-if="row.is_duplicate" color="warning">
           {{ $t('page.kol.kolCandidate.is-duplicate.yes') }}
         </Tag>
-        <span v-else>-</span>
+        <Tag v-else color="default">
+          {{ $t('page.kol.kolCandidate.is-duplicate.no') }}
+        </Tag>
       </template>
 
       <template #has_belong_bd="{ row }">

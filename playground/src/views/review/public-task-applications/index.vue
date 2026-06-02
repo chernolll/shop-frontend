@@ -143,16 +143,16 @@ const [Grid, gridApi] = useVbenVxeGrid<ApplicationRow>({
     columns: [
       { type: 'checkbox', width: 50 },
       { type: 'seq', title: '#', width: 50 },
-      {
-        field: 'id',
-        title: $t('page.review.publicTaskApplications.columns.id'),
-        width: 80,
-      },
-      {
-        field: 'task_id',
-        title: $t('page.review.publicTaskApplications.columns.task-id'),
-        width: 80,
-      },
+      // {
+      //   field: 'id',
+      //   title: $t('page.review.publicTaskApplications.columns.id'),
+      //   width: 80,
+      // },
+      // {
+      //   field: 'task_id',
+      //   title: $t('page.review.publicTaskApplications.columns.task-id'),
+      //   width: 80,
+      // },
       {
         field: 'product_url',
         title: $t('page.review.publicTaskApplications.columns.product-url'),

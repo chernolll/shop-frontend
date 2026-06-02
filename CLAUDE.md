@@ -52,3 +52,7 @@ playground/src/router/routes/modules/
 ### 占位文件
 
 `views/bd/analytics/`、`views/bd/workspace/`、`views/bd/task-progress/` — 均为 5 行占位，analytics 有路由注册，workspace 和 task-progress 无路由注册。
+
+### 附件图片显示
+
+汇款审核等处后端返回的附件是 `{access_url, file_key, file_name, ...}` 对象数组，模板中遍历时使用 `item.access_url` 而非直接将对象当 `:src`。参考 `views/review/remittance/index.vue` 中的 `#payment_attachments` 和 `#chat_attachments` 模板。

@@ -652,14 +652,14 @@
       "filters": {
         "bd-code": "BD 编码",
         "kol-id": "达人 ID",
-        "prepared-bd-code": "Selected BD"
+        "prepared-bd-code": "筹备BD"
       },
       "columns": {
         "kol-id": "达人 ID",
         "kol-link": "达人主页链接",
         "bd-code": "BD 编码",
         "is-duplicate": "是否重复",
-        "prepared-bd": "Selected BD",
+        "prepared-bd": "筹备BD",
         "has-belong-bd": "已有所属BD",
         "followers": "粉丝数",
         "status": "达人状态",
@@ -667,7 +667,8 @@
         "created-at": "提交时间"
       },
       "is-duplicate": {
-        "yes": "重复提交"
+        "yes": "重复提交",
+        "no": "否"
       },
       "has-belong-bd": {
         "yes": "已有所属BD"
@@ -862,13 +863,13 @@
       "description": "查看我提交的达人筹备记录。",
       "filters": {
         "kol-id": "达人 ID",
-        "prepared-bd-code": "Selected BD"
+        "prepared-bd-code": "筹备BD"
       },
       "columns": {
         "kol-id": "达人 ID",
         "kol-link": "达人主页链接",
         "is-duplicate": "是否重复",
-        "prepared-bd": "Selected BD",
+        "prepared-bd": "筹备BD",
         "has-belong-bd": "已有所属BD",
         "followers": "粉丝数",
         "status": "达人状态",
@@ -881,14 +882,17 @@
         "delete": "移除候选"
       },
       "is-duplicate": {
-        "yes": "重复提交"
+        "yes": "重复提交",
+        "no": "否"
       },
       "has-belong-bd": {
         "yes": "已有所属BD"
       },
       "status": {
         "blacklist": "黑名单",
-        "lost": "流失"
+        "lost": "流失",
+        "normal": "正常",
+        "unrecorded": "未建档"
       },
       "delete": {
         "confirm-title": "确认移除候选达人",
@@ -897,13 +901,38 @@
       "create": {
         "title": "提交候选达人",
         "kol-id-placeholder": "请输入达人ID",
-        "kol-link-placeholder": "请输入达人主页链接（可选）"
+        "kol-link-placeholder": "请输入达人主页链接（可选）",
+        "tabs": {
+          "manual": "手动输入",
+          "excel": "Excel 导入",
+          "batch": "批量粘贴"
+        },
+        "excel": {
+          "download-template": "下载模板",
+          "upload": "上传 Excel",
+          "import": "导入到筹备表",
+          "preview": "预览（共 {0} 条）",
+          "no-data": "请上传 Excel 文件"
+        },
+        "batch": {
+          "label": "达人 ID 列表",
+          "placeholder": "每行输入一个达人 ID，支持 kol_id, kol_link 格式",
+          "parsed": "已解析 {0} 个达人",
+          "submit": "批量创建"
+        }
       },
       "messages": {
         "create-success": "达人 {0} 提交成功",
         "create-duplicate": "达人 {0} 已提交过（标记为重复）",
         "delete-success": "候选达人已移除",
-        "kol-id-required": "请输入达人 ID"
+        "kol-id-required": "请输入达人 ID",
+        "file-empty": "文件为空",
+        "file-parsed": "已解析 {0} 条记录",
+        "missing-kol-id-column": "缺少 kol_id 列",
+        "no-valid-kol-id-in-excel": "Excel 中没有有效的达人 ID",
+        "no-data-to-import": "没有可导入的数据",
+        "import-result": "导入成功：{0} 条新增，{1} 条重复",
+        "import-failed": "导入失败"
       }
     },
     "videos": {

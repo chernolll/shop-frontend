@@ -12,7 +12,7 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 | `/bd/public-tasks` | `views/bd/public-tasks/index.vue` | BD | 280+ | ✅ 申请参与功能 |
 | `/bd/tasks` | `views/bd/tasks/index.vue` | ADMIN | 895 | ✅ |
 | `/bd/my-tasks` | `views/bd/my-tasks/index.vue` | BD | 461 | ✅ |
-| `/bd/kols` | `views/bd/kols/index.vue` | BD | 444 | ✅ |
+| `/bd/kols` | `views/bd/kols/index.vue` | BD | 500+ | ✅ 支持多方式上传 |
 | `/bd/videos` | `views/bd/videos/index.vue` | BD | 368 | ✅ |
 | `/bd/my-task/:task_id` | `views/bd/my-tasks/kol-prepare.vue` | BD | 1217 | ✅ 隐藏路由 |
 | `/bd/sop/list` | `views/bd/sop/index.vue` | BD | 310 | ✅ |
@@ -22,10 +22,11 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 ### KOL 模块 (`/kol`) — ADMIN 专用
 
-| 路由           | 视图                   | 行数         |
-| -------------- | ---------------------- | ------------ |
-| `/kol/list`    | `views/kol/index.vue`  | 893          |
-| `/kol/:kol_id` | `views/kol/detail.vue` | 270 隐藏路由 |
+| 路由             | 视图                      | 行数              |
+| ---------------- | ------------------------- | ----------------- |
+| `/kol/list`      | `views/kol/index.vue`     | 893               |
+| `/kol/candidate` | `views/kol/candidate.vue` | 235 ✅ 筹备表视图 |
+| `/kol/:kol_id`   | `views/kol/detail.vue`    | 270 隐藏路由      |
 
 ### 商品模块 (`/product`) — ADMIN 专用
 
@@ -38,11 +39,11 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 | 路由 | 视图 | 行数 |
 | --- | --- | --- | --- |
-| `/review/kol-prepare` | `views/review/kol-prepare/index.vue` | 837 |
+| `/review/kol-prepare` | `views/review/kol-prepare/index.vue` | 850+ | ✅ 审核状态列前置固定 + 已审核禁用按钮 |
 | `/review/kol-prepare/:task_id` | `views/review/kol-prepare/detail.vue` | 70 隐藏路由 |
 | `/review/budget` | `views/review/budget/index.vue` | 612 |
 | `/review/sample` | `views/review/sample/index.vue` | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
-| `/review/remittance` | `views/review/remittance/index.vue` | 1379 |
+| `/review/remittance` | `views/review/remittance/index.vue` | 1380+ | ✅ 修复附件图片显示为 base64 的问题 |
 | `/review/public-task-applications` | `views/review/public-task-applications/index.vue` | 300+ |
 
 ### 视频模块 + 系统管理 — ADMIN 专用
