@@ -154,3 +154,20 @@ export interface SyncTrackingResult {
 export async function syncTracking(): Promise<SyncTrackingResult> {
   return requestClient.post('/admin/sop/sample/sync-tracking');
 }
+
+export namespace SampleDashboardApi {
+  export interface Stats {
+    not_sent: number;
+    not_received: number;
+    overdue: number;
+    month_sent: number;
+    prev_month_sent: number;
+    total_sent: number;
+  }
+}
+
+export async function getSampleDashboardStats() {
+  return requestClient.get<SampleDashboardApi.Stats>(
+    '/admin/sop/sample/dashboard',
+  );
+}
