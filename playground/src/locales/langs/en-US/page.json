@@ -1516,6 +1516,30 @@
       "bd-ranking-extra": "Top 3 · Current Month",
       "load-failed": "Data load failed, please retry",
       "no-sales-data": "No sales data this month"
+    },
+    "kolLibrary": {
+      "title": "KOL Library",
+      "list-title": "My KOLs",
+      "filters": {
+        "kol-id": "KOL ID"
+      },
+      "columns": {
+        "kol-id": "KOL ID",
+        "kol-link": "KOL Link",
+        "followers": "Followers",
+        "cooperation-fee": "Cooperation Fee",
+        "status": "Status",
+        "score": "Score",
+        "participated-task-count": "Tasks Participated",
+        "completed-task-count": "Tasks Completed",
+        "entry-time": "Entry Time"
+      },
+      "status": {
+        "normal": "Normal",
+        "lost": "Lost",
+        "blacklist": "Blacklist"
+      },
+      "empty": "No data"
     }
   },
   "shop": {

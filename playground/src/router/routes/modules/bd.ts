@@ -68,6 +68,16 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'BD-KolLibrary',
+        path: '/bd/kol-library',
+        component: () => import('#/views/bd/kol-library/index.vue'),
+        meta: {
+          icon: 'lucide:library',
+          title: $t('page.bd.kolLibrary.title'),
+          authority: [RoleEnum.BD],
+        },
+      },
+      {
         name: 'BD-Videos',
         path: '/bd/videos',
         component: () => import('#/views/bd/videos/index.vue'),

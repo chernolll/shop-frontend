@@ -113,3 +113,45 @@ export async function deleteKolCandidate(data: BdKolListApi.DeleteParams) {
 export async function unbindBdKol(data: BdKolListApi.DeleteParams) {
   return requestClient.put<BdKolListApi.UnbindResult>('/bd/kols/unbind', data);
 }
+
+export namespace BdKolLibraryApi {
+  export interface ListParams {
+    kol_id?: string;
+    page: number;
+    page_size: number;
+  }
+
+  export interface ListItem {
+    kol_id: string;
+    kol_link: null | string;
+    followers: number;
+    is_paid: number;
+    cooperation_fee: number;
+    contact_info: null | string;
+    belong_bd_code: null | string;
+    participated_task_count: number;
+    completed_task_count: number;
+    status: number;
+    score: number;
+    notes: null | string;
+    entry_time: number;
+    created_at: number;
+    updated_at: number;
+  }
+
+  export interface ListResult {
+    list: ListItem[];
+    page: number;
+    page_size: number;
+    total: number;
+  }
+}
+
+/** BD 查询达人库（自己的正常达人，来自 kol 表） */
+export async function getBdKolLibraryList(
+  params: BdKolLibraryApi.ListParams,
+) {
+  return requestClient.get<BdKolLibraryApi.ListResult>('/bd/kol-library', {
+    params,
+  });
+}

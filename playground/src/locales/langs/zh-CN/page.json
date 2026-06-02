@@ -1516,6 +1516,30 @@
       "bd-ranking-extra": "Top 3 · 当月",
       "load-failed": "数据加载失败，请稍后重试",
       "no-sales-data": "本月暂无销售数据"
+    },
+    "kolLibrary": {
+      "title": "达人库",
+      "list-title": "我的达人",
+      "filters": {
+        "kol-id": "达人ID"
+      },
+      "columns": {
+        "kol-id": "达人ID",
+        "kol-link": "达人链接",
+        "followers": "粉丝数",
+        "cooperation-fee": "合作费用",
+        "status": "状态",
+        "score": "评分",
+        "participated-task-count": "参与任务数",
+        "completed-task-count": "完成任务数",
+        "entry-time": "录入时间"
+      },
+      "status": {
+        "normal": "正常",
+        "lost": "流失",
+        "blacklist": "黑名单"
+      },
+      "empty": "暂无数据"
     }
   },
   "shop": {
