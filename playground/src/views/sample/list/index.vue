@@ -486,15 +486,11 @@ async function submitReview() {
 
     if (failedCount === 0) {
       message.success(
-        $t('page.sample.messages.review-success', [
-          String(successCount),
-        ]),
+        $t('page.sample.messages.review-success', [String(successCount)]),
       );
     } else if (successCount === 0) {
       message.warning(
-        $t('page.sample.messages.review-all-failed', [
-          String(failedCount),
-        ]),
+        $t('page.sample.messages.review-all-failed', [String(failedCount)]),
       );
     } else {
       message.warning(
@@ -812,9 +808,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <template #toolbar-tools>
         <Space wrap>
           <Tag color="processing">
-            {{
-              $t('page.sample.selected-count', [String(selectedCount)])
-            }}
+            {{ $t('page.sample.selected-count', [String(selectedCount)]) }}
           </Tag>
           <Button
             type="primary"
@@ -986,9 +980,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               v-model:value="reviewForm.status"
               class="w-full"
               :options="reviewStatusOptions"
-              :placeholder="
-                $t('page.sample.review-modal.status-placeholder')
-              "
+              :placeholder="$t('page.sample.review-modal.status-placeholder')"
             />
           </FormItem>
 
@@ -998,9 +990,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               label-prefix="page.sample.review-modal"
             />
 
-            <FormItem
-              :label="$t('page.sample.review-modal.quantity-label')"
-            >
+            <FormItem :label="$t('page.sample.review-modal.quantity-label')">
               <InputNumber
                 v-model:value="reviewForm.quantity"
                 class="w-full"
@@ -1013,17 +1003,13 @@ const [Grid, gridApi] = useVbenVxeGrid({
             </FormItem>
 
             <FormItem
-              :label="
-                $t('page.sample.review-modal.tracking-number-label')
-              "
+              :label="$t('page.sample.review-modal.tracking-number-label')"
             >
               <Input
                 v-model:value="reviewForm.tracking_number"
                 :maxlength="100"
                 :placeholder="
-                  $t(
-                    'page.sample.review-modal.tracking-number-placeholder',
-                  )
+                  $t('page.sample.review-modal.tracking-number-placeholder')
                 "
               />
             </FormItem>
@@ -1040,9 +1026,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
             </FormItem>
 
             <FormItem
-              :label="
-                $t('page.sample.review-modal.package-received-label')
-              "
+              :label="$t('page.sample.review-modal.package-received-label')"
             >
               <Select
                 v-model:value="reviewForm.package_received"
@@ -1062,9 +1046,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
               :maxlength="500"
               :placeholder="
                 isRejecting
-                  ? $t(
-                      'page.sample.review-modal.reject-reason-placeholder',
-                    )
+                  ? $t('page.sample.review-modal.reject-reason-placeholder')
                   : $t('page.sample.review-modal.reason-placeholder')
               "
               show-count
@@ -1107,12 +1089,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
           </div>
           <div class="sync-result-table">
             <div class="sync-result-row sync-result-header">
-              <span>{{
-                $t('page.sample.messages.sync-tracking-order')
-              }}</span>
-              <span>{{
-                $t('page.sample.messages.sync-tracking-number')
-              }}</span>
+              <span>{{ $t('page.sample.messages.sync-tracking-order') }}</span>
+              <span>{{ $t('page.sample.messages.sync-tracking-number') }}</span>
               <span>{{
                 $t('page.sample.messages.sync-tracking-logistics')
               }}</span>

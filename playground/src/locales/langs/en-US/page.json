@@ -1720,6 +1720,14 @@
       "sync-tracking-number": "Tracking No.",
       "sync-tracking-logistics": "Logistics",
       "sync-tracking-no-result": "No pending records"
+    },
+    "dashboard": {
+      "not-sent": "Not Yet Sent",
+      "not-received": "Not Received",
+      "overdue": "Overdue",
+      "month-sent": "Month Total Sent",
+      "prev-month-sent": "Prev Month Sent",
+      "total-sent": "Total Sent"
     }
   }
 }

@@ -157,10 +157,10 @@ export async function syncTracking(): Promise<SyncTrackingResult> {
 
 export namespace SampleDashboardApi {
   export interface Stats {
-    not_sent: number;
-    not_received: number;
-    overdue: number;
     month_sent: number;
+    not_received: number;
+    not_sent: number;
+    overdue: number;
     prev_month_sent: number;
     total_sent: number;
   }

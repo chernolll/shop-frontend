@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { SampleDashboardApi } from '#/api/review/sample';
+
 import { onMounted, ref, watch } from 'vue';
 
 import { Page } from '@vben/common-ui';
@@ -7,14 +9,13 @@ import { usePreferences } from '@vben/preferences';
 
 import { Card, Empty, Skeleton } from 'ant-design-vue';
 
-import type { SampleDashboardApi } from '#/api/review/sample';
 import { getSampleDashboardStats } from '#/api/review/sample';
 import { $t } from '#/locales';
 
 const { isDark } = usePreferences();
 const loading = ref(true);
 const mounted = ref(false);
-const stats = ref<SampleDashboardApi.Stats | null>(null);
+const stats = ref<null | SampleDashboardApi.Stats>(null);
 
 onMounted(async () => {
   try {
@@ -34,7 +35,7 @@ interface StatCard {
   icon: string;
   key: string;
   label: string;
-  value: number | null;
+  value: null | number;
 }
 
 const cards = ref<StatCard[]>([]);
@@ -142,7 +143,7 @@ watch(
         >
           <Card :bordered="false" class="dash-card">
             <div class="dash-card-inner">
-              <div :class="['dash-icon', `dash-icon-${card.color}`]">
+              <div class="dash-icon" :class="[`dash-icon-${card.color}`]">
                 <IconifyIcon :icon="card.icon" class="size-5" />
               </div>
               <div class="dash-card-text">
@@ -236,11 +237,11 @@ watch(
 }
 
 .dash-title {
+  margin: 0;
   font-size: 20px;
   font-weight: 700;
   line-height: 1.3;
   color: var(--text-title);
-  margin: 0;
 }
 
 .dash-subtitle {
@@ -281,11 +282,13 @@ watch(
 }
 
 .dash-card {
-  border-radius: 16px !important;
-  border: 1px solid var(--card-border-color) !important;
-  box-shadow: var(--card-shadow);
-  transition: box-shadow 0.25s, transform 0.25s;
   cursor: default;
+  border: 1px solid var(--card-border-color) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--card-shadow);
+  transition:
+    box-shadow 0.25s,
+    transform 0.25s;
 }
 
 .dash-card:hover {
@@ -306,18 +309,18 @@ watch(
 /* Card Inner (icon + text) */
 .dash-card-inner {
   display: flex;
-  align-items: center;
   gap: 16px;
+  align-items: center;
 }
 
 .dash-icon {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  flex-shrink: 0;
   transition: transform 0.25s;
 }
 
@@ -330,22 +333,27 @@ watch(
   color: var(--icon-blue-fg);
   background: var(--icon-blue-bg);
 }
+
 .dash-icon-cyan {
   color: var(--icon-cyan-fg);
   background: var(--icon-cyan-bg);
 }
+
 .dash-icon-gray {
   color: var(--icon-gray-fg);
   background: var(--icon-gray-bg);
 }
+
 .dash-icon-green {
   color: var(--icon-green-fg);
   background: var(--icon-green-bg);
 }
+
 .dash-icon-orange {
   color: var(--icon-orange-fg);
   background: var(--icon-orange-bg);
 }
+
 .dash-icon-red {
   color: var(--icon-red-fg);
   background: var(--icon-red-bg);
@@ -357,10 +365,10 @@ watch(
 }
 
 .dash-card-label {
+  margin-bottom: 4px;
   font-size: 13px;
   line-height: 1.2;
   color: var(--text-label);
-  margin-bottom: 4px;
 }
 
 @media (min-width: 768px) {

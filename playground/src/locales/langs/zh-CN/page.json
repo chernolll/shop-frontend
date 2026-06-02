@@ -1720,6 +1720,14 @@
       "sync-tracking-number": "物流单号",
       "sync-tracking-logistics": "物流方式",
       "sync-tracking-no-result": "暂无待同步记录"
+    },
+    "dashboard": {
+      "not-sent": "未发出",
+      "not-received": "未签收",
+      "overdue": "超时未签收",
+      "month-sent": "当月总发出",
+      "prev-month-sent": "上月总发出",
+      "total-sent": "历史总发出"
     }
   }
 }

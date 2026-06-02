@@ -47,10 +47,10 @@ Vue 3 + TypeScript + Vben Admin 5.x。电商 BD 管理系统前端。
 
 ### 寄样模块 (`/sample`) — ADMIN 专用
 
-| 路由 | 视图 | 行数 |
-| --- | --- | --- |
-| `/sample/list` | `views/sample/list/index.vue` | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
-| `/sample/dashboard` | `views/sample/dashboard/index.vue` | 占位 | 🚧 寄样看板 |
+| 路由                | 视图                               | 行数  |
+| ------------------- | ---------------------------------- | ----- | -------------------------------- |
+| `/sample/list`      | `views/sample/list/index.vue`      | 1180+ | ✅ 含导出订单表格 + 同步物流单号 |
+| `/sample/dashboard` | `views/sample/dashboard/index.vue` | 占位  | 🚧 寄样看板                      |
 
 ### 视频模块 + 系统管理 — ADMIN 专用
 
