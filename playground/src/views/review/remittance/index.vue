@@ -660,17 +660,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
           >-</span>
         <Space v-else wrap :size="4">
           <Image
-            v-for="(url, idx) in row.payment_attachments"
+            v-for="(item, idx) in row.payment_attachments"
             :key="idx"
             :height="40"
-            :src="url"
+            :src="item.access_url"
             :preview="{
               mask: $t('page.review.remittance.actions.preview'),
             }"
             alt="payment"
             class="cursor-pointer rounded"
             fallback="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='10'%3EIMG%3C/text%3E%3C/svg%3E"
-            @click="handlePreviewImage(url, `payment-${idx + 1}`)"
+            @click="handlePreviewImage(item.access_url, `payment-${idx + 1}`)"
           />
         </Space>
       </template>
@@ -722,17 +722,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
           >-</span>
         <Space v-else wrap :size="4">
           <Image
-            v-for="(url, idx) in row.chat_attachments"
+            v-for="(item, idx) in row.chat_attachments"
             :key="idx"
             :height="40"
-            :src="url"
+            :src="item.access_url"
             :preview="{
               mask: $t('page.review.remittance.actions.preview'),
             }"
             alt="chat"
             class="cursor-pointer rounded"
             fallback="data:image/svg+xml,%3Csvg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='40' height='40' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' fill='%23999' font-size='10'%3EIMG%3C/text%3E%3C/svg%3E"
-            @click="handlePreviewImage(url, `chat-${idx + 1}`)"
+            @click="handlePreviewImage(item.access_url, `chat-${idx + 1}`)"
           />
         </Space>
       </template>

@@ -89,6 +89,13 @@ function getStatusText(status: ReviewKolPrepareApi.Status) {
   }
 }
 
+function isReviewed(status: ReviewKolPrepareApi.Status) {
+  return (
+    status === ReviewKolPrepareApi.Status.APPROVED ||
+    status === ReviewKolPrepareApi.Status.REJECTED
+  );
+}
+
 function getStatusColor(status: ReviewKolPrepareApi.Status) {
   switch (status) {
     case 1: {
@@ -248,9 +255,24 @@ function openBatchReviewModal(
     return;
   }
 
+  // 过滤掉已审核的记录（已通过或已驳回的不再审核）
+  const pendingRows = rows.filter((r) => !isReviewed(r.status));
+  if (pendingRows.length === 0) {
+    message.warning($t('page.review.kolPrepare.messages.all-reviewed'));
+    return;
+  }
+  if (pendingRows.length < rows.length) {
+    message.info(
+      $t('page.review.kolPrepare.messages.partial-reviewed', [
+        String(pendingRows.length),
+        String(rows.length),
+      ]),
+    );
+  }
+
   reviewForm.status = status;
   reviewForm.reason = '';
-  reviewTargetRows.value = [...rows];
+  reviewTargetRows.value = pendingRows;
   reviewModalOpen.value = true;
 }
 
@@ -408,6 +430,13 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
     { type: 'seq', width: 60 },
     { type: 'checkbox', width: 56 },
     {
+      field: 'status',
+      fixed: 'left',
+      minWidth: 100,
+      slots: { default: 'status' },
+      title: $t('page.review.kolPrepare.columns.status'),
+    },
+    {
       field: 'task_code',
       minWidth: 180,
       slots: { default: 'task_code' },
@@ -452,12 +481,6 @@ const gridOptions: VxeTableGridOptions<ReviewKolPrepareApi.ListItem> = {
       minWidth: 140,
       slots: { default: 'participated_task_count' },
       title: $t('page.review.kolPrepare.columns.participated-task-count'),
-    },
-    {
-      field: 'status',
-      minWidth: 120,
-      slots: { default: 'status' },
-      title: $t('page.review.kolPrepare.columns.status'),
     },
     {
       field: 'reviewer_name',
@@ -651,6 +674,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <Button
             type="link"
             size="small"
+            :disabled="isReviewed(row.status)"
             @click="openBatchReviewModal(3, [row])"
           >
             {{ $t('page.review.actions.approve') }}
@@ -659,6 +683,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
             danger
             type="link"
             size="small"
+            :disabled="isReviewed(row.status)"
             @click="openBatchReviewModal(2, [row])"
           >
             {{ $t('page.review.actions.reject') }}

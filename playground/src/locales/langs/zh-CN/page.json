@@ -121,7 +121,9 @@
         "review-partial-success": "审核已完成，成功 {0} 条，失败 {1} 条",
         "review-success": "审核成功，共处理 {0} 条",
         "select-records-first": "请先选择至少 1 条记录",
-        "unknown-failure": "未知失败原因"
+        "unknown-failure": "未知失败原因",
+        "all-reviewed": "所选记录均已审核，无需再次处理",
+        "partial-reviewed": "已过滤 {0} 条可审核记录，{1} 条已审核的记录已跳过"
       },
       "detail-title": "达人筹备表审核详情",
       "detail-description": "这里预留给达人筹备表审核详情，后续接到接口后补充真实数据、审核动作和历史记录。",
