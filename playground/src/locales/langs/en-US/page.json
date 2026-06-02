@@ -223,6 +223,7 @@
         "payee-name": "Payee",
         "payment-attachment-count": "Payment Images",
         "payment-attachments": "Payment Proof",
+        "product-listing-id": "Product Listing",
         "product-url": "Product URL",
         "remark": "Remark",
         "review-remark": "Review Remark",
@@ -230,8 +231,12 @@
         "reviewer-name": "Reviewer",
         "sop-status": "SOP Status",
         "status": "Remittance Status",
+        "target-count": "Target Count",
         "submit-at": "Submitted At",
         "submitter-name": "Submitter",
+        "task-bd-id": "Task Relation ID",
+        "task-id": "Task ID",
+        "task-sop-id": "SOP ID",
         "task-code": "Task Code",
         "video-ads-code": "Video Ads Code",
         "video-url": "Video URL"
@@ -257,8 +262,11 @@
       "actions": {
         "batch-review": "Batch Review",
         "confirm-submit": "Confirm Submit",
+        "detail": "Detail",
+        "payment": "Payment",
         "review": "Review",
         "update-payment": "Add Payment Proof",
+        "upload": "Upload",
         "view": "View Detail"
       },
       "detail": {
@@ -277,6 +285,7 @@
         "amount-placeholder": "Optionally update the remittance amount",
         "batch-title": "Batch Review Remittance Requests",
         "description": "This action will process {0} selected remittance request(s).",
+        "remark-placeholder": "Please enter a review remark",
         "review-remark-label": "Review Remark",
         "review-remark-placeholder": "Enter the review remark. Sending an empty string will clear it.",
         "single-title": "Review Remittance Request",

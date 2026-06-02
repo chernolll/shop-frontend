@@ -223,6 +223,7 @@
         "payee-name": "收款人",
         "payment-attachment-count": "付款截图数",
         "payment-attachments": "付款凭证",
+        "product-listing-id": "商品链接",
         "product-url": "商品链接",
         "remark": "备注",
         "review-remark": "审核备注",
@@ -230,8 +231,12 @@
         "reviewer-name": "审核人",
         "sop-status": "SOP 状态",
         "status": "汇款状态",
+        "target-count": "目标数量",
         "submit-at": "提交时间",
         "submitter-name": "提交人",
+        "task-bd-id": "任务分配 ID",
+        "task-id": "任务 ID",
+        "task-sop-id": "SOP ID",
         "task-code": "任务代码",
         "video-ads-code": "视频 Ads Code",
         "video-url": "视频链接"
@@ -257,8 +262,11 @@
       "actions": {
         "batch-review": "批量审核",
         "confirm-submit": "确认提交",
+        "detail": "详情",
+        "payment": "补凭证",
         "review": "审核",
         "update-payment": "补付款截图",
+        "upload": "上传截图",
         "view": "查看详情"
       },
       "detail": {
@@ -277,6 +285,7 @@
         "amount-placeholder": "可选修改汇款金额",
         "batch-title": "批量审核汇款申请",
         "description": "将对选中的 {0} 条汇款申请执行审核。",
+        "remark-placeholder": "请输入审核备注",
         "review-remark-label": "审核备注",
         "review-remark-placeholder": "请输入审核备注；传空字符串会清空",
         "single-title": "审核汇款申请",
