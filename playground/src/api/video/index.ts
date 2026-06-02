@@ -46,7 +46,7 @@ export namespace AdminVideoApi {
   }
 
   export interface ScoreParams {
-    items: ScoreItem[];
+    list: ScoreItem[];
   }
 
   export interface ScoreResultItem {

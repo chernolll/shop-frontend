@@ -163,7 +163,7 @@ async function submitScores() {
   try {
     scoreSubmitting.value = true;
     const result = await scoreAdminVideos({
-      items: scoreDrafts.value.map((item) => ({
+      list: scoreDrafts.value.map((item) => ({
         score: Number(item.score),
         video_id: item.video_id,
       })),
