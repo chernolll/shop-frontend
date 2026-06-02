@@ -118,7 +118,7 @@ export namespace AdminProductApi {
   export interface ProductListingCreateParams {
     commission_private?: number;
     commission_public?: number;
-    main_sku_id?: null | number;
+    main_sku_id: number;
     product_url: string;
     shop_id: number;
     status: Status;

@@ -787,7 +787,7 @@
         "commission-public": "公佣",
         "main-sku-id": "主SKU",
         "product-url": "商品链接",
-        "shop-id": "店铺ID",
+        "shop-id": "店铺",
         "status": "状态"
       },
       "empty": "暂无商品链接数据",
@@ -796,7 +796,9 @@
         "delete-success": "商品链接删除成功",
         "input-product-url": "请输入商品链接",
         "input-shop-id": "请输入店铺ID",
-        "update-success": "商品链接更新成功"
+        "update-success": "商品链接更新成功",
+        "select-shop": "请选择店铺",
+        "main-sku-required": "请选择主力SKU"
       },
       "delete": {
         "confirm-content": "确认删除商品链接 {0} 吗？",

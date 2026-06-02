@@ -44,6 +44,16 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('#/views/system/bd-person/index.vue'),
       },
+      {
+        path: '/system/shops',
+        name: 'SystemShops',
+        meta: {
+          icon: 'lucide:store',
+          title: $t('system.shop.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+        component: () => import('#/views/system/shop/index.vue'),
+      },
     ],
   },
 ];

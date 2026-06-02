@@ -787,7 +787,7 @@
         "commission-public": "Public Commission",
         "main-sku-id": "Main SKU",
         "product-url": "Product URL",
-        "shop-id": "Shop ID",
+        "shop-id": "Shop",
         "status": "Status"
       },
       "empty": "No product listing data",
@@ -796,7 +796,9 @@
         "delete-success": "Product listing deleted successfully",
         "input-product-url": "Please enter the product URL",
         "input-shop-id": "Please enter the shop ID",
-        "update-success": "Product listing updated successfully"
+        "update-success": "Product listing updated successfully",
+        "select-shop": "Please select a shop",
+        "main-sku-required": "Please select a main SKU"
       },
       "delete": {
         "confirm-content": "Are you sure you want to delete product listing {0}?",

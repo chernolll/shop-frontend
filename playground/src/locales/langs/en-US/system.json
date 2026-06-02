@@ -238,5 +238,80 @@
     "operation": "Operation",
     "permissions": "Permissions",
     "setPermissions": "Permissions"
+  },
+  "shop": {
+    "title": "Shop Management",
+    "list": "Shop List",
+    "filters": {
+      "platform-shop-id": "Platform Shop ID",
+      "shop-name": "Shop Name",
+      "platform": "Platform",
+      "shop-type": "Shop Type",
+      "country": "Country",
+      "status": "Status"
+    },
+    "columns": {
+      "platform": "Platform",
+      "shop-type": "Shop Type",
+      "platform-shop-id": "Platform Shop ID",
+      "shop-name": "Shop Name",
+      "country": "Country",
+      "owner": "Owner",
+      "status": "Status",
+      "created-at": "Created At",
+      "updated-at": "Updated At",
+      "operation": "Operation"
+    },
+    "actions": {
+      "create": "New Shop",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "form": {
+      "platform": "Platform",
+      "platform-placeholder": "Select platform",
+      "shop-type": "Shop Type",
+      "shop-type-placeholder": "Select shop type",
+      "platform-shop-id": "Platform Shop ID",
+      "platform-shop-id-placeholder": "Enter platform shop ID",
+      "shop-name": "Shop Name",
+      "shop-name-placeholder": "Enter shop name",
+      "country": "Country",
+      "country-placeholder": "Enter country code (e.g. TH)",
+      "status": "Status",
+      "status-placeholder": "Select status",
+      "owner-user-id": "Owner ID",
+      "owner-user-id-placeholder": "Enter owner employee ID (optional)"
+    },
+    "platform": {
+      "tiktok": "TikTok",
+      "shopee": "Shopee",
+      "lazada": "Lazada"
+    },
+    "shopType": {
+      "cross-border": "Cross-border",
+      "local": "Local"
+    },
+    "status": {
+      "disabled": "Disabled",
+      "normal": "Normal",
+      "pending": "Pending",
+      "frozen": "Frozen"
+    },
+    "delete": {
+      "confirm-content": "Are you sure to delete shop {0}?",
+      "confirm-title": "Confirm Delete Shop"
+    },
+    "empty": "No shop data",
+    "messages": {
+      "platform-required": "Please select a platform",
+      "shop-type-required": "Please select a shop type",
+      "platform-shop-id-required": "Please enter platform shop ID",
+      "shop-name-required": "Please enter shop name",
+      "country-required": "Please enter country",
+      "create-success": "Shop created successfully",
+      "update-success": "Shop updated successfully",
+      "delete-success": "Shop {0} deleted successfully"
+    }
   }
 }

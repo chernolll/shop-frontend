@@ -34,9 +34,12 @@ import {
 import { $t } from '#/locales';
 
 import { useAdminMainSkuSelect } from '../shared/useAdminMainSkuSelect';
+import { useAdminShopSelect } from '#/views/system/shared/useAdminShopSelect';
 
 const { componentProps: mainSkuSelectProps, loadOptions: loadMainSkuOptions } =
   useAdminMainSkuSelect();
+const { componentProps: shopSelectProps, loadOptions: loadShopOptions } =
+  useAdminShopSelect();
 
 const drawerOpen = ref(false);
 const detailLoading = ref(false);
@@ -46,14 +49,14 @@ const editingRow = ref<AdminProductApi.ProductListingItem | null>(null);
 const formState = reactive<{
   commission_private: number | undefined;
   commission_public: number | undefined;
-  main_sku_id: number | undefined;
+  main_sku_id: number | null;
   product_url: string;
   shop_id: number | undefined;
   status: AdminProductApi.Status;
 }>({
   commission_private: undefined,
   commission_public: undefined,
-  main_sku_id: undefined,
+  main_sku_id: null,
   product_url: '',
   shop_id: undefined,
   status: AdminProductApi.Status.ON_SALE,
@@ -102,7 +105,7 @@ function getStatusColor(status?: null | number) {
 function resetForm() {
   formState.commission_private = undefined;
   formState.commission_public = undefined;
-  formState.main_sku_id = undefined;
+  formState.main_sku_id = null;
   formState.product_url = '';
   formState.shop_id = undefined;
   formState.status = AdminProductApi.Status.ON_SALE;
@@ -111,7 +114,7 @@ function resetForm() {
 function assignForm(detail: AdminProductApi.ProductListingItem) {
   formState.commission_private = detail.commission_private;
   formState.commission_public = detail.commission_public;
-  formState.main_sku_id = detail.main_sku_id ?? undefined;
+  formState.main_sku_id = detail.main_sku_id ?? null;
   formState.product_url = detail.product_url;
   formState.shop_id = detail.shop_id;
   formState.status = detail.status;
@@ -119,11 +122,15 @@ function assignForm(detail: AdminProductApi.ProductListingItem) {
 
 function validateForm() {
   if (!formState.shop_id) {
-    message.warning($t('page.product.listing.messages.input-shop-id'));
+    message.warning($t('page.product.listing.messages.select-shop'));
     return false;
   }
   if (!formState.product_url.trim()) {
     message.warning($t('page.product.listing.messages.input-product-url'));
+    return false;
+  }
+  if (!formState.main_sku_id) {
+    message.warning($t('page.product.listing.messages.main-sku-required'));
     return false;
   }
   return true;
@@ -133,7 +140,7 @@ function buildPayload(): AdminProductApi.ProductListingCreateParams {
   return {
     commission_private: formState.commission_private,
     commission_public: formState.commission_public,
-    main_sku_id: formState.main_sku_id ?? null,
+    main_sku_id: formState.main_sku_id,
     product_url: formState.product_url.trim(),
     shop_id: Number(formState.shop_id),
     status: formState.status,
@@ -144,7 +151,7 @@ async function openCreate() {
   editingRow.value = null;
   resetForm();
   drawerOpen.value = true;
-  await loadMainSkuOptions();
+  await Promise.all([loadMainSkuOptions(), loadShopOptions()]);
 }
 
 async function openEdit(row: AdminProductApi.ProductListingItem) {
@@ -154,9 +161,12 @@ async function openEdit(row: AdminProductApi.ProductListingItem) {
     detailLoading.value = true;
     const detail = await getAdminProductListingDetail({ id: row.id });
     assignForm(detail);
-    await loadMainSkuOptions(
-      detail.main_sku_code || detail.main_sku_name || '',
-    );
+    await Promise.all([
+      loadMainSkuOptions(
+        detail.main_sku_code || detail.main_sku_name || '',
+      ),
+      loadShopOptions(),
+    ]);
   } finally {
     detailLoading.value = false;
   }
@@ -438,11 +448,9 @@ const [Grid, gridApi] = useVbenVxeGrid({
         layout="horizontal"
       >
         <Form.Item :label="$t('page.product.listing.form.shop-id')" required>
-          <InputNumber
+          <Select
             v-model:value="formState.shop_id"
-            class="w-full"
-            :min="1"
-            :precision="0"
+            v-bind="shopSelectProps"
           />
         </Form.Item>
         <Form.Item
@@ -451,7 +459,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           <Input v-model:value="formState.product_url" />
         </Form.Item>
-        <Form.Item :label="$t('page.product.listing.form.main-sku-id')">
+        <Form.Item :label="$t('page.product.listing.form.main-sku-id')" required>
           <Select
             v-model:value="formState.main_sku_id"
             v-bind="mainSkuSelectProps"
