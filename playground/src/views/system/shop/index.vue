@@ -11,7 +11,6 @@ import { formatDateTime } from '@vben/utils';
 import {
   Button,
   Drawer,
-  Empty,
   Form,
   Input,
   InputNumber,
@@ -36,21 +35,21 @@ const submitting = ref(false);
 const editingRow = ref<AdminShopApi.ShopItem | null>(null);
 
 const platformOptions = [
-  { label: $t('system.shop.platform.tiktok'), value: 1 },
-  { label: $t('system.shop.platform.shopee'), value: 2 },
-  { label: $t('system.shop.platform.lazada'), value: 3 },
+  { label: $t('page.shop.platform.tiktok'), value: 1 },
+  { label: $t('page.shop.platform.shopee'), value: 2 },
+  { label: $t('page.shop.platform.lazada'), value: 3 },
 ];
 
 const shopTypeOptions = [
-  { label: $t('system.shop.shopType.cross-border'), value: 1 },
-  { label: $t('system.shop.shopType.local'), value: 2 },
+  { label: $t('page.shop.shopType.cross-border'), value: 1 },
+  { label: $t('page.shop.shopType.local'), value: 2 },
 ];
 
 const statusOptions = [
-  { label: $t('system.shop.status.disabled'), value: 0 },
-  { label: $t('system.shop.status.normal'), value: 1 },
-  { label: $t('system.shop.status.pending'), value: 2 },
-  { label: $t('system.shop.status.frozen'), value: 3 },
+  { label: $t('page.shop.status.disabled'), value: 0 },
+  { label: $t('page.shop.status.normal'), value: 1 },
+  { label: $t('page.shop.status.pending'), value: 2 },
+  { label: $t('page.shop.status.frozen'), value: 3 },
 ];
 
 function getPlatformText(platform: number) {
@@ -65,16 +64,21 @@ function getShopTypeText(shopType: number) {
 
 function getStatusColor(status: number) {
   switch (status) {
-    case 1:
+    case 0: {
+      return 'default';
+    }
+    case 1: {
       return 'success';
-    case 0:
-      return 'default';
-    case 2:
+    }
+    case 2: {
       return 'processing';
-    case 3:
+    }
+    case 3: {
       return 'error';
-    default:
+    }
+    default: {
       return 'default';
+    }
   }
 }
 
@@ -84,12 +88,12 @@ function getStatusText(status: number) {
 }
 
 const formState = reactive<{
-  platform: number | undefined;
-  shop_type: number | undefined;
-  platform_shop_id: string;
-  shop_name: string;
   country: string;
   owner_user_id: number | undefined;
+  platform: number | undefined;
+  platform_shop_id: string;
+  shop_name: string;
+  shop_type: number | undefined;
   status: number | undefined;
 }>({
   platform: undefined,
@@ -104,8 +108,8 @@ const formState = reactive<{
 const isEditMode = computed(() => Boolean(editingRow.value));
 const drawerTitle = computed(() =>
   isEditMode.value
-    ? $t('system.shop.actions.edit')
-    : $t('system.shop.actions.create'),
+    ? $t('page.shop.actions.edit')
+    : $t('page.shop.actions.create'),
 );
 
 function formatTimestamp(value?: null | number) {
@@ -151,23 +155,23 @@ function closeDrawer() {
 
 async function submitForm() {
   if (!formState.platform) {
-    message.warning($t('system.shop.messages.platform-required'));
+    message.warning($t('page.shop.messages.platform-required'));
     return;
   }
   if (!formState.shop_type) {
-    message.warning($t('system.shop.messages.shop-type-required'));
+    message.warning($t('page.shop.messages.shop-type-required'));
     return;
   }
   if (!formState.platform_shop_id.trim()) {
-    message.warning($t('system.shop.messages.platform-shop-id-required'));
+    message.warning($t('page.shop.messages.platform-shop-id-required'));
     return;
   }
   if (!formState.shop_name.trim()) {
-    message.warning($t('system.shop.messages.shop-name-required'));
+    message.warning($t('page.shop.messages.shop-name-required'));
     return;
   }
   if (!formState.country.trim()) {
-    message.warning($t('system.shop.messages.country-required'));
+    message.warning($t('page.shop.messages.country-required'));
     return;
   }
 
@@ -184,7 +188,7 @@ async function submitForm() {
         owner_user_id: formState.owner_user_id ?? null,
         status: formState.status ?? 1,
       });
-      message.success($t('system.shop.messages.update-success'));
+      message.success($t('page.shop.messages.update-success'));
     } else {
       await createAdminShop({
         platform: formState.platform,
@@ -195,7 +199,7 @@ async function submitForm() {
         owner_user_id: formState.owner_user_id ?? null,
         status: formState.status ?? 1,
       });
-      message.success($t('system.shop.messages.create-success'));
+      message.success($t('page.shop.messages.create-success'));
     }
     closeDrawer();
     await gridApi.query();
@@ -207,12 +211,12 @@ async function submitForm() {
 function confirmDelete(row: AdminShopApi.ShopItem) {
   Modal.confirm({
     okText: $t('common.confirm'),
-    title: $t('system.shop.delete.confirm-title'),
-    content: $t('system.shop.delete.confirm-content', [row.platform_shop_id]),
+    title: $t('page.shop.delete.confirm-title'),
+    content: $t('page.shop.delete.confirm-content', [row.platform_shop_id]),
     async onOk() {
       await deleteAdminShop({ id: row.id });
       message.success(
-        $t('system.shop.messages.delete-success', [row.platform_shop_id]),
+        $t('page.shop.messages.delete-success', [row.platform_shop_id]),
       );
       await gridApi.query();
     },
@@ -225,12 +229,12 @@ const formOptions: VbenFormProps = {
     {
       component: 'Input',
       fieldName: 'platform_shop_id',
-      label: $t('system.shop.filters.platform-shop-id'),
+      label: $t('page.shop.filters.platform-shop-id'),
     },
     {
       component: 'Input',
       fieldName: 'shop_name',
-      label: $t('system.shop.filters.shop-name'),
+      label: $t('page.shop.filters.shop-name'),
     },
     {
       component: 'Select',
@@ -239,7 +243,7 @@ const formOptions: VbenFormProps = {
         options: platformOptions,
       },
       fieldName: 'platform',
-      label: $t('system.shop.filters.platform'),
+      label: $t('page.shop.filters.platform'),
     },
     {
       component: 'Select',
@@ -248,12 +252,12 @@ const formOptions: VbenFormProps = {
         options: shopTypeOptions,
       },
       fieldName: 'shop_type',
-      label: $t('system.shop.filters.shop-type'),
+      label: $t('page.shop.filters.shop-type'),
     },
     {
       component: 'Input',
       fieldName: 'country',
-      label: $t('system.shop.filters.country'),
+      label: $t('page.shop.filters.country'),
     },
     {
       component: 'Select',
@@ -262,7 +266,7 @@ const formOptions: VbenFormProps = {
         options: statusOptions,
       },
       fieldName: 'status',
-      label: $t('system.shop.filters.status'),
+      label: $t('page.shop.filters.status'),
     },
   ],
   submitOnChange: false,
@@ -275,49 +279,49 @@ const gridOptions: VxeTableGridOptions<AdminShopApi.ShopItem> = {
     {
       field: 'platform_shop_id',
       minWidth: 160,
-      title: $t('system.shop.columns.platform-shop-id'),
+      title: $t('page.shop.columns.platform-shop-id'),
     },
     {
       field: 'shop_name',
       minWidth: 160,
-      title: $t('system.shop.columns.shop-name'),
+      title: $t('page.shop.columns.shop-name'),
     },
     {
       field: 'platform',
       minWidth: 100,
-      title: $t('system.shop.columns.platform'),
+      title: $t('page.shop.columns.platform'),
       formatter: ({ cellValue }: { cellValue: number }) =>
         getPlatformText(cellValue),
     },
     {
       field: 'shop_type',
       minWidth: 100,
-      title: $t('system.shop.columns.shop-type'),
+      title: $t('page.shop.columns.shop-type'),
       formatter: ({ cellValue }: { cellValue: number }) =>
         getShopTypeText(cellValue),
     },
     {
       field: 'country',
       minWidth: 90,
-      title: $t('system.shop.columns.country'),
+      title: $t('page.shop.columns.country'),
     },
     {
       field: 'status',
       minWidth: 100,
-      title: $t('system.shop.columns.status'),
+      title: $t('page.shop.columns.status'),
       slots: { default: 'status' },
     },
     {
       field: 'created_at',
       minWidth: 170,
-      title: $t('system.shop.columns.created-at'),
+      title: $t('page.shop.columns.created-at'),
       formatter: ({ cellValue }: { cellValue: number }) =>
         formatTimestamp(cellValue),
     },
     {
       field: 'updated_at',
       minWidth: 170,
-      title: $t('system.shop.columns.updated-at'),
+      title: $t('page.shop.columns.updated-at'),
       formatter: ({ cellValue }: { cellValue: number }) =>
         formatTimestamp(cellValue),
     },
@@ -325,7 +329,7 @@ const gridOptions: VxeTableGridOptions<AdminShopApi.ShopItem> = {
       field: 'operation',
       fixed: 'right',
       minWidth: 120,
-      title: $t('system.shop.columns.operation'),
+      title: $t('page.shop.columns.operation'),
       slots: { default: 'operation' },
     },
   ],
@@ -371,10 +375,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
 <template>
   <Page auto-content-height>
-    <Grid :table-title="$t('system.shop.list')">
+    <Grid :table-title="$t('page.shop.list')">
       <template #toolbar-tools>
         <Button type="primary" @click="openCreate">
-          {{ $t('system.shop.actions.create') }}
+          {{ $t('page.shop.actions.create') }}
         </Button>
       </template>
 
@@ -387,15 +391,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <template #operation="{ row }">
         <Space size="small">
           <Button type="link" size="small" @click="openEdit(row)">
-            {{ $t('system.shop.actions.edit') }}
+            {{ $t('page.shop.actions.edit') }}
           </Button>
-          <Button
-            danger
-            type="link"
-            size="small"
-            @click="confirmDelete(row)"
-          >
-            {{ $t('system.shop.actions.delete') }}
+          <Button danger type="link" size="small" @click="confirmDelete(row)">
+            {{ $t('page.shop.actions.delete') }}
           </Button>
         </Space>
       </template>
@@ -409,57 +408,57 @@ const [Grid, gridApi] = useVbenVxeGrid({
       @close="closeDrawer"
     >
       <Form layout="vertical">
-        <Form.Item :label="$t('system.shop.form.platform')" required>
+        <Form.Item :label="$t('page.shop.form.platform')" required>
           <Select
             v-model:value="formState.platform"
-            :placeholder="$t('system.shop.form.platform-placeholder')"
+            :placeholder="$t('page.shop.form.platform-placeholder')"
             :options="platformOptions"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.shop-type')" required>
+        <Form.Item :label="$t('page.shop.form.shop-type')" required>
           <Select
             v-model:value="formState.shop_type"
-            :placeholder="$t('system.shop.form.shop-type-placeholder')"
+            :placeholder="$t('page.shop.form.shop-type-placeholder')"
             :options="shopTypeOptions"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.platform-shop-id')" required>
+        <Form.Item :label="$t('page.shop.form.platform-shop-id')" required>
           <Input
             v-model:value="formState.platform_shop_id"
-            :placeholder="$t('system.shop.form.platform-shop-id-placeholder')"
+            :placeholder="$t('page.shop.form.platform-shop-id-placeholder')"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.shop-name')" required>
+        <Form.Item :label="$t('page.shop.form.shop-name')" required>
           <Input
             v-model:value="formState.shop_name"
-            :placeholder="$t('system.shop.form.shop-name-placeholder')"
+            :placeholder="$t('page.shop.form.shop-name-placeholder')"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.country')" required>
+        <Form.Item :label="$t('page.shop.form.country')" required>
           <Input
             v-model:value="formState.country"
-            :placeholder="$t('system.shop.form.country-placeholder')"
+            :placeholder="$t('page.shop.form.country-placeholder')"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.status')" required>
+        <Form.Item :label="$t('page.shop.form.status')" required>
           <Select
             v-model:value="formState.status"
-            :placeholder="$t('system.shop.form.status-placeholder')"
+            :placeholder="$t('page.shop.form.status-placeholder')"
             :options="statusOptions"
           />
         </Form.Item>
 
-        <Form.Item :label="$t('system.shop.form.owner-user-id')">
+        <Form.Item :label="$t('page.shop.form.owner-user-id')">
           <InputNumber
             v-model:value="formState.owner_user_id"
             class="w-full"
             :min="1"
-            :placeholder="$t('system.shop.form.owner-user-id-placeholder')"
+            :placeholder="$t('page.shop.form.owner-user-id-placeholder')"
           />
         </Form.Item>
       </Form>

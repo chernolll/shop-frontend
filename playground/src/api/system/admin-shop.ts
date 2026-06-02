@@ -2,27 +2,27 @@ import { requestClient } from '#/api/request';
 
 export namespace AdminShopApi {
   export interface ListParams {
-    id?: number;
-    platform_shop_id?: string;
-    shop_name?: string;
-    platform?: number;
-    shop_type?: number;
     country?: string;
-    status?: number;
+    id?: number;
     page: number;
     page_size: number;
+    platform?: number;
+    platform_shop_id?: string;
+    shop_name?: string;
+    shop_type?: number;
+    status?: number;
   }
 
   export interface ShopItem {
+    country: string;
+    created_at: number;
     id: number;
+    owner_user_id: null | number;
     platform: number;
-    shop_type: number;
     platform_shop_id: string;
     shop_name: string;
-    country: string;
-    owner_user_id: null | number;
+    shop_type: number;
     status: number;
-    created_at: number;
     updated_at: number;
   }
 
@@ -34,12 +34,12 @@ export namespace AdminShopApi {
   }
 
   export interface CreateParams {
-    platform: number;
-    shop_type: number;
-    platform_shop_id: string;
-    shop_name: string;
     country: string;
     owner_user_id?: null | number;
+    platform: number;
+    platform_shop_id: string;
+    shop_name: string;
+    shop_type: number;
     status: number;
   }
 

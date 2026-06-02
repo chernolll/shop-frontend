@@ -48,7 +48,7 @@ export function useAdminShopSelect() {
     },
     onSearch: handleSearch,
     options: options.value,
-    placeholder: $t('system.shop.form.shop-name-placeholder'),
+    placeholder: $t('page.shop.form.shop-name-placeholder'),
     showSearch: true,
   }));
 

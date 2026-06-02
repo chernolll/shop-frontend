@@ -32,9 +32,9 @@ import {
   updateAdminProductListing,
 } from '#/api/product';
 import { $t } from '#/locales';
+import { useAdminShopSelect } from '#/views/system/shared/useAdminShopSelect';
 
 import { useAdminMainSkuSelect } from '../shared/useAdminMainSkuSelect';
-import { useAdminShopSelect } from '#/views/system/shared/useAdminShopSelect';
 
 const { componentProps: mainSkuSelectProps, loadOptions: loadMainSkuOptions } =
   useAdminMainSkuSelect();
@@ -49,7 +49,7 @@ const editingRow = ref<AdminProductApi.ProductListingItem | null>(null);
 const formState = reactive<{
   commission_private: number | undefined;
   commission_public: number | undefined;
-  main_sku_id: number | null;
+  main_sku_id: null | number;
   product_url: string;
   shop_id: number | undefined;
   status: AdminProductApi.Status;
@@ -162,9 +162,7 @@ async function openEdit(row: AdminProductApi.ProductListingItem) {
     const detail = await getAdminProductListingDetail({ id: row.id });
     assignForm(detail);
     await Promise.all([
-      loadMainSkuOptions(
-        detail.main_sku_code || detail.main_sku_name || '',
-      ),
+      loadMainSkuOptions(detail.main_sku_code || detail.main_sku_name || ''),
       loadShopOptions(),
     ]);
   } finally {
@@ -448,10 +446,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         layout="horizontal"
       >
         <Form.Item :label="$t('page.product.listing.form.shop-id')" required>
-          <Select
-            v-model:value="formState.shop_id"
-            v-bind="shopSelectProps"
-          />
+          <Select v-model:value="formState.shop_id" v-bind="shopSelectProps" />
         </Form.Item>
         <Form.Item
           :label="$t('page.product.listing.form.product-url')"
@@ -459,7 +454,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
         >
           <Input v-model:value="formState.product_url" />
         </Form.Item>
-        <Form.Item :label="$t('page.product.listing.form.main-sku-id')" required>
+        <Form.Item
+          :label="$t('page.product.listing.form.main-sku-id')"
+          required
+        >
           <Select
             v-model:value="formState.main_sku_id"
             v-bind="mainSkuSelectProps"
