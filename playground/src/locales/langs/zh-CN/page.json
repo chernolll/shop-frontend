@@ -1500,6 +1500,22 @@
           "video-url-required": "请填写视频链接"
         }
       }
+    },
+    "analytics": {
+      "monthly-gmv": "月度GMV",
+      "monthly-gmv-sub": "GMV MTH.",
+      "monthly-tasks": "月度任务完成数",
+      "monthly-tasks-sub": "Tasks completed MTH.",
+      "deadline-14d": "14天内到期任务",
+      "deadline-14d-sub": "Deadline 14 days Tasks",
+      "total-kols": "达人总数",
+      "total-kols-sub": "Total KOL",
+      "kol-ranking-title": "KOL 月度销售额排名",
+      "kol-ranking-extra": "Top 10 · 当月",
+      "bd-ranking-title": "BD 月度销售额排名",
+      "bd-ranking-extra": "Top 3 · 当月",
+      "load-failed": "数据加载失败，请稍后重试",
+      "no-sales-data": "本月暂无销售数据"
     }
   },
   "shop": {

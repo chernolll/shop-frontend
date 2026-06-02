@@ -1500,6 +1500,22 @@
           "video-url-required": "Please enter the video URL"
         }
       }
+    },
+    "analytics": {
+      "monthly-gmv": "Monthly GMV",
+      "monthly-gmv-sub": "GMV MTH.",
+      "monthly-tasks": "Monthly Tasks Completed",
+      "monthly-tasks-sub": "Tasks completed MTH.",
+      "deadline-14d": "Deadline (14 days)",
+      "deadline-14d-sub": "Deadline 14 days Tasks",
+      "total-kols": "Total KOLs",
+      "total-kols-sub": "Total KOL",
+      "kol-ranking-title": "KOL Monthly Sales Ranking",
+      "kol-ranking-extra": "Top 10 · Current Month",
+      "bd-ranking-title": "BD Monthly Sales Ranking",
+      "bd-ranking-extra": "Top 3 · Current Month",
+      "load-failed": "Data load failed, please retry",
+      "no-sales-data": "No sales data this month"
     }
   },
   "shop": {
