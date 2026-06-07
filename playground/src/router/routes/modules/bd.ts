@@ -36,16 +36,16 @@ const routes: RouteRecordRaw[] = [
         },
       },
       // 公开任务（BD用）
-      {
-        name: 'BD-PublicTasks',
-        path: '/bd/public-tasks',
-        component: () => import('#/views/bd/public-tasks/index.vue'),
-        meta: {
-          icon: 'lucide:megaphone',
-          title: $t('page.bd.publicTasks.list-title'),
-          authority: [RoleEnum.BD],
-        },
-      },
+      // {
+      //   name: 'BD-PublicTasks',
+      //   path: '/bd/public-tasks',
+      //   component: () => import('#/views/bd/public-tasks/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:megaphone',
+      //     title: $t('page.bd.publicTasks.list-title'),
+      //     authority: [RoleEnum.BD],
+      //   },
+      // },
       // 我的任务（BD用）
       {
         name: 'BD-MyTasks',
@@ -57,36 +57,36 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
-      {
-        name: 'BD-Kols',
-        path: '/bd/kols',
-        component: () => import('#/views/bd/kols/index.vue'),
-        meta: {
-          icon: 'lucide:users-round',
-          title: $t('page.bd.kols.title'),
-          authority: [RoleEnum.BD],
-        },
-      },
-      {
-        name: 'BD-KolLibrary',
-        path: '/bd/kol-library',
-        component: () => import('#/views/bd/kol-library/index.vue'),
-        meta: {
-          icon: 'lucide:library',
-          title: $t('page.bd.kolLibrary.title'),
-          authority: [RoleEnum.BD],
-        },
-      },
-      {
-        name: 'BD-Videos',
-        path: '/bd/videos',
-        component: () => import('#/views/bd/videos/index.vue'),
-        meta: {
-          icon: 'lucide:clapperboard',
-          title: $t('page.bd.videos.title'),
-          authority: [RoleEnum.BD],
-        },
-      },
+      // {
+      //   name: 'BD-Kols',
+      //   path: '/bd/kols',
+      //   component: () => import('#/views/bd/kols/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:users-round',
+      //     title: $t('page.bd.kols.title'),
+      //     authority: [RoleEnum.BD],
+      //   },
+      // },
+      // {
+      //   name: 'BD-KolLibrary',
+      //   path: '/bd/kol-library',
+      //   component: () => import('#/views/bd/kol-library/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:library',
+      //     title: $t('page.bd.kolLibrary.title'),
+      //     authority: [RoleEnum.BD],
+      //   },
+      // },
+      // {
+      //   name: 'BD-Videos',
+      //   path: '/bd/videos',
+      //   component: () => import('#/views/bd/videos/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:clapperboard',
+      //     title: $t('page.bd.videos.title'),
+      //     authority: [RoleEnum.BD],
+      //   },
+      // },
       // 达人筹备（独立页面）
       {
         name: 'BD-KolPrepare',

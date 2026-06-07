@@ -1,100 +1,120 @@
-<!-- eslint-disable unicorn/no-nested-ternary -->
-<!-- eslint-disable unicorn/prefer-add-event-listener -->
-<!-- eslint-disable unicorn/prefer-blob-reading-methods -->
 <script lang="ts" setup>
-// oxlint-disable typescript/no-non-null-assertion
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { KolPrepareApi } from '#/api/bd/kol-prepare';
 
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
 import {
-  Alert,
   Button,
   Card,
+  Drawer,
   Input,
   InputNumber,
   message,
   Modal,
-  Select,
   Switch,
   Tag,
 } from 'ant-design-vue';
-import * as XLSX from 'xlsx';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
   createKolPrepare,
   deleteKolPrepare,
   getMyKolPrepareList,
-  validateKolPrepare,
 } from '#/api/bd/kol-prepare';
-import { KolPrepareReasonCode } from '#/consts/bd-sop';
 
-interface ParsedKolRow {
-  kol_id: string;
-  kol_url?: string;
-}
-
-interface PreviewRow {
-  budget_amount: null | number;
-  can_prepare: boolean;
+interface PrepareFormRow {
+  budget_amount: number | undefined;
   has_budget: 0 | 1;
   kol_id: string;
   kol_url: string;
-  reason_code: number;
-  reason_msg: string;
   remark: string;
 }
 
-// --- Reason code helpers ---
-function reasonCodeText(code: number): string {
-  const map: Record<number, string> = {
-    [KolPrepareReasonCode.CAN_PREPARE]: '可筹备',
-    [KolPrepareReasonCode.TASK_DUPLICATE]: '已在筹备列表中',
-    [KolPrepareReasonCode.HAS_BD]: '达人已有所属BD',
-    [KolPrepareReasonCode.PREPARED_BY_OTHER]: '已被其他BD筹备占用',
-    [KolPrepareReasonCode.KOL_DELETED]: '达人已删除',
-    [KolPrepareReasonCode.KOL_ABNORMAL]: '达人状态异常',
+// --- Drawer state ---
+const prepareDrawerOpen = ref(false);
+const prepareSubmitting = ref(false);
+const prepareRows = ref<PrepareFormRow[]>([]);
+
+function createEmptyRow(): PrepareFormRow {
+  return {
+    kol_id: '',
+    kol_url: '',
+    has_budget: 0,
+    budget_amount: undefined,
+    remark: '',
   };
-  return map[code] ?? String(code);
 }
 
-function availabilityTagColor(row: PreviewRow) {
-  if (row.can_prepare) return 'success';
-  if (row.reason_code === KolPrepareReasonCode.TASK_DUPLICATE) return 'warning';
-  return 'error';
+function openPrepareDrawer() {
+  prepareRows.value = [createEmptyRow()];
+  prepareDrawerOpen.value = true;
 }
 
-// --- State ---
-const submitting = ref(false);
-const fileInputRef = ref<HTMLInputElement>();
-const previewData = ref<PreviewRow[]>([]);
-const previewVisible = ref(false);
-const selectedReasonCode = ref<'all' | number>('all');
+function closePrepareDrawer() {
+  prepareDrawerOpen.value = false;
+  prepareSubmitting.value = false;
+}
 
-const hasNonNormal = computed(() =>
-  previewData.value.some((row) => !row.can_prepare),
-);
-const canSubmit = computed(
-  () => previewData.value.length > 0 && !hasNonNormal.value,
-);
-const filteredPreviewData = computed(() =>
-  selectedReasonCode.value === 'all'
-    ? previewData.value
-    : previewData.value.filter(
-        (row) => row.reason_code === selectedReasonCode.value,
-      ),
-);
+function addPrepareRow() {
+  prepareRows.value.push(createEmptyRow());
+}
 
-const reasonCodeOptions = computed(() => [
-  { label: '全部校验结果', value: 'all' as const },
-  ...Object.values(KolPrepareReasonCode)
-    .filter((v): v is number => typeof v === 'number')
-    .map((v) => ({ label: reasonCodeText(v), value: v })),
-]);
+function removePrepareRow(index: number) {
+  if (prepareRows.value.length <= 1) {
+    prepareRows.value[0] = createEmptyRow();
+    return;
+  }
+  prepareRows.value.splice(index, 1);
+}
+
+function dedupeFormRows(rows: PrepareFormRow[]): PrepareFormRow[] {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    const id = row.kol_id.trim();
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
+// --- Drawer submit ---
+async function handleDrawerSubmit() {
+  const filledRows = prepareRows.value.filter((r) => r.kol_id.trim());
+  if (filledRows.length === 0) {
+    message.warning('请至少输入一个达人ID');
+    return;
+  }
+
+  const deduped = dedupeFormRows(filledRows);
+  if (deduped.length < filledRows.length) {
+    message.warning(
+      `检测到 ${filledRows.length - deduped.length} 个重复的达人ID，已自动去除`,
+    );
+  }
+
+  prepareSubmitting.value = true;
+  try {
+    await createKolPrepare({
+      list: deduped.map((row) => ({
+        kol_id: row.kol_id.trim(),
+        kol_url: row.kol_url.trim() || undefined,
+        has_budget: row.has_budget,
+        budget_amount: row.has_budget === 1 ? row.budget_amount : null,
+        remark: row.remark.trim() || undefined,
+      })),
+    });
+    message.success(`成功提交 ${deduped.length} 条筹备记录`);
+    closePrepareDrawer();
+    listGridApi.reload();
+  } catch (error: any) {
+    message.error(error?.message || '提交失败');
+  } finally {
+    prepareSubmitting.value = false;
+  }
+}
 
 // --- List grid ---
 const listColumns: VxeGridProps<KolPrepareApi.MyListItem>['columns'] = [
@@ -166,238 +186,7 @@ const [ListGrid, listGridApi] = useVbenVxeGrid<KolPrepareApi.MyListItem>({
   },
 });
 
-// --- Preview grid ---
-const previewColumns: VxeGridProps<PreviewRow>['columns'] = [
-  { type: 'seq', width: 60 },
-  {
-    field: 'kol_id',
-    title: '达人ID',
-    width: 160,
-  },
-  {
-    field: 'kol_url',
-    minWidth: 200,
-    slots: { default: 'kol_url' },
-    title: '达人主页',
-  },
-  {
-    field: 'reason_msg',
-    minWidth: 140,
-    slots: { default: 'reason' },
-    title: '校验结果',
-  },
-  {
-    field: 'has_budget',
-    slots: { default: 'has_budget_edit' },
-    title: '有无预算',
-    width: 100,
-  },
-  {
-    field: 'budget_amount',
-    slots: { default: 'budget_amount_edit' },
-    title: '预算金额',
-    width: 140,
-  },
-  {
-    field: 'remark',
-    slots: { default: 'remark_edit' },
-    minWidth: 160,
-    title: '备注',
-  },
-  {
-    field: 'action',
-    fixed: 'right',
-    slots: { default: 'action' },
-    title: '操作',
-    width: 80,
-  },
-];
-
-const [PreviewGrid, previewGridApi] = useVbenVxeGrid<PreviewRow>({
-  gridOptions: {
-    columns: previewColumns,
-    data: [],
-    maxHeight: 520,
-    pagerConfig: { enabled: false },
-    rowConfig: { keyField: 'kol_id' },
-    scrollY: { enabled: true, gt: 0 },
-    showOverflow: true,
-  },
-});
-
-// --- Actions ---
-function syncPreviewGrid() {
-  previewGridApi.setGridOptions({ data: filteredPreviewData.value });
-}
-
-function normalizeKolId(value: string) {
-  return value.trim();
-}
-
-function dedupeKolIds(items: ParsedKolRow[]) {
-  const seen = new Set<string>();
-  return items.filter((item) => {
-    const id = normalizeKolId(item.kol_id);
-    if (!id || seen.has(id)) return false;
-    seen.add(id);
-    return true;
-  });
-}
-
-async function validateAndPreview(items: ParsedKolRow[]) {
-  const deduped = dedupeKolIds(items);
-  if (deduped.length === 0) {
-    message.warning('请输入有效的达人ID');
-    return;
-  }
-
-  const existingIds = new Set(previewData.value.map((r) => r.kol_id));
-  const newItems = deduped.filter((item) => !existingIds.has(item.kol_id));
-
-  if (newItems.length === 0) {
-    message.warning('所有达人已在预览列表中');
-    return;
-  }
-
-  const result = await validateKolPrepare({
-    kol_ids: newItems.map((item) => item.kol_id),
-  });
-
-  const linkMap = new Map(
-    newItems.map((item) => [item.kol_id, item.kol_url ?? '']),
-  );
-  const rows: PreviewRow[] = result.map((item) => ({
-    budget_amount: null,
-    can_prepare: item.can_prepare,
-    has_budget: 0,
-    kol_id: item.kol_id,
-    kol_url: linkMap.get(item.kol_id) ?? '',
-    reason_code: item.reason_code,
-    reason_msg: item.reason_msg,
-    remark: '',
-  }));
-
-  previewData.value = [...previewData.value, ...rows];
-  syncPreviewGrid();
-  previewVisible.value = true;
-  message.success(`已校验 ${rows.length} 个达人`);
-}
-
-async function handleFileChange(e: Event) {
-  const input = e.target as HTMLInputElement;
-  const file = input.files?.[0];
-  if (!file) return;
-
-  try {
-    const rows = await parseExcelFile(file);
-    if (rows.length === 0) {
-      message.warning('Excel 中没有有效的达人ID');
-      return;
-    }
-    await validateAndPreview(rows);
-  } catch (error: any) {
-    message.error(error?.message || '解析文件失败');
-  } finally {
-    input.value = '';
-  }
-}
-
-function parseExcelFile(file: File): Promise<ParsedKolRow[]> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener('load', (e) => {
-      try {
-        const data = new Uint8Array(e.target!.result as ArrayBuffer);
-        const wb = XLSX.read(data, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]!];
-        const rows = XLSX.utils.sheet_to_json<string[]>(ws!, { header: 1 });
-        if (rows.length === 0) {
-          reject(new Error('文件为空'));
-          return;
-        }
-
-        const header = rows[0]!.map((h) => String(h ?? '').trim());
-        const kolIdIndex = header.indexOf('kol_id');
-        const kolUrlIndex = header.indexOf('kol_url');
-        if (kolIdIndex === -1) {
-          reject(new Error('缺少 kol_id 列'));
-          return;
-        }
-
-        const parsed = rows
-          .slice(1)
-          .map((row) => ({
-            kol_id: String(row[kolIdIndex] ?? '').trim(),
-            kol_url:
-              kolUrlIndex === -1
-                ? undefined
-                : String(row[kolUrlIndex] ?? '').trim(),
-          }))
-          .filter((row) => row.kol_id);
-        resolve(parsed);
-      } catch (error) {
-        reject(error);
-      }
-    });
-    reader.onerror = reject;
-    reader.readAsArrayBuffer(file);
-  });
-}
-
-function triggerUpload() {
-  fileInputRef.value?.click();
-}
-
-function downloadTemplate() {
-  const link = document.createElement('a');
-  link.style.display = 'none';
-  link.href = '/bd-prepare-template.xlsx';
-  document.body.append(link);
-  link.download = 'bd-prepare-template.xlsx';
-  link.click();
-  link.remove();
-}
-
-function removePreviewRow(kolId: string) {
-  previewData.value = previewData.value.filter((row) => row.kol_id !== kolId);
-  syncPreviewGrid();
-}
-
-function clearPreviewData() {
-  previewData.value = [];
-  selectedReasonCode.value = 'all';
-  syncPreviewGrid();
-}
-
-async function handleSubmit() {
-  if (previewData.value.length === 0) return;
-  if (hasNonNormal.value) {
-    message.warning('存在不可筹备的达人，请先删除后再提交');
-    return;
-  }
-
-  submitting.value = true;
-  try {
-    await createKolPrepare({
-      list: previewData.value.map((row) => ({
-        kol_id: row.kol_id,
-        kol_url: row.kol_url || undefined,
-        has_budget: row.has_budget,
-        budget_amount: row.has_budget === 1 ? row.budget_amount : null,
-        remark: row.remark || undefined,
-      })),
-    });
-    message.success(`成功提交 ${previewData.value.length} 条筹备记录`);
-    clearPreviewData();
-    previewVisible.value = false;
-    listGridApi.reload();
-  } catch (error: any) {
-    message.error(error?.message || '提交失败');
-  } finally {
-    submitting.value = false;
-  }
-}
-
+// --- Delete ---
 async function handleDelete(prepareId: number) {
   Modal.confirm({
     content: '确认删除该筹备记录吗？',
@@ -415,38 +204,33 @@ async function handleDelete(prepareId: number) {
   <Page auto-content-height>
     <!-- Header -->
     <div
-      class="mb-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+      class="mb-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800"
     >
       <div
         class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
       >
         <div>
-          <h1 class="text-xl font-semibold text-slate-900">达人筹备</h1>
-          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-500">
-            管理你的达人筹备记录。上传 Excel
-            或手动添加达人，校验通过后即可提交。
+          <h1 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            达人筹备
+          </h1>
+          <p
+            class="mt-2 max-w-2xl text-sm leading-6 text-gray-500 dark:text-gray-400"
+          >
+            管理你的达人筹备记录。点击按钮填写达人信息，支持多行录入，提交后即可生效。
           </p>
         </div>
         <div class="flex flex-wrap gap-2">
-          <Button @click="downloadTemplate">下载模板</Button>
-          <Button type="primary" @click="triggerUpload">上传 Excel</Button>
+          <Button type="primary" @click="openPrepareDrawer">新增筹备</Button>
         </div>
       </div>
     </div>
 
-    <!-- Hidden file input -->
-    <input
-      ref="fileInputRef"
-      accept=".xlsx,.xls"
-      style="display: none"
-      type="file"
-      @change="handleFileChange"
-    />
-
     <!-- My Preparation List -->
     <Card :bordered="false" class="rounded-2xl shadow-sm">
       <div class="mb-4 flex items-center justify-between">
-        <h3 class="text-base font-semibold text-slate-900">我的筹备记录</h3>
+        <h3 class="text-base font-semibold text-gray-900 dark:text-gray-100">
+          我的筹备记录
+        </h3>
       </div>
       <ListGrid>
         <template #kol_url="{ row }">
@@ -459,7 +243,7 @@ async function handleDelete(prepareId: number) {
           >
             {{ row.kol_url }}
           </a>
-          <span v-else class="text-slate-400">-</span>
+          <span v-else class="text-gray-400 dark:text-gray-500">-</span>
         </template>
         <template #has_budget="{ row }">
           <Tag :color="row.has_budget === 1 ? 'green' : 'default'">
@@ -479,97 +263,125 @@ async function handleDelete(prepareId: number) {
       </ListGrid>
     </Card>
 
-    <!-- Preview Modal -->
-    <Modal
-      v-model:open="previewVisible"
-      :footer="null"
-      title="达人校验预览"
-      width="1000px"
+    <!-- Prepare Drawer: Multi-row form -->
+    <Drawer
+      :open="prepareDrawerOpen"
+      :width="680"
+      title="达人筹备录入"
+      @close="closePrepareDrawer"
     >
-      <div v-if="previewData.length > 0" class="space-y-4">
-        <Alert
-          v-if="hasNonNormal"
-          show-icon
-          type="warning"
-          message="存在不可筹备的达人"
-          description="请删除异常行后再提交。"
-        />
-
-        <div class="mb-4 flex items-center justify-between">
-          <Select
-            v-model:value="selectedReasonCode"
-            :options="reasonCodeOptions"
-            class="min-w-[160px]"
-          />
-          <div class="flex gap-2">
-            <Button @click="clearPreviewData">清空列表</Button>
-            <Button
-              type="primary"
-              :disabled="!canSubmit"
-              :loading="submitting"
-              @click="handleSubmit"
+      <div class="flex flex-col gap-4">
+        <!-- Row cards -->
+        <div
+          v-for="(row, idx) in prepareRows"
+          :key="idx"
+          class="rounded-xl border border-gray-200 bg-gray-50/60 p-4 dark:border-gray-700 dark:bg-gray-800/60"
+        >
+          <!-- Row header -->
+          <div
+            class="mb-3 flex items-center justify-between border-b border-gray-200 pb-2 dark:border-gray-700"
+          >
+            <span
+              class="text-sm font-semibold text-gray-700 dark:text-gray-300"
             >
-              提交筹备 ({{ previewData.filter((r) => r.can_prepare).length }})
-            </Button>
-          </div>
-        </div>
-
-        <PreviewGrid>
-          <template #kol_url="{ row }">
-            <a
-              v-if="row.kol_url"
-              :href="row.kol_url"
-              class="text-blue-500 hover:underline"
-              rel="noreferrer"
-              target="_blank"
-            >
-              {{ row.kol_url }}
-            </a>
-            <span v-else class="text-slate-400">-</span>
-          </template>
-          <template #reason="{ row }">
-            <Tag :color="availabilityTagColor(row)">
-              {{ reasonCodeText(row.reason_code) }}
-            </Tag>
-          </template>
-          <template #has_budget_edit="{ row }">
-            <Switch
-              v-model:checked="row.has_budget"
-              :checked-value="1"
-              :unchecked-value="0"
-              :disabled="!row.can_prepare"
-            />
-          </template>
-          <template #budget_amount_edit="{ row }">
-            <InputNumber
-              v-model:value="row.budget_amount"
-              :disabled="!row.can_prepare || row.has_budget !== 1"
-              :min="0"
-              :precision="2"
-              class="w-full"
-              placeholder="预算金额"
-            />
-          </template>
-          <template #remark_edit="{ row }">
-            <Input
-              v-model:value="row.remark"
-              :disabled="!row.can_prepare"
-              placeholder="备注（可选）"
-            />
-          </template>
-          <template #action="{ row }">
+              达人 #{{ idx + 1 }}
+            </span>
             <Button
               danger
               size="small"
               type="link"
-              @click="removePreviewRow(row.kol_id)"
+              @click="removePrepareRow(idx)"
             >
               删除
             </Button>
-          </template>
-        </PreviewGrid>
+          </div>
+
+          <!-- Form fields -->
+          <div class="grid grid-cols-2 gap-3">
+            <!-- kol_id -->
+            <div>
+              <div
+                class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                达人ID
+                <span class="text-red-500">*</span>
+              </div>
+              <Input
+                v-model:value="row.kol_id"
+                :maxlength="100"
+                placeholder="请输入达人ID"
+              />
+            </div>
+
+            <!-- kol_url -->
+            <div>
+              <div
+                class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                达人主页链接
+              </div>
+              <Input v-model:value="row.kol_url" placeholder="选填" />
+            </div>
+
+            <!-- has_budget -->
+            <div>
+              <div
+                class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                有无预算
+              </div>
+              <Switch
+                v-model:checked="row.has_budget"
+                :checked-value="1"
+                :unchecked-value="0"
+              />
+            </div>
+
+            <!-- budget_amount (conditional) -->
+            <div v-if="row.has_budget === 1">
+              <div
+                class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                预算金额
+              </div>
+              <InputNumber
+                v-model:value="row.budget_amount"
+                :min="0"
+                :precision="2"
+                class="w-full"
+                placeholder="请输入预算金额"
+              />
+            </div>
+
+            <!-- remark (full width) -->
+            <div class="col-span-2">
+              <div
+                class="mb-1.5 text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                备注
+              </div>
+              <Input v-model:value="row.remark" placeholder="选填" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Add row button -->
+        <Button block type="dashed" @click="addPrepareRow"> + 添加达人 </Button>
       </div>
-      <div v-else class="py-16 text-center text-slate-500">暂无数据</div>
-    </Modal>
+
+      <!-- Drawer footer -->
+      <template #footer>
+        <div class="flex justify-end gap-2">
+          <Button @click="closePrepareDrawer">取消</Button>
+          <Button
+            type="primary"
+            :loading="prepareSubmitting"
+            @click="handleDrawerSubmit"
+          >
+            提交
+          </Button>
+        </div>
+      </template>
+    </Drawer>
   </Page>
 </template>
