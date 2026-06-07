@@ -30,6 +30,16 @@ export namespace AdminKolPrepareApi {
     page_size: number;
     total: number;
   }
+
+  // --- Update ---
+
+  export interface UpdateParams {
+    budget_amount?: null | number;
+    has_budget: 0 | 1;
+    kol_url?: string;
+    prepare_id: number;
+    remark?: null | string;
+  }
 }
 
 /** Admin 查询全局达人筹备记录 */
@@ -40,4 +50,11 @@ export async function getAdminKolPrepareList(
     '/admin/kol-prepare',
     { params },
   );
+}
+
+/** Admin 更新达人筹备记录 */
+export async function updateAdminKolPrepare(
+  data: AdminKolPrepareApi.UpdateParams,
+) {
+  return requestClient.put<{ prepare_id: number }>('/admin/kol-prepare', data);
 }

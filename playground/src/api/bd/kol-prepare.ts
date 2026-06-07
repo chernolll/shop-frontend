@@ -46,7 +46,18 @@ export namespace KolPrepareApi {
     has_budget: 0 | 1;
     kol_id: string;
     kol_url: null | string;
+    prepare_id: number;
     remark: null | string;
+  }
+
+  // --- Update ---
+
+  export interface UpdateParams {
+    budget_amount?: null | number;
+    has_budget: 0 | 1;
+    kol_url?: string;
+    prepare_id: number;
+    remark?: null | string;
   }
 
   export interface MyListResult {
@@ -125,6 +136,11 @@ export async function getGlobalKolPrepareList(
     '/bd/kol-prepare/list',
     { params },
   );
+}
+
+/** BD 更新达人筹备记录 */
+export async function updateKolPrepare(data: KolPrepareApi.UpdateParams) {
+  return requestClient.put<{ prepare_id: number }>('/bd/kol-prepare', data);
 }
 
 /** BD 删除达人筹备记录 */

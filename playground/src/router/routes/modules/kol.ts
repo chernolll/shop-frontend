@@ -45,6 +45,16 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'KOL-Prepare',
+        path: '/kol/prepare',
+        component: () => import('#/views/admin/kol-prepare/index.vue'),
+        meta: {
+          icon: 'lucide:clipboard-edit',
+          title: '达人筹备管理',
+          authority: [RoleEnum.ADMIN],
+        },
+      },
+      {
         name: 'KOL-Detail',
         path: '/kol/:kol_id',
         component: () => import('#/views/kol/detail.vue'),

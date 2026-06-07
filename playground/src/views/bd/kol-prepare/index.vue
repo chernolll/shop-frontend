@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// oxlint-disable typescript/no-non-null-assertion
 import type { VxeGridProps } from '#/adapter/vxe-table';
 import type { KolPrepareApi } from '#/api/bd/kol-prepare';
 
@@ -14,7 +15,7 @@ import {
   InputNumber,
   message,
   Modal,
-  Switch,
+  Select,
   Tag,
 } from 'ant-design-vue';
 
@@ -23,6 +24,7 @@ import {
   createKolPrepare,
   deleteKolPrepare,
   getMyKolPrepareList,
+  updateKolPrepare,
 } from '#/api/bd/kol-prepare';
 
 interface PrepareFormRow {
@@ -32,6 +34,11 @@ interface PrepareFormRow {
   kol_url: string;
   remark: string;
 }
+
+const hasBudgetOptions = [
+  { label: '无', value: 0 as const },
+  { label: '有', value: 1 as const },
+];
 
 // --- Drawer state ---
 const prepareDrawerOpen = ref(false);
@@ -98,13 +105,24 @@ async function handleDrawerSubmit() {
   prepareSubmitting.value = true;
   try {
     await createKolPrepare({
-      list: deduped.map((row) => ({
-        kol_id: row.kol_id.trim(),
-        kol_url: row.kol_url.trim() || undefined,
-        has_budget: row.has_budget,
-        budget_amount: row.has_budget === 1 ? row.budget_amount : null,
-        remark: row.remark.trim() || undefined,
-      })),
+      list: deduped.map((row) => {
+        const item: {
+          budget_amount?: number;
+          has_budget: 0 | 1;
+          kol_id: string;
+          kol_url?: string;
+          remark?: string;
+        } = {
+          kol_id: row.kol_id.trim(),
+          kol_url: row.kol_url.trim() || undefined,
+          has_budget: row.has_budget,
+          remark: row.remark.trim() || undefined,
+        };
+        if (row.has_budget === 1) {
+          item.budget_amount = row.budget_amount;
+        }
+        return item;
+      }),
     });
     message.success(`成功提交 ${deduped.length} 条筹备记录`);
     closePrepareDrawer();
@@ -157,7 +175,7 @@ const listColumns: VxeGridProps<KolPrepareApi.MyListItem>['columns'] = [
     fixed: 'right',
     slots: { default: 'action' },
     title: '操作',
-    width: 80,
+    width: 140,
   },
 ];
 
@@ -185,6 +203,67 @@ const [ListGrid, listGridApi] = useVbenVxeGrid<KolPrepareApi.MyListItem>({
     toolbarConfig: { refresh: true },
   },
 });
+
+// --- Edit Modal ---
+const editVisible = ref(false);
+const editSubmitting = ref(false);
+const editingPrepareId = ref<null | number>(null);
+const editForm = ref({
+  kol_url: '',
+  has_budget: 0 as 0 | 1,
+  budget_amount: null as null | number,
+  remark: '',
+});
+
+function openEditModal(row: KolPrepareApi.MyListItem) {
+  editingPrepareId.value = row.prepare_id;
+  editForm.value = {
+    kol_url: row.kol_url ?? '',
+    has_budget: row.has_budget,
+    budget_amount: row.budget_amount,
+    remark: row.remark ?? '',
+  };
+  editVisible.value = true;
+}
+
+function closeEditModal() {
+  editVisible.value = false;
+  editSubmitting.value = false;
+}
+
+async function handleEditSubmit() {
+  if (editForm.value.has_budget === 1 && !editForm.value.budget_amount) {
+    message.warning('有预算时必须填写预算金额');
+    return;
+  }
+
+  editSubmitting.value = true;
+  try {
+    const updateData: {
+      budget_amount?: number;
+      has_budget: 0 | 1;
+      kol_url?: string;
+      prepare_id: number;
+      remark?: null | string;
+    } = {
+      prepare_id: editingPrepareId.value!,
+      kol_url: editForm.value.kol_url || undefined,
+      has_budget: editForm.value.has_budget,
+      remark: editForm.value.remark || undefined,
+    };
+    if (editForm.value.has_budget === 1) {
+      updateData.budget_amount = editForm.value.budget_amount!;
+    }
+    await updateKolPrepare(updateData);
+    message.success('更新成功');
+    closeEditModal();
+    listGridApi.reload();
+  } catch (error: any) {
+    message.error(error?.message || '操作失败');
+  } finally {
+    editSubmitting.value = false;
+  }
+}
 
 // --- Delete ---
 async function handleDelete(prepareId: number) {
@@ -251,11 +330,14 @@ async function handleDelete(prepareId: number) {
           </Tag>
         </template>
         <template #action="{ row }">
+          <Button size="small" type="link" @click="openEditModal(row)">
+            编辑
+          </Button>
           <Button
             danger
             size="small"
             type="link"
-            @click="handleDelete((row as any).prepare_id)"
+            @click="handleDelete(row.prepare_id)"
           >
             删除
           </Button>
@@ -330,10 +412,10 @@ async function handleDelete(prepareId: number) {
               >
                 有无预算
               </div>
-              <Switch
-                v-model:checked="row.has_budget"
-                :checked-value="1"
-                :unchecked-value="0"
+              <Select
+                v-model:value="row.has_budget"
+                :options="hasBudgetOptions"
+                class="w-20"
               />
             </div>
 
@@ -383,5 +465,62 @@ async function handleDelete(prepareId: number) {
         </div>
       </template>
     </Drawer>
+
+    <!-- Edit Modal -->
+    <Modal
+      v-model:open="editVisible"
+      :confirm-loading="editSubmitting"
+      title="编辑达人筹备"
+      @cancel="closeEditModal"
+      @ok="handleEditSubmit"
+    >
+      <div class="space-y-4 pt-2">
+        <div>
+          <div
+            class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            达人主页链接
+          </div>
+          <Input
+            v-model:value="editForm.kol_url"
+            placeholder="请输入达人主页链接（可选）"
+          />
+        </div>
+        <div>
+          <div
+            class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            有无预算
+          </div>
+          <Select
+            v-model:value="editForm.has_budget"
+            :options="hasBudgetOptions"
+            class="w-20"
+          />
+        </div>
+        <div v-if="editForm.has_budget === 1">
+          <div
+            class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            预算金额
+          </div>
+          <InputNumber
+            v-model:value="editForm.budget_amount"
+            :min="0"
+            :precision="2"
+            class="w-full"
+            placeholder="请输入预算金额"
+          />
+        </div>
+        <div>
+          <div
+            class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+          >
+            备注
+          </div>
+          <Input v-model:value="editForm.remark" placeholder="备注（可选）" />
+        </div>
+      </div>
+    </Modal>
   </Page>
 </template>
