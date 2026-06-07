@@ -6,14 +6,14 @@
 
 #### 4.1.1 字段定义
 
-| 字段 | 说明 | 备注 |
-|------|------|------|
-| kol_id | TikTok主页唯一标识 | |
-| kol_url | TikTok主页链接 | |
-| has_budget | 有无预算 | Boolean |
-| budget_amount | 预算金额 | 仅 has_budget=true 时需填 |
-| created_at | 录入时间 | 系统自动记录 |
-| remark | 备注 | 可选 |
+| 字段          | 说明               | 备注                      |
+| ------------- | ------------------ | ------------------------- |
+| kol_id        | TikTok主页唯一标识 |                           |
+| kol_url       | TikTok主页链接     |                           |
+| has_budget    | 有无预算           | Boolean                   |
+| budget_amount | 预算金额           | 仅 has_budget=true 时需填 |
+| created_at    | 录入时间           | 系统自动记录              |
+| remark        | 备注               | 可选                      |
 
 #### 4.1.2 业务规则
 
