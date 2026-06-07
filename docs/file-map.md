@@ -3,7 +3,7 @@
 ## 入口与启动
 
 | 文件 | 职责 |
-|------|------|
+| --- | --- |
 | `playground/src/main.ts` | 应用入口 |
 | `playground/src/bootstrap.ts` | 启动流程：初始化适配器→i18n→Store→路由→挂载 |
 | `playground/src/app.vue` | 根组件 |
@@ -12,7 +12,7 @@
 ## 路由
 
 | 文件 | 职责 |
-|------|------|
+| --- | --- |
 | `playground/src/router/index.ts` | createRouter 实例 |
 | `playground/src/router/guard.ts` | 通用守卫 + 权限守卫（动态路由生成） |
 | `playground/src/router/access.ts` | generateAccess：基于角色/权限码生成可访问路由 |
@@ -33,7 +33,7 @@
 ## 请求层
 
 | 文件 | 职责 |
-|------|------|
+| --- | --- |
 | `playground/src/api/request.ts` | RequestClient 工厂：拦截器/认证/错误处理/BigInt |
 | `playground/src/api/index.ts` | API 汇总导出 |
 | `playground/src/api/core/auth.ts` | 登录/登出/刷新 Token |
@@ -45,7 +45,7 @@
 ## API 业务模块
 
 | 文件 | 核心接口 |
-|------|---------|
+| --- | --- |
 | `api/bd/tasks.ts` | Admin 任务 CRUD + BD 分配 + 商品链接查询 |
 | `api/bd/bd-my-task.ts` | BD 我的任务 + 公开任务 + 达人筹备提交 + 数据看板 |
 | `api/bd/kol.ts` | BD 达人候选池 + 达人库 CRUD |
@@ -67,7 +67,7 @@
 ## 关键 View 页面
 
 | 文件 | 职责 |
-|------|------|
+| --- | --- |
 | `views/bd/my-tasks/index.vue` | BD 任务列表 |
 | `views/bd/my-tasks/kol-prepare.vue` | 达人筹备表提交 |
 | `views/bd/sop/detail/index.vue` | SOP 详情（建联/送样/视频/汇款面板组合） |

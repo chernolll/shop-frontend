@@ -5,7 +5,7 @@
 ## 命名规范
 
 | 对象 | 规范 | 示例 |
-|------|------|------|
+| --- | --- | --- |
 | 文件/目录 | kebab-case | `user-service.ts` / `my-tasks/` |
 | Vue 组件文件 | kebab-case | `kol-prepare.vue` |
 | Vue 组件 name | PascalCase | `SopContactPanel` |

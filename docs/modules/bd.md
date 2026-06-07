@@ -35,19 +35,34 @@ BD（达人运营）端的核心业务模块，覆盖达人全生命周期管理
 ### 4. 我的任务（My Tasks）
 
 - 页面: `views/bd/my-tasks/index.vue`
-- API: `getBdTaskList()` / `uploadKolPrepareData()` / `queryKolPrepareData()`
+- API: `getBdTaskList()` / `getBDPublicTaskList()` / `applyForPublicTask()`
 - 权限: BD only
-- 核心操作: 查看已分配任务 → 进入达人筹备 → 提交 KOL 供 Admin 审核
+- 核心操作: 查看已分配任务 → 进入达人筹备（独立页面）
 
-### 5. 达人候选池（KOLs）
+### 5. 达人筹备（KOL Prepare）
+
+- 页面: `views/bd/kol-prepare/index.vue`
+- API: `api/bd/kol-prepare.ts` (validate / create / list / delete)
+- 权限: BD only
+- 核心操作: 上传/录入达人 → 预校验 → 填写预算信息 → 提交筹备
+- **重构变化:** 与任务完全解绑，BD 可独立管理自己的筹备记录，无需任务上下文。不再有审核流程。
+
+### 6. 达人池（KOL Pool）
+
+- 页面: `views/bd/kol-pool/index.vue`
+- API: `api/bd/kol-pool.ts` (list / claim)
+- 权限: BD only
+- 核心操作: 浏览公共达人池 → 筛选（来源/预算） → 认领达人到自己筹备列表
+- **新增模块:** 无主 BD 的公共达人资源池，来源包括离职 BD 释放和 Admin 上传。
+
+### 7. 达人候选池（KOLs）
 
 - 页面: `views/bd/kols/index.vue`
 - API: `getBdKolList()` / `createKolCandidate()` / `deleteKolCandidate()`
 - 权限: BD only
-- Store: 无独立 Store
-- 核心操作: 搜索达人 → 添加候选 → 校验达人状态（`queryKolPrepareState`）→ 加入任务筹备
+- 核心操作: 搜索达人 → 添加候选 → 校验达人状态
 
-### 6. 达人库（KOL Library）
+### 8. 达人库（KOL Library）
 
 - 页面: `views/bd/kol-library/index.vue`
 - API: `getBdKolLibraryList()`

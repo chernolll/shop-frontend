@@ -35,6 +35,16 @@ const routes: RouteRecordRaw[] = [
         },
       },
       {
+        name: 'KOL-Pool',
+        path: '/kol/pool',
+        component: () => import('#/views/admin/kol-pool/index.vue'),
+        meta: {
+          icon: 'lucide:layout-grid',
+          title: '达人池管理',
+          authority: [RoleEnum.ADMIN],
+        },
+      },
+      {
         name: 'KOL-Detail',
         path: '/kol/:kol_id',
         component: () => import('#/views/kol/detail.vue'),

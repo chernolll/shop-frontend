@@ -16,7 +16,7 @@ BD达人运营管理系统 — 基于 Vue Vben Admin 定制的达人合作全流
 ## 基础层 (packages/)
 
 | 分类 | 包名 | 职责 |
-|------|------|------|
+| --- | --- | --- |
 | 核心基础 | `@core/base/*` | design tokens / shared utils / icons / types |
 | 核心组件 | `@core/composables` | useNamespace / useScrollLock / useSortable 等通用 composable |
 | 核心 UI | `@core/ui-kit/*` | layout-ui / popup-ui / tabs-ui / form-ui / menu-ui |
@@ -36,15 +36,15 @@ BD达人运营管理系统 — 基于 Vue Vben Admin 定制的达人合作全流
 
 ## 业务层 (playground/src/)
 
-| 目录 | 职责 |
-|------|------|
-| `views/` | 页面组件，按模块分子目录 |
-| `router/` | 路由定义 (routes) + 权限守卫 (guard) + 动态路由生成 |
-| `api/` | 后端 API 调用函数，按业务域分 |
-| `store/` | 业务级 Pinia stores (auth / bd-sop) |
-| `adapter/` | UI 组件库适配层 (form / vxe-table) |
-| `locales/` | 当前项目国际化文案 (zh-CN / en-US) |
-| `consts/` | 业务枚举与常量 |
+| 目录       | 职责                                                |
+| ---------- | --------------------------------------------------- |
+| `views/`   | 页面组件，按模块分子目录                            |
+| `router/`  | 路由定义 (routes) + 权限守卫 (guard) + 动态路由生成 |
+| `api/`     | 后端 API 调用函数，按业务域分                       |
+| `store/`   | 业务级 Pinia stores (auth / bd-sop)                 |
+| `adapter/` | UI 组件库适配层 (form / vxe-table)                  |
+| `locales/` | 当前项目国际化文案 (zh-CN / en-US)                  |
+| `consts/`  | 业务枚举与常量                                      |
 
 ## 架构层级 (数据流方向)
 

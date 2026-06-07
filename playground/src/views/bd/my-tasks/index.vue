@@ -234,17 +234,8 @@ async function openBriefPreview(row: BdTaskApi.BDTaskRow) {
   }
 }
 
-function goPrepare(row: BdTaskApi.BDTaskRow) {
-  if (isTaskAbandoned(row)) {
-    message.warning($t('page.bd.my-task.messages.task-abandoned-blocked'));
-    return;
-  }
-  router.push({
-    path: `/bd/my-task/${row.relationId}`,
-    query: {
-      task_status: String(resolveTaskStatus(row)),
-    },
-  });
+function goPrepare(_row: BdTaskApi.BDTaskRow) {
+  router.push({ path: '/bd/kol-prepare' });
 }
 
 function resolveTaskStatus(row: BdTaskApi.BDTaskRow) {
@@ -447,11 +438,7 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
       </template>
       <template #action="{ row }">
         <Space :size="[4, 4]" wrap>
-          <Button
-            type="link"
-            :disabled="isTaskAbandoned(row)"
-            @click="goPrepare(row)"
-          >
+          <Button type="link" @click="goPrepare(row)">
             {{ $t('page.bd.my-task.actions.upload-prepare') }}
           </Button>
         </Space>

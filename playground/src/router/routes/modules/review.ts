@@ -15,34 +15,12 @@ const routes: RouteRecordRaw[] = [
     path: '/review',
     children: [
       {
-        name: 'Review-KolPrepare',
-        path: '/review/kol-prepare',
-        component: () => import('#/views/review/kol-prepare/index.vue'),
-        meta: {
-          icon: 'lucide:file-search',
-          title: $t('page.review.kolPrepare.list-title'),
-          authority: [RoleEnum.ADMIN],
-        },
-      },
-      {
         name: 'Review-Budget',
         path: '/review/budget',
         component: () => import('#/views/review/budget/index.vue'),
         meta: {
           icon: 'lucide:badge-dollar-sign',
           title: $t('page.review.budget.list-title'),
-          authority: [RoleEnum.ADMIN],
-        },
-      },
-      {
-        name: 'Review-KolPrepare-Detail',
-        path: '/review/kol-prepare/:task_id',
-        component: () => import('#/views/review/kol-prepare/detail.vue'),
-        meta: {
-          hideInMenu: true,
-          hideInTab: true,
-          title: $t('page.review.kolPrepare.detail-title'),
-          activeMenu: '/review/kol-prepare',
           authority: [RoleEnum.ADMIN],
         },
       },

@@ -2,9 +2,7 @@ import { requestClient } from '../request';
 
 export namespace KolApi {
   export interface ValidKolStateParams {
-    /** task_bd_relation.id */
     kol_ids: string[];
-    task_id: number;
   }
 
   export interface ValidKolStateResult {

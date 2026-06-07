@@ -87,16 +87,25 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
-      // 达人筹备详情（隐藏路由，不在菜单显示）
+      // 达人筹备（独立页面）
       {
-        name: 'BD-MyTask-Detail',
-        path: '/bd/my-task/:task_id',
-        component: () => import('#/views/bd/my-tasks/kol-prepare.vue'),
+        name: 'BD-KolPrepare',
+        path: '/bd/kol-prepare',
+        component: () => import('#/views/bd/kol-prepare/index.vue'),
         meta: {
-          hideInMenu: true,
-          hideInTab: true,
-          title: '达人筹备表',
-          activeMenu: '/bd/my-tasks',
+          icon: 'lucide:user-round-pen',
+          title: '达人筹备',
+          authority: [RoleEnum.BD],
+        },
+      },
+      // 达人池（BD 查看并认领）
+      {
+        name: 'BD-KolPool',
+        path: '/bd/kol-pool',
+        component: () => import('#/views/bd/kol-pool/index.vue'),
+        meta: {
+          icon: 'lucide:layout-grid',
+          title: '达人池',
           authority: [RoleEnum.BD],
         },
       },

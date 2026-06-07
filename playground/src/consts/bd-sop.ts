@@ -7,11 +7,3 @@ export enum KolPrepareReasonCode {
   KOL_DELETED = 4, // 达人已删除
   KOL_ABNORMAL = 5, // 达人状态异常
 }
-
-/** 达人筹备表-审核状态（对应后端 prepare_status） */
-export enum KoaPrepareAuditStatus {
-  WAITING = 0, // 待审核
-  PENDING = 1, // 审核中
-  REJECT = 2, // 审核不通过
-  PASS = 3, // 审核通过
-}

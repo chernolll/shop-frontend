@@ -1542,6 +1542,143 @@
         "blacklist": "黑名单"
       },
       "empty": "暂无数据"
+    },
+    "kolPrepare": {
+      "title": "达人筹备",
+      "description": "管理你的达人筹备记录。上传 Excel 或手动添加达人，校验通过后即可提交。",
+      "columns": {
+        "kol-id": "达人ID",
+        "kol-url": "达人主页",
+        "has-budget": "有无预算",
+        "budget-amount": "预算金额",
+        "remark": "备注",
+        "entry-time": "录入时间",
+        "action": "操作"
+      },
+      "actions": {
+        "download-template": "下载模板",
+        "upload-excel": "上传 Excel",
+        "delete": "删除",
+        "clear-list": "清空列表",
+        "submit": "提交筹备"
+      },
+      "preview": {
+        "title": "达人校验预览",
+        "invalid-alert": "存在不可筹备的达人，请删除异常行后再提交。"
+      },
+      "messages": {
+        "validate-success": "已校验 {0} 个达人",
+        "submit-success": "成功提交 {0} 条筹备记录",
+        "delete-confirm": "确认删除该筹备记录吗？",
+        "delete-success": "删除成功",
+        "input-valid-kol-id": "请输入有效的达人ID",
+        "all-in-list": "所有达人已在预览列表中",
+        "no-valid-in-excel": "Excel 中没有有效的达人ID",
+        "parse-failed": "解析文件失败",
+        "file-empty": "文件为空",
+        "missing-kol-id-column": "缺少 kol_id 列",
+        "has-invalid-data": "存在不可筹备的达人，请先删除后再提交",
+        "submit-failed": "提交失败"
+      },
+      "has-budget": {
+        "yes": "有",
+        "no": "无"
+      },
+      "empty": "暂无数据"
+    },
+    "kolPool": {
+      "title": "达人池",
+      "description": "公共达人资源池。离职BD释放的达人以及Admin上传的达人会进入此池，你可以认领到自己的筹备列表中。",
+      "filters": {
+        "source-type": "来源筛选",
+        "has-budget": "预算筛选",
+        "all-source": "全部来源",
+        "all-budget": "全部预算",
+        "search": "查询",
+        "reset": "重置"
+      },
+      "columns": {
+        "kol-id": "达人ID",
+        "kol-url": "达人主页",
+        "has-budget": "有无预算",
+        "budget-amount": "预算金额",
+        "remark": "备注",
+        "source-type": "来源",
+        "source-bd-code": "来源BD",
+        "created-at": "创建时间",
+        "action": "操作"
+      },
+      "source-type": {
+        "departed-bd": "离职BD释放",
+        "admin-upload": "Admin上传"
+      },
+      "actions": {
+        "claim": "认领",
+        "claim-confirm-title": "确认认领",
+        "claim-confirm-content": "确认认领达人 {0} 吗？认领后将出现在你的筹备列表中。",
+        "claim-success": "已认领达人 {0}，请前往「达人筹备」查看",
+        "claim-failed": "认领失败"
+      }
+    }
+  },
+  "admin": {
+    "kolPool": {
+      "title": "达人池管理",
+      "description": "管理公共达人池中的达人。支持手动添加、Excel批量导入、编辑和删除。",
+      "filters": {
+        "source-type": "来源筛选",
+        "has-budget": "预算筛选",
+        "search": "查询",
+        "reset": "重置"
+      },
+      "columns": {
+        "kol-id": "达人ID",
+        "kol-url": "达人主页",
+        "has-budget": "有无预算",
+        "budget-amount": "预算金额",
+        "remark": "备注",
+        "source-type": "来源",
+        "source-bd-code": "来源BD",
+        "uploader-id": "上传人ID",
+        "created-at": "创建时间",
+        "updated-at": "更新时间",
+        "action": "操作"
+      },
+      "actions": {
+        "download-template": "下载模板",
+        "batch-import": "批量导入",
+        "add": "新增达人",
+        "edit": "编辑",
+        "delete": "删除",
+        "delete-confirm-title": "确认删除",
+        "delete-confirm-content": "确认删除该达人池记录吗？"
+      },
+      "editor": {
+        "create-title": "新增达人",
+        "edit-title": "编辑达人",
+        "kol-id": "达人ID",
+        "kol-id-placeholder": "请输入达人ID",
+        "kol-url": "达人主页链接",
+        "kol-url-placeholder": "请输入达人主页链接（可选）",
+        "has-budget": "有无预算",
+        "budget-amount": "预算金额",
+        "budget-amount-placeholder": "请输入预算金额",
+        "remark": "备注",
+        "remark-placeholder": "备注（可选）"
+      },
+      "messages": {
+        "create-success": "新增成功",
+        "update-success": "更新成功",
+        "delete-success": "删除成功",
+        "kol-id-required": "请输入达人ID",
+        "budget-required": "有预算时必须填写预算金额",
+        "operation-failed": "操作失败",
+        "file-empty": "文件为空",
+        "missing-kol-id-column": "缺少 kol_id 列",
+        "no-valid-in-excel": "Excel 中没有有效数据",
+        "parse-failed": "解析文件失败",
+        "import-result": "导入完成：{0} 条成功，{1} 条失败"
+      }
     }
   },
   "shop": {
