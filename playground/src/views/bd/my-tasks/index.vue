@@ -81,12 +81,6 @@ async function fetchMyTaskList({
     result = await getBdTaskList({
       deadlineEnd: deadlineRange[1] ? Number(deadlineRange[1]) : undefined,
       deadlineStart: deadlineRange[0] ? Number(deadlineRange[0]) : undefined,
-      hasBudget:
-        formValues?.hasBudget === undefined
-          ? undefined
-          : (Number(formValues.hasBudget) === 1
-            ? 1
-            : 0),
       page: currentPage,
       pageSize,
       task_code: formValues?.task_code?.trim() || undefined,
@@ -141,28 +135,6 @@ const formOptions: VbenFormProps = {
       },
       fieldName: 'taskStatus',
       label: $t('page.bd.my-task.filters.task-status'),
-    },
-    {
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: [
-          {
-            label: $t('page.bd.my-task.placeholders.all-budget'),
-            value: undefined,
-          },
-          {
-            label: $t('page.bd.my-task.budget-text.yes'),
-            value: 1,
-          },
-          {
-            label: $t('page.bd.my-task.budget-text.no'),
-            value: 0,
-          },
-        ],
-      },
-      fieldName: 'hasBudget',
-      label: $t('page.bd.my-task.filters.has-budget'),
     },
   ],
   submitOnChange: false,
@@ -420,15 +392,6 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
         </template>
         <Tag v-else color="default">
           {{ $t('page.bd.my-task.prepare-status.not-submitted') }}
-        </Tag>
-      </template>
-      <template #hasBudget="{ row }">
-        <Tag :color="row.hasBudget ? 'green' : 'default'">
-          {{
-            row.hasBudget
-              ? $t('page.bd.my-task.budget-text.yes')
-              : $t('page.bd.my-task.budget-text.no')
-          }}
         </Tag>
       </template>
       <template #taskStatus="{ row }">

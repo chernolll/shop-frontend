@@ -31,12 +31,12 @@ import {
   AdminTaskApi,
   assignBDToPublicTask,
   createAdminTask,
+  dispatchPublicTaskToBD,
   getAdminBdList,
   getAdminProductListingList,
   getAdminTaskList,
   getAdminTaskRelations,
 } from '#/api/bd/tasks';
-import { dispatchPublicTaskToBD } from '#/api/review/public-task-application';
 import { $t } from '#/locales';
 
 interface BdOption {
@@ -65,7 +65,6 @@ const relationData = ref<AdminTaskApi.RelationsResult | null>(null);
 
 const createForm = reactive<{
   bd_codes: string[];
-  budget: AdminTaskApi.BudgetFlag;
   commission: number | undefined;
   deadline: string | undefined;
   product_listing_id: number | undefined;
@@ -73,24 +72,12 @@ const createForm = reactive<{
   video_num: number | undefined;
 }>({
   bd_codes: [],
-  budget: AdminTaskApi.BudgetFlag.NO,
   commission: undefined,
   deadline: undefined,
   product_listing_id: undefined,
   type: AdminTaskApi.TaskType.CUSTOM,
   video_num: undefined,
 });
-
-const budgetOptions = [
-  {
-    label: $t('page.bd.task-center.budget-text.no'),
-    value: AdminTaskApi.BudgetFlag.NO,
-  },
-  {
-    label: $t('page.bd.task-center.budget-text.yes'),
-    value: AdminTaskApi.BudgetFlag.YES,
-  },
-];
 
 const taskTypeOptions = [
   {
@@ -251,19 +238,8 @@ function getTaskTypeText(type?: number) {
     : $t('page.bd.task-center.task-type-text.custom');
 }
 
-function getBudgetText(value?: number) {
-  return value === AdminTaskApi.BudgetFlag.YES
-    ? $t('page.bd.task-center.budget-text.yes')
-    : $t('page.bd.task-center.budget-text.no');
-}
-
-function getBudgetColor(value?: number) {
-  return value === AdminTaskApi.BudgetFlag.YES ? 'success' : 'default';
-}
-
 function resetCreateForm() {
   createForm.bd_codes = [];
-  createForm.budget = AdminTaskApi.BudgetFlag.NO;
   createForm.commission = undefined;
   createForm.deadline = undefined;
   createForm.product_listing_id = undefined;
@@ -406,7 +382,10 @@ async function submitCreateTask() {
     message.warning($t('page.bd.task-center.messages.commission-required'));
     return;
   }
-  if (!createForm.video_num || createForm.video_num <= 0) {
+  if (
+    createForm.type === AdminTaskApi.TaskType.CUSTOM &&
+    (!createForm.video_num || createForm.video_num <= 0)
+  ) {
     message.warning($t('page.bd.task-center.messages.video-num-required'));
     return;
   }
@@ -421,13 +400,18 @@ async function submitCreateTask() {
   try {
     createSubmitting.value = true;
     const result = await createAdminTask({
-      bd_codes: normalizedBdCodes.value,
-      budget: createForm.budget,
+      bd_codes:
+        createForm.type === AdminTaskApi.TaskType.CUSTOM
+          ? normalizedBdCodes.value
+          : [],
       commission: createForm.commission,
       deadline: toOptionalNumber(createForm.deadline),
       product_listing_id: createForm.product_listing_id,
       type: createForm.type,
-      video_num: createForm.video_num,
+      video_num:
+        createForm.type === AdminTaskApi.TaskType.CUSTOM
+          ? (createForm.video_num ?? 0)
+          : 0,
     });
 
     createModalOpen.value = false;
@@ -552,21 +536,6 @@ const formOptions: VbenFormProps = {
       label: $t('page.bd.task-center.filters.type'),
     },
     {
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: [
-          {
-            label: $t('page.bd.task-center.filters.all-budget'),
-            value: undefined,
-          },
-          ...budgetOptions,
-        ],
-      },
-      fieldName: 'budget',
-      label: $t('page.bd.task-center.filters.budget'),
-    },
-    {
       component: 'RangePicker',
       componentProps: {
         valueFormat: 'x',
@@ -622,12 +591,6 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
       title: $t('page.bd.task-center.columns.type'),
     },
     {
-      field: 'budget',
-      minWidth: 120,
-      slots: { default: 'budget' },
-      title: $t('page.bd.task-center.columns.budget'),
-    },
-    {
       field: 'status',
       minWidth: 120,
       slots: { default: 'status' },
@@ -660,9 +623,6 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
     ajax: {
       query: async ({ page }, formValues = {}) => {
         const result = await getAdminTaskList({
-          budget: toOptionalNumber(formValues.budget) as
-            | AdminTaskApi.BudgetFlag
-            | undefined,
           deadline_end: Array.isArray(formValues.deadline_range)
             ? toOptionalNumber(formValues.deadline_range[1])
             : undefined,
@@ -761,12 +721,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :color="row.type === AdminTaskApi.TaskType.PUBLIC ? 'purple' : 'blue'"
         >
           {{ getTaskTypeText(row.type) }}
-        </Tag>
-      </template>
-
-      <template #budget="{ row }">
-        <Tag :color="getBudgetColor(row.budget)">
-          {{ getBudgetText(row.budget) }}
         </Tag>
       </template>
 
@@ -878,6 +832,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </FormItem>
 
         <FormItem
+          v-if="createForm.type === AdminTaskApi.TaskType.CUSTOM"
           :label="$t('page.bd.task-center.create-modal.video-num')"
           required
         >
@@ -893,7 +848,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
           <DatePicker
             v-model:value="createForm.deadline"
             class="w-full"
-            show-time
             value-format="x"
           />
         </FormItem>
@@ -906,21 +860,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
           />
         </FormItem>
 
-        <FormItem :label="$t('page.bd.task-center.create-modal.budget')">
-          <Select
-            v-model:value="createForm.budget"
-            class="w-full"
-            :options="budgetOptions"
-          />
-        </FormItem>
-
         <FormItem
-          :label="
-            createForm.type === AdminTaskApi.TaskType.PUBLIC
-              ? 'BD代号（可选）'
-              : $t('page.bd.task-center.create-modal.bd-codes')
-          "
-          :required="createForm.type === AdminTaskApi.TaskType.CUSTOM"
+          v-if="createForm.type === AdminTaskApi.TaskType.CUSTOM"
+          :label="$t('page.bd.task-center.create-modal.bd-codes')"
+          required
         >
           <Select
             v-model:value="createForm.bd_codes"
@@ -929,9 +872,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :loading="bdOptionsLoading"
             :options="bdOptions"
             :placeholder="
-              createForm.type === AdminTaskApi.TaskType.PUBLIC
-                ? '公开任务可不指定BD，后续再分配'
-                : $t('page.bd.task-center.create-modal.bd-codes-placeholder')
+              $t('page.bd.task-center.create-modal.bd-codes-placeholder')
             "
             :filter-option="false"
             show-search

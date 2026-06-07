@@ -63,11 +63,6 @@ export namespace AdminTaskApi {
     total: number;
   }
 
-  export enum BudgetFlag {
-    NO = 0,
-    YES = 1,
-  }
-
   export enum Status {
     NORMAL = 0,
     ABANDONED = 1,
@@ -80,7 +75,6 @@ export namespace AdminTaskApi {
 
   export interface CreateParams {
     bd_codes: string[];
-    budget: BudgetFlag;
     commission: number;
     deadline?: number;
     product_listing_id: number | string;
@@ -97,7 +91,6 @@ export namespace AdminTaskApi {
 
   export interface CreateResult {
     bd_relations: CreateRelationItem[];
-    budget: BudgetFlag;
     commission: number;
     created_at: number;
     deadline: null | number;
@@ -110,7 +103,6 @@ export namespace AdminTaskApi {
   }
 
   export interface ListParams {
-    budget?: BudgetFlag;
     deadline_end?: number;
     deadline_start?: number;
     page: number;
@@ -123,7 +115,6 @@ export namespace AdminTaskApi {
 
   export interface ListItem {
     bd_count: number;
-    budget: BudgetFlag;
     commission: number;
     created_at: number;
     deadline: number;
@@ -254,6 +245,37 @@ export namespace AdminAssignApi {
 export async function assignBDToPublicTask(data: AdminAssignApi.AssignParams) {
   return requestClient.post<AdminAssignApi.AssignResult>(
     '/admin/tasks/assign',
+    data,
+  );
+}
+
+export namespace AdminDispatchApi {
+  export interface DispatchParams {
+    bd_codes: string[];
+    commission?: number;
+    deadline?: number;
+    public_task_id: number;
+    video_num: number;
+  }
+
+  export interface DispatchResultItem {
+    bd_code: string;
+    relation_id: number;
+    task_code: string;
+    task_id: number;
+  }
+
+  export interface DispatchResult {
+    items: DispatchResultItem[];
+  }
+}
+
+/** Admin 派送公开任务给 BD */
+export async function dispatchPublicTaskToBD(
+  data: AdminDispatchApi.DispatchParams,
+) {
+  return requestClient.post<AdminDispatchApi.DispatchResult>(
+    '/admin/public-tasks/dispatch',
     data,
   );
 }

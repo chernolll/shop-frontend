@@ -43,7 +43,7 @@ const formState = reactive<{
 
 const submitting = ref(false);
 
-const hasBudget = computed(() => Number(props.detail?.task_budget ?? 0) === 1);
+const hasBudget = computed(() => Number(props.detail?.has_budget ?? 0) === 1);
 const canEdit = computed(
   () => props.detail?.sop_status === BDSopApi.Status.CONTACT,
 );

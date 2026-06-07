@@ -52,16 +52,6 @@ function getSopStatusColor(status: number) {
   return sopStatusColorMap[status] ?? 'default';
 }
 
-function getBudgetText(value: number) {
-  return value === 1
-    ? $t('page.bd.sop.budget-text.yes')
-    : $t('page.bd.sop.budget-text.no');
-}
-
-function getBudgetColor(value: number) {
-  return value === 1 ? 'green' : 'default';
-}
-
 function getTaskTypeText(value: number) {
   return value === 1
     ? $t('page.bd.sop.task-type-text.public')
@@ -180,12 +170,6 @@ const gridOptions: VxeTableGridOptions<BDSopApi.Item> = {
       width: 130,
     },
     {
-      field: 'task_budget',
-      slots: { default: 'task_budget' },
-      title: $t('page.bd.sop.columns.budget'),
-      width: 120,
-    },
-    {
       field: 'task_type',
       slots: { default: 'task_type' },
       title: $t('page.bd.sop.columns.task-type'),
@@ -289,11 +273,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
           {{ row.brief_url }}
         </a>
         <span v-else>-</span>
-      </template>
-      <template #task_budget="{ row }">
-        <Tag :color="getBudgetColor(row.task_budget)">
-          {{ getBudgetText(row.task_budget) }}
-        </Tag>
       </template>
       <template #task_type="{ row }">
         <Tag>

@@ -7,7 +7,6 @@ export interface MyTaskItem {
   commission: number;
   completedVideos: number;
   deadline: number;
-  hasBudget: number;
   hasPrepareRecords: number;
   main_sku_code?: string;
   main_sku_name?: string;
@@ -66,12 +65,6 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       showOverflow: false,
       slots: { default: 'prepareSummary' },
       title: $t('page.bd.my-task.columns.prepare-summary'),
-    },
-    {
-      field: 'hasBudget',
-      slots: { default: 'hasBudget' },
-      title: $t('page.bd.my-task.columns.has-budget'),
-      width: 110,
     },
     {
       field: 'taskStatus',

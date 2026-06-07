@@ -10,7 +10,6 @@ export namespace BdTaskApi {
   export interface BdTaskListParams {
     deadlineEnd?: number; // 截止时间结束
     deadlineStart?: number; // 截止时间开始
-    hasBudget?: 0 | 1; // 是否有预算
     page: number;
     pageSize: number;
     task_code?: string; // 任务代码
@@ -22,7 +21,6 @@ export namespace BdTaskApi {
     commission: number; // 佣金
     completedVideos: number; // 已完成视频数
     deadline: number; // 截止日期 单位毫秒
-    hasBudget: 0 | 1; // 是否有预算 1:有
     hasPrepareRecords: number; // 是否提交过达人审核记录
     main_sku_code?: string;
     main_sku_name?: string;
@@ -53,14 +51,12 @@ export namespace BdPublicTaskApi {
   export interface BdPublicTaskListParams {
     deadlineEnd?: number;
     deadlineStart?: number;
-    hasBudget?: boolean;
     page: number;
     pageSize: number;
   }
 
   export interface BdPublicTaskItem {
     bd_count: number;
-    budget: 0 | 1;
     commission: number;
     created_at: number;
     deadline: null | number;
@@ -125,56 +121,18 @@ export async function getBdTaskList(params: BdTaskApi.BdTaskListParams) {
   return requestClient.get<BdTaskApi.BdTasListResult>('/bd/tasks', { params });
 }
 
-// --- BD Public Task Application ---
+// --- BD Join Public Task ---
 
-export namespace BdPublicTaskApplicationApi {
-  export enum ApplicationStatus {
-    PENDING = 0,
-    APPROVED = 1,
-    REJECTED = 2,
-  }
-
-  export interface ApplyParams {
-    task_id: number;
-  }
-
-  export interface ApplicationItem {
+/** BD 直接加入公开任务（无需审核） */
+export async function joinPublicTask(data: { task_id: number }) {
+  return requestClient.post<{
     bd_code: string;
-    created_at: number;
+    created_at: string;
+    follow_entry_time: number;
     id: number;
-    status: number;
+    task_code: string;
     task_id: number;
-    updated_at: number;
-  }
-
-  export interface ListParams {
-    page: number;
-    pageSize: number;
-    status?: number;
-  }
-
-  export interface ListResult {
-    list: ApplicationItem[];
-    page: number;
-    page_size: number;
-    total: number;
-  }
-}
-
-/** BD申请参与公开任务 */
-export async function applyForPublicTask(data: { task_id: number }) {
-  return requestClient.post<BdPublicTaskApplicationApi.ApplicationItem>(
-    '/bd/public-tasks/apply',
-    data,
-  );
-}
-
-/** BD查看自己的公开任务申请记录 */
-export async function getMyPublicTaskApplications(
-  params: BdPublicTaskApplicationApi.ListParams,
-) {
-  return requestClient.get<BdPublicTaskApplicationApi.ListResult>(
-    '/bd/public-tasks/applications',
-    { params },
-  );
+    updated_at: string;
+    video_quantity: number;
+  }>('/bd/public-tasks/join', data);
 }

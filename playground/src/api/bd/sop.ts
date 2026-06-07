@@ -47,7 +47,6 @@ export namespace BDSopApi {
     product_url: null | string;
     status: number;
     task_bd_id: number;
-    task_budget: number;
     task_commission: number;
     task_created_at: number;
     task_deadline: null | number;
@@ -78,7 +77,6 @@ export namespace BDSopApi {
     remittance_status?: BudgetReviewStatus;
     sop_status: Status;
     task_bd_id: number;
-    task_budget: number;
     task_commission: number;
     task_created_at: number;
     task_deadline: null | number;

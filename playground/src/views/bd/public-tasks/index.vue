@@ -9,7 +9,7 @@ import { Page } from '@vben/common-ui';
 import { Alert, Button, Empty, message, Modal, Tag } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { applyForPublicTask, getBDPublicTaskList } from '#/api';
+import { getBDPublicTaskList, joinPublicTask } from '#/api';
 import { $t } from '#/locales';
 
 const formOptions: VbenFormProps = {
@@ -22,22 +22,6 @@ const formOptions: VbenFormProps = {
       },
       fieldName: 'deadlineRange',
       label: $t('page.bd.task-center.filters.deadline-range'),
-    },
-    {
-      component: 'Select',
-      componentProps: {
-        allowClear: true,
-        options: [
-          {
-            label: $t('page.bd.my-task.placeholders.all-budget'),
-            value: undefined,
-          },
-          { label: $t('page.bd.publicTasks.budget-text.yes'), value: true },
-          { label: $t('page.bd.publicTasks.budget-text.no'), value: false },
-        ],
-      },
-      fieldName: 'hasBudget',
-      label: $t('page.bd.my-task.filters.has-budget'),
     },
   ],
   submitOnChange: false,
@@ -59,7 +43,7 @@ async function confirmApply() {
 
   applyingTaskId.value = taskId;
   try {
-    await applyForPublicTask({ task_id: taskId });
+    await joinPublicTask({ task_id: taskId });
     message.success($t('page.bd.publicTasks.messages.apply-success'));
     applyModalVisible.value = false;
   } catch (error: any) {
@@ -88,8 +72,6 @@ async function fetchPublicTaskList({
     result = await getBDPublicTaskList({
       deadlineEnd: deadlineRange[1] ? Number(deadlineRange[1]) : undefined,
       deadlineStart: deadlineRange[0] ? Number(deadlineRange[0]) : undefined,
-      hasBudget:
-        formValues?.hasBudget === undefined ? undefined : formValues.hasBudget,
       page: currentPage,
       pageSize,
     });
@@ -147,12 +129,6 @@ const [Grid] = useVbenVxeGrid<BdPublicTaskApi.BdPublicTaskItem>({
         title: $t('page.bd.publicTasks.columns.deadline'),
         width: 120,
         slots: { default: 'deadline' },
-      },
-      {
-        field: 'budget',
-        title: $t('page.bd.publicTasks.columns.budget'),
-        width: 80,
-        slots: { default: 'budget' },
       },
       {
         field: 'created_at',
@@ -245,15 +221,6 @@ function formatCurrency(value: number): string {
         <span v-if="row.deadline">{{ formatDate(row.deadline) }}</span>
         <Tag v-else color="green">
           {{ $t('page.bd.publicTasks.deadline.long-term') }}
-        </Tag>
-      </template>
-      <template #budget="{ row }">
-        <Tag :color="row.budget === 1 ? 'green' : 'default'">
-          {{
-            row.budget === 1
-              ? $t('page.bd.publicTasks.budget-text.yes')
-              : $t('page.bd.publicTasks.budget-text.no')
-          }}
         </Tag>
       </template>
       <template #created_at="{ row }">
