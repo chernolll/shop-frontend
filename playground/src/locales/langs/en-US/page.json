@@ -385,6 +385,84 @@
         "select-records-first": "Select at least one record first",
         "unknown-failure": "Unknown failure reason"
       }
+    },
+    "taskKol": {
+      "list-title": "SOP Review",
+      "no-data": "No review data",
+      "selected-count": "{0} selected",
+      "filters": {
+        "all-status": "All Status",
+        "bd-codes": "BD Code",
+        "review-status": "Review Status",
+        "task-name": "Task Name"
+      },
+      "columns": {
+        "review-status": "Review Status",
+        "task-name": "Task Name",
+        "kol-id": "KOL ID",
+        "kol-url": "KOL Homepage",
+        "bd-code": "BD Code",
+        "has-budget": "Has Budget",
+        "budget": "Budget",
+        "brand": "Brand",
+        "sku-name": "SKU Name",
+        "product-url": "Product URL",
+        "followers": "Followers",
+        "score": "Score",
+        "contact-info": "Contact",
+        "kol-note": "Submit Note",
+        "operation": "Operation"
+      },
+      "status": {
+        "approved": "Approved",
+        "pending": "Pending",
+        "rejected": "Rejected"
+      },
+      "detail": {
+        "title": "Review Detail",
+        "task-info": "Task Info",
+        "kol-info": "KOL Info",
+        "submit-info": "Submission Info",
+        "task-name": "Task Name",
+        "product-url": "Product URL",
+        "brand": "Brand",
+        "sku-name": "SKU Name",
+        "commission": "Commission",
+        "kol-id": "KOL ID",
+        "kol-url": "KOL Homepage",
+        "followers": "Followers",
+        "contact-info": "Contact Info",
+        "score": "Score",
+        "kol-notes": "KOL Notes",
+        "has-budget": "Has Budget",
+        "budget": "Budget",
+        "kol-note": "BD Note",
+        "review-history": "Review History",
+        "no-history": "No review history"
+      },
+      "actions": {
+        "approve": "Approve",
+        "batch-review": "Batch Review",
+        "detail": "Detail",
+        "reject": "Reject",
+        "review": "Review"
+      },
+      "review-modal": {
+        "title": "Review",
+        "batch-title": "Batch Review ({0} items)",
+        "pass": "Approve",
+        "reject": "Reject",
+        "budget-placeholder": "Budget amount",
+        "note-placeholder": "Review note (optional)",
+        "note-label": "Review Note",
+        "confirm-ok": "Submit"
+      },
+      "messages": {
+        "detail-load-error": "Failed to load review detail",
+        "no-data": "No data",
+        "review-failed": "Review operation failed",
+        "review-success": "Review completed, {0} record(s) processed"
+      }
     }
   },
   "kol": {
@@ -960,6 +1038,30 @@
         "select-bd-required": "Please select at least one BD",
         "video-num-required": "Video count must be greater than 0",
         "dispatch-success": "Dispatch successful, custom task created"
+      },
+      "kol-dialog": {
+        "title": "Submit KOL to Task",
+        "search-placeholder": "Search KOL ID",
+        "filter-all": "All",
+        "filter-has-budget": "Has Budget",
+        "filter-no-budget": "No Budget",
+        "selected-count": "{0} selected",
+        "submit": "Submit for Review",
+        "submit-success": "Submitted successfully, pending admin review.",
+        "submit-failed": "Submission failed",
+        "submit-partial": "Partial failure: {0}",
+        "columns": {
+          "kol-id": "KOL ID",
+          "kol-url": "KOL Homepage",
+          "has-budget": "Has Budget",
+          "budget-amount": "Budget",
+          "remark": "Remark",
+          "entry-time": "Entry Time"
+        },
+        "budget-text": {
+          "no": "No Budget",
+          "yes": "Has Budget"
+        }
       }
     },
     "publicTasks": {

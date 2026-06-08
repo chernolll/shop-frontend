@@ -385,6 +385,84 @@
         "select-records-first": "请先选择至少 1 条记录",
         "unknown-failure": "未知失败原因"
       }
+    },
+    "taskKol": {
+      "list-title": "SOP审核",
+      "no-data": "暂无审核数据",
+      "selected-count": "已选 {0} 条",
+      "filters": {
+        "all-status": "全部状态",
+        "bd-codes": "BD 编码",
+        "review-status": "审核状态",
+        "task-name": "任务名称"
+      },
+      "columns": {
+        "review-status": "审核状态",
+        "task-name": "任务名称",
+        "kol-id": "达人ID",
+        "kol-url": "达人主页",
+        "bd-code": "BD Code",
+        "has-budget": "是否有预算",
+        "budget": "预算金额",
+        "brand": "品牌",
+        "sku-name": "SKU名称",
+        "product-url": "商品链接",
+        "followers": "粉丝数",
+        "score": "权重分",
+        "contact-info": "联系方式",
+        "kol-note": "提交备注",
+        "operation": "操作"
+      },
+      "status": {
+        "approved": "审核通过",
+        "pending": "待审核",
+        "rejected": "已驳回"
+      },
+      "detail": {
+        "title": "审核详情",
+        "task-info": "任务信息",
+        "kol-info": "达人信息",
+        "submit-info": "提交信息",
+        "task-name": "任务名称",
+        "product-url": "商品链接",
+        "brand": "品牌",
+        "sku-name": "SKU名称",
+        "commission": "佣金",
+        "kol-id": "达人ID",
+        "kol-url": "达人主页",
+        "followers": "粉丝数",
+        "contact-info": "联系方式",
+        "score": "权重分",
+        "kol-notes": "达人备注",
+        "has-budget": "是否有预算",
+        "budget": "预算金额",
+        "kol-note": "BD备注",
+        "review-history": "审核记录",
+        "no-history": "暂无审核记录"
+      },
+      "actions": {
+        "approve": "审核通过",
+        "batch-review": "批量审核",
+        "detail": "详情",
+        "reject": "驳回",
+        "review": "审核"
+      },
+      "review-modal": {
+        "title": "审核",
+        "batch-title": "批量审核（{0} 条）",
+        "pass": "审核通过",
+        "reject": "驳回",
+        "budget-placeholder": "预算金额",
+        "note-placeholder": "审核备注（可选）",
+        "note-label": "审核备注",
+        "confirm-ok": "确认提交"
+      },
+      "messages": {
+        "detail-load-error": "加载审核详情失败",
+        "no-data": "暂无审核数据",
+        "review-failed": "审核操作失败",
+        "review-success": "审核操作成功，共处理 {0} 条"
+      }
     }
   },
   "kol": {
@@ -960,6 +1038,30 @@
         "select-bd-required": "请选择至少一个 BD",
         "video-num-required": "视频数必须大于 0",
         "dispatch-success": "派送成功，已创建定制任务"
+      },
+      "kol-dialog": {
+        "title": "提交达人参与任务",
+        "search-placeholder": "搜索达人ID",
+        "filter-all": "全部",
+        "filter-has-budget": "有预算",
+        "filter-no-budget": "无预算",
+        "selected-count": "已选 {0} 项",
+        "submit": "提交审核",
+        "submit-success": "提交成功，等待管理员审核。",
+        "submit-failed": "提交失败",
+        "submit-partial": "部分提交失败: {0}",
+        "columns": {
+          "kol-id": "达人ID",
+          "kol-url": "达人主页",
+          "has-budget": "是否有预算",
+          "budget-amount": "预算金额",
+          "remark": "备注",
+          "entry-time": "录入时间"
+        },
+        "budget-text": {
+          "no": "无预算",
+          "yes": "有预算"
+        }
       }
     },
     "publicTasks": {

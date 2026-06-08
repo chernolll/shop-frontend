@@ -46,18 +46,6 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
-      {
-        name: 'BD-TaskCenter-Detail',
-        path: '/bd/task-center/:taskId',
-        component: () => import('#/views/bd/task-center/detail.vue'),
-        meta: {
-          hideInMenu: true,
-          hideInTab: true,
-          title: '任务详情',
-          activeMenu: '/bd/task-center',
-          authority: [RoleEnum.BD],
-        },
-      },
       // 我的任务（BD用）- 旧版，保留兼容
       // {
       //   name: 'BD-MyTasks',

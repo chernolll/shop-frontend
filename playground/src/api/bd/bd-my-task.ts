@@ -22,6 +22,7 @@ export namespace BdTaskApi {
     completedVideos: number; // 已完成视频数
     deadline: number; // 截止日期 单位毫秒
     hasPrepareRecords: number; // 是否提交过达人审核记录
+    main_sku_brand?: string;
     main_sku_code?: string;
     main_sku_name?: string;
     main_sku_status?: number;
@@ -62,6 +63,7 @@ export namespace BdPublicTaskApi {
     commission: number;
     created_at: number;
     deadline: null | number;
+    main_sku_brand?: string;
     main_sku_brand?: string;
     main_sku_code?: string;
     main_sku_name?: string;
@@ -139,4 +141,51 @@ export async function joinPublicTask(data: { task_id: number }) {
     updated_at: string;
     video_quantity: number;
   }>('/bd/public-tasks/join', data);
+}
+
+// --- BD 有效筹备达人 ---
+
+export namespace BdPrepareKolApi {
+  export interface ValidKolItem {
+    budget_amount: null | number;
+    entry_time: number;
+    has_budget: 0 | 1;
+    kol_id: string;
+    kol_url: null | string;
+    remark: null | string;
+  }
+}
+
+/** BD 查询自己的有效筹备达人列表（去重+状态过滤） */
+export async function getValidPrepareKols() {
+  return requestClient.get<BdPrepareKolApi.ValidKolItem[]>(
+    '/bd/prepare-kols/valid',
+  );
+}
+
+// --- BD 提交达人参与任务 ---
+
+export namespace BdSubmitKolApi {
+  export interface SubmitKolItem {
+    budget?: null | number;
+    has_budget: 0 | 1;
+    kol_id: string;
+    kol_note?: string;
+    kol_url?: string;
+    product_listing_id: number;
+    task_id: number;
+  }
+
+  export interface SubmitKolResult {
+    failed_kol_ids: string[];
+    success_count: number;
+  }
+}
+
+/** BD 提交达人参与任务 → 创建审核记录 */
+export async function submitKolsToTask(data: BdSubmitKolApi.SubmitKolItem[]) {
+  return requestClient.post<BdSubmitKolApi.SubmitKolResult>(
+    '/bd/tasks/submit-kols',
+    data,
+  );
 }

@@ -34,6 +34,16 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
+      {
+        name: 'Review-TaskKol',
+        path: '/review/task-kol',
+        component: () => import('#/views/review/task-kol/index.vue'),
+        meta: {
+          icon: 'lucide:user-check',
+          title: 'SOP审核',
+          authority: [RoleEnum.ADMIN],
+        },
+      },
     ],
   },
 ];

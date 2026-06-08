@@ -1,147 +1,224 @@
 <script lang="ts" setup>
-import type { MyTaskItem, TaskStatus } from '../mockData';
+import { ref } from 'vue';
 
-import { computed, reactive, ref } from 'vue';
+import {
+  Button,
+  DatePicker,
+  Empty,
+  Input,
+  Progress,
+  Select,
+  Space,
+  Table,
+  Tag,
+  Tooltip,
+} from 'ant-design-vue';
 
-import { Button, Input, Select, Space, Table, Tag } from 'ant-design-vue';
+import { BdTaskApi, getBdTaskList } from '#/api';
+import { $t } from '#/locales';
 
-import { mockMyTaskList, TASK_STATUS_CONFIG } from '../mockData';
+import KolSelectDialog from './KolSelectDialog.vue';
+
+// --- State ---
+const loading = ref(false);
+const taskList = ref<BdTaskApi.BDTaskRow[]>([]);
+const totalItems = ref(0);
+const currentPage = ref(1);
+const pageSize = ref(10);
 
 // --- Filters ---
-const searchKeyword = ref('');
-const statusFilter = ref<TaskStatus | undefined>(undefined);
+const searchTaskCode = ref('');
+const statusFilter = ref<number | undefined>(undefined);
+const deadlineRange = ref<[any, any] | null>(null);
 
-const statusOptions = Object.entries(TASK_STATUS_CONFIG).map(([key, val]) => ({
-  label: val.label,
-  value: Number(key),
-}));
+// --- KOL Dialog ---
+const kolDialogOpen = ref(false);
+const selectedTaskId = ref(0);
+const selectedProductListingId = ref(0);
 
-// --- Table Selection ---
-const selectedRowKeys = ref<number[]>([]);
-
-// --- Pagination ---
-const pagination = reactive({
-  current: 1,
-  pageSize: 10,
-  showSizeChanger: true,
-  showTotal: (total: number) => `共 ${total} 条`,
-});
-
-// --- Filtered data ---
-const filteredList = computed(() => {
-  let list = mockMyTaskList;
-
-  if (searchKeyword.value.trim()) {
-    const kw = searchKeyword.value.trim().toLowerCase();
-    list = list.filter(
-      (item) =>
-        item.taskCode.toLowerCase().includes(kw) ||
-        item.assigneeName.toLowerCase().includes(kw) ||
-        item.assignee.toLowerCase().includes(kw),
-    );
+// --- Fetch ---
+async function fetchMyTaskList(page?: number, pageSizeVal?: number) {
+  loading.value = true;
+  try {
+    const result = await getBdTaskList({
+      deadlineEnd: deadlineRange.value?.[1]
+        ? Number(deadlineRange.value[1].valueOf())
+        : undefined,
+      deadlineStart: deadlineRange.value?.[0]
+        ? Number(deadlineRange.value[0].valueOf())
+        : undefined,
+      page: page ?? currentPage.value,
+      pageSize: pageSizeVal ?? pageSize.value,
+      task_code: searchTaskCode.value?.trim() || undefined,
+      taskStatus:
+        statusFilter.value === undefined
+          ? undefined
+          : Number(statusFilter.value),
+    });
+    taskList.value = result.list ?? [];
+    totalItems.value = result.total ?? 0;
+  } catch {
+    taskList.value = [];
+    totalItems.value = 0;
+  } finally {
+    loading.value = false;
   }
-
-  if (statusFilter.value !== undefined) {
-    list = list.filter((item) => item.status === statusFilter.value);
-  }
-
-  return list;
-});
-
-const tableData = computed(() => {
-  const start = (pagination.current - 1) * pagination.pageSize;
-  return filteredList.value.slice(start, start + pagination.pageSize);
-});
-
-function resetFilters() {
-  searchKeyword.value = '';
-  statusFilter.value = undefined;
-  pagination.current = 1;
 }
 
-const paginationConfig = computed(() => ({
-  ...pagination,
-  total: filteredList.value.length,
-}));
+fetchMyTaskList();
 
-// --- Formatting ---
-function formatDate(ts: number): string {
+function onPageChange(page: number, size: number) {
+  currentPage.value = page;
+  pageSize.value = size;
+  fetchMyTaskList(page, size);
+}
+
+function onFilterSubmit() {
+  currentPage.value = 1;
+  fetchMyTaskList(1);
+}
+
+// --- KOL Dialog ---
+function openKolDialog(row: BdTaskApi.BDTaskRow) {
+  selectedTaskId.value = row.taskId;
+  selectedProductListingId.value = Number(
+    row.productListingId ?? row.product_listing_id ?? 0,
+  );
+  kolDialogOpen.value = true;
+}
+
+function onKolSubmitted() {
+  fetchMyTaskList();
+}
+
+// --- Helpers ---
+function hasMainSkuInfo(row: BdTaskApi.BDTaskRow) {
+  return Boolean(
+    row.main_sku_code || row.main_sku_name || row.main_sku_status !== undefined,
+  );
+}
+
+function getMainSkuStatusText(status?: number) {
+  return status === 1
+    ? $t('page.bd.task-center.product-status.on-sale')
+    : $t('page.bd.task-center.product-status.off-shelf');
+}
+
+function getVideoProgressPercent(row: BdTaskApi.BDTaskRow) {
+  const total = Number(row.totalVideos ?? 0);
+  const completed = Number(row.completedVideos ?? 0);
+  if (total <= 0) return 0;
+  return Math.min(100, Math.max(0, Math.round((completed / total) * 100)));
+}
+
+function isVideoCompleted(row: BdTaskApi.BDTaskRow) {
+  const total = Number(row.totalVideos ?? 0);
+  return total > 0 && Number(row.completedVideos ?? 0) >= total;
+}
+
+function isTaskAbandoned(row: BdTaskApi.BDTaskRow) {
+  return (row.taskStatus ?? row.task_status) === BdTaskApi.TaskStatus.ABANDONED;
+}
+
+function getTaskStatusText(row: BdTaskApi.BDTaskRow) {
+  return isTaskAbandoned(row)
+    ? $t('page.bd.task-center.status-text.abandoned')
+    : $t('page.bd.task-center.status-text.normal');
+}
+
+function getTaskStatusColor(row: BdTaskApi.BDTaskRow) {
+  return isTaskAbandoned(row) ? 'error' : 'success';
+}
+
+function formatDate(ts: null | number): string {
+  if (!ts) return '-';
   return new Date(ts).toLocaleDateString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
     day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
   });
 }
 
 function formatCurrency(value: number): string {
-  return `฿${value.toLocaleString()}`;
+  return `฿${value.toFixed(2)}`;
 }
 
-function handleTableChange(pag: any) {
-  pagination.current = pag.current;
-  pagination.pageSize = pag.pageSize;
+// --- Tag colors ---
+const TAG_COLORS = [
+  'blue',
+  'purple',
+  'cyan',
+  'green',
+  'orange',
+  'magenta',
+  'gold',
+  'geekblue',
+] as const;
+
+function getTagColor(index: number): string {
+  return TAG_COLORS[index % TAG_COLORS.length] ?? 'default';
 }
 
-function handleSelectionChange(keys: (number | string)[]) {
-  selectedRowKeys.value = keys as number[];
-}
-
-// --- Table Columns ---
+// --- Table columns ---
 const columns = [
   {
-    title: '任务代码',
-    dataIndex: 'taskCode',
-    key: 'taskCode',
-    width: 160,
-    sorter: (a: MyTaskItem, b: MyTaskItem) =>
-      a.taskCode.localeCompare(b.taskCode),
+    dataIndex: 'taskName',
+    key: 'taskName',
+    title: $t('page.bd.my-task.columns.task-name'),
+    width: 180,
   },
   {
-    title: '指派对象',
-    dataIndex: 'assigneeName',
-    key: 'assigneeName',
-    width: 120,
-    sorter: (a: MyTaskItem, b: MyTaskItem) =>
-      a.assigneeName.localeCompare(b.assigneeName),
+    dataIndex: 'task_code',
+    key: 'task_code',
+    title: $t('page.bd.my-task.columns.task-code'),
+    width: 180,
   },
   {
-    title: '奖励 (฿)',
-    dataIndex: 'reward',
-    key: 'reward',
-    width: 120,
-    sorter: (a: MyTaskItem, b: MyTaskItem) => a.reward - b.reward,
+    dataIndex: 'taskTags',
+    key: 'taskTags',
+    title: $t('page.bd.my-task.columns.task-tags'),
+    width: 200,
   },
   {
-    title: '创建时间',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-    width: 130,
-    sorter: (a: MyTaskItem, b: MyTaskItem) => a.createdAt - b.createdAt,
+    dataIndex: 'main_sku_brand',
+    key: 'main_sku_brand',
+    title: '品牌',
+    width: 100,
   },
   {
-    title: '截止时间',
+    dataIndex: 'productUrl',
+    key: 'productUrl',
+    title: $t('page.bd.my-task.columns.product-url'),
+    width: 220,
+  },
+  {
+    dataIndex: 'commission',
+    key: 'commission',
+    title: $t('page.bd.my-task.columns.commission'),
+    width: 100,
+  },
+  {
+    dataIndex: 'videoProgress',
+    key: 'videoProgress',
+    title: $t('page.bd.my-task.columns.video-progress'),
+    width: 170,
+  },
+  {
     dataIndex: 'deadline',
     key: 'deadline',
+    title: $t('page.bd.my-task.columns.deadline'),
     width: 130,
-    sorter: (a: MyTaskItem, b: MyTaskItem) => a.deadline - b.deadline,
   },
   {
-    title: '当前状态',
-    dataIndex: 'status',
-    key: 'status',
-    width: 110,
-    sorter: (a: MyTaskItem, b: MyTaskItem) => a.status - b.status,
+    dataIndex: 'taskStatus',
+    key: 'taskStatus',
+    title: $t('page.bd.my-task.columns.task-status'),
+    width: 100,
   },
   {
-    title: '更新时间',
-    dataIndex: 'updatedAt',
-    key: 'updatedAt',
-    width: 130,
-    sorter: (a: MyTaskItem, b: MyTaskItem) => a.updatedAt - b.updatedAt,
-  },
-  {
-    title: '操作',
-    key: 'action',
+    dataIndex: 'operation',
+    key: 'operation',
+    title: $t('page.bd.my-task.columns.action'),
     width: 160,
     fixed: 'right' as const,
   },
@@ -153,162 +230,159 @@ const columns = [
     <!-- Filter Bar -->
     <div class="mb-6 flex flex-wrap items-center gap-3">
       <Input
-        v-model:value="searchKeyword"
-        placeholder="搜索任务代码 / 指派对象..."
+        v-model:value="searchTaskCode"
+        placeholder="搜索任务代码..."
         allow-clear
-        class="!w-full sm:!w-[260px]"
-      >
-        <template #prefix>
-          <svg
-            viewBox="0 0 24 24"
-            width="16"
-            height="16"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            class="text-gray-400"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-        </template>
-      </Input>
+        class="!w-full sm:!w-[220px]"
+      />
       <Select
         v-model:value="statusFilter"
-        placeholder="状态筛选"
+        placeholder="任务状态"
         allow-clear
-        class="!w-full sm:!w-[150px]"
-        :options="statusOptions"
+        class="!w-full sm:!w-[140px]"
+        :options="[
+          { label: $t('page.bd.my-task.task-status.normal'), value: 0 },
+          { label: $t('page.bd.my-task.task-status.abandoned'), value: 1 },
+        ]"
       />
-      <div class="flex-1"></div>
-      <Button @click="resetFilters">
-        <template #icon>
-          <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path
-              d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-            />
-          </svg>
-        </template>
-        刷新
-      </Button>
-    </div>
-
-    <!-- Batch Actions -->
-    <div
-      v-if="selectedRowKeys.length > 0"
-      class="mb-4 flex items-center gap-3 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 dark:border-blue-800 dark:bg-blue-950"
-    >
-      <span class="text-sm font-medium text-blue-700 dark:text-blue-300">
-        已选择 {{ selectedRowKeys.length }} 项
-      </span>
-      <Button size="small">批量导出</Button>
-      <Button size="small">批量标记完成</Button>
-      <Button size="small" danger>批量删除</Button>
+      <DatePicker.RangePicker
+        v-model:value="deadlineRange"
+        placeholder="截止时间范围"
+        class="!w-full sm:!w-[260px]"
+      />
+      <Button @click="onFilterSubmit">查询</Button>
     </div>
 
     <!-- Data Table -->
     <div class="my-tasks-table">
       <Table
         :columns="columns"
-        :data-source="tableData"
-        :pagination="paginationConfig"
-        :row-key="(r: MyTaskItem) => r.id"
-        :row-selection="{
-          selectedRowKeys,
-          onChange: handleSelectionChange,
+        :data-source="taskList"
+        :loading="loading"
+        :row-key="(r: BdTaskApi.BDTaskRow) => r.relationId"
+        :pagination="{
+          current: currentPage,
+          pageSize,
+          total: totalItems,
+          showSizeChanger: true,
+          showTotal: (t: number) => `共 ${t} 条`,
+          onChange: onPageChange,
         }"
         size="middle"
-        :scroll="{ x: 1100 }"
-        @change="handleTableChange"
+        :scroll="{ x: 1500 }"
       >
         <template #bodyCell="{ column, record }">
-          <!-- Task Code -->
-          <template v-if="column.key === 'taskCode'">
-            <span class="task-code-link">{{ record.taskCode }}</span>
+          <template v-if="column.key === 'taskName'">
+            <span class="font-medium">{{ record.taskName || '-' }}</span>
           </template>
 
-          <!-- Assignee -->
-          <template v-if="column.key === 'assigneeName'">
-            <div class="flex items-center gap-2">
-              <div
-                class="flex h-7 w-7 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+          <template v-if="column.key === 'task_code'">
+            <Tooltip v-if="hasMainSkuInfo(record)">
+              <template #title>
+                <div class="space-y-1">
+                  <div>SKU编码: {{ record.main_sku_code || '-' }}</div>
+                  <div>SKU名称: {{ record.main_sku_name || '-' }}</div>
+                  <div>
+                    SKU状态:
+                    {{ getMainSkuStatusText(record.main_sku_status) }}
+                  </div>
+                </div>
+              </template>
+              <span class="cursor-help text-blue-500 hover:underline">
+                {{ record.task_code || '-' }}
+              </span>
+            </Tooltip>
+            <span v-else>{{ record.task_code || '-' }}</span>
+          </template>
+
+          <template v-if="column.key === 'taskTags'">
+            <Space
+              v-if="(record.taskTags ?? []).length > 0"
+              :size="[4, 4]"
+              wrap
+            >
+              <Tag
+                v-for="(tag, i) in record.taskTags ?? []"
+                :key="tag"
+                :color="getTagColor(i)"
               >
-                {{ record.assigneeName.charAt(0) }}
-              </div>
-              <span class="text-sm">{{ record.assigneeName }}</span>
+                {{ tag }}
+              </Tag>
+            </Space>
+            <span v-else>-</span>
+          </template>
+
+          <template v-if="column.key === 'main_sku_brand'">
+            <span>{{ record.main_sku_brand || '-' }}</span>
+          </template>
+
+          <template v-if="column.key === 'productUrl'">
+            <a
+              v-if="record.productUrl"
+              :href="record.productUrl"
+              target="_blank"
+              class="text-blue-500 hover:underline"
+            >
+              {{ record.productUrl }}
+            </a>
+            <span v-else>-</span>
+          </template>
+
+          <template v-if="column.key === 'commission'">
+            {{ formatCurrency(record.commission) }}
+          </template>
+
+          <template v-if="column.key === 'videoProgress'">
+            <div class="min-w-[136px] pr-2 text-center">
+              <span
+                :class="
+                  isVideoCompleted(record)
+                    ? 'font-medium text-success'
+                    : 'text-foreground'
+                "
+              >
+                {{ record.completedVideos }} / {{ record.totalVideos }}
+              </span>
+              <Progress
+                class="mt-1"
+                :percent="getVideoProgressPercent(record)"
+                :show-info="false"
+                :status="isVideoCompleted(record) ? 'success' : 'active'"
+                size="small"
+              />
             </div>
           </template>
 
-          <!-- Reward -->
-          <template v-if="column.key === 'reward'">
-            <span
-              :class="
-                record.reward > 0
-                  ? 'font-medium text-amber-600'
-                  : 'text-gray-400'
-              "
-            >
-              {{ record.reward > 0 ? formatCurrency(record.reward) : '-' }}
-            </span>
-          </template>
-
-          <!-- Created At -->
-          <template v-if="column.key === 'createdAt'">
-            {{ formatDate(record.createdAt) }}
-          </template>
-
-          <!-- Deadline -->
           <template v-if="column.key === 'deadline'">
-            <span
-              :class="
-                record.status === 3 || new Date(record.deadline) < new Date()
-                  ? 'text-red-500'
-                  : ''
-              "
-            >
-              {{ formatDate(record.deadline) }}
-            </span>
+            {{ formatDate(record.deadline) }}
           </template>
 
-          <!-- Status Badge -->
-          <template v-if="column.key === 'status'">
-            <Tag :color="TASK_STATUS_CONFIG[record.status as TaskStatus].color">
-              {{ TASK_STATUS_CONFIG[record.status as TaskStatus].label }}
+          <template v-if="column.key === 'taskStatus'">
+            <Tag :color="getTaskStatusColor(record)">
+              {{ getTaskStatusText(record) }}
             </Tag>
           </template>
 
-          <!-- Updated At -->
-          <template v-if="column.key === 'updatedAt'">
-            {{ formatDate(record.updatedAt) }}
+          <template v-if="column.key === 'operation'">
+            <Button type="primary" size="small" @click="openKolDialog(record)">
+              提交达人参与
+            </Button>
           </template>
+        </template>
 
-          <!-- Actions -->
-          <template v-if="column.key === 'action'">
-            <Space :size="[4, 4]">
-              <Button type="link" size="small">查看详情</Button>
-              <Button
-                v-if="record.status === 0 || record.status === 1"
-                type="link"
-                size="small"
-              >
-                上传达人
-              </Button>
-            </Space>
-          </template>
+        <template #empty>
+          <Empty description="暂无任务数据" />
         </template>
       </Table>
     </div>
+
+    <!-- KOL Select Dialog -->
+    <KolSelectDialog
+      v-model:open="kolDialogOpen"
+      :task-id="selectedTaskId"
+      :product-listing-id="selectedProductListingId"
+      @submitted="onKolSubmitted"
+    />
   </div>
 </template>
 
@@ -331,11 +405,5 @@ const columns = [
 
 .my-tasks-table :deep(.ant-table-tbody > tr:hover > td) {
   background: hsl(var(--primary) / 5%);
-}
-
-.task-code-link {
-  font-size: 13px;
-  font-weight: 500;
-  color: hsl(var(--primary));
 }
 </style>
