@@ -30,6 +30,7 @@ import {
 
 import {
   abandonBDSopRemittance,
+  advanceStageBDSop,
   BDSopApi,
   completeBDSop,
   createBDSopRemittance,
@@ -62,6 +63,7 @@ const detailDrawerOpen = ref(false);
 
 const createModalOpen = ref(false);
 const createSubmitting = ref(false);
+const advancing = ref(false);
 const completing = ref(false);
 const actionSubmittingIds = ref<number[]>([]);
 const uploadFileList = ref<UploadFile[]>([]);
@@ -94,6 +96,18 @@ const canCreate = computed(
 const canCompleteSop = computed(
   () =>
     Boolean(remittanceList.value) && hasBudget.value && isRemittanceStage.value,
+);
+const hasApprovedRemittance = computed(() =>
+  (remittanceList.value?.list ?? []).some(
+    (r) => r.status === BDSopApi.RemittanceStatus.APPROVED,
+  ),
+);
+const canAdvance = computed(
+  () =>
+    Boolean(remittanceList.value) &&
+    hasBudget.value &&
+    isRemittanceStage.value &&
+    hasApprovedRemittance.value,
 );
 
 const allowedUploadMimeTypes = new Set(['image/jpeg', 'image/png']);
@@ -634,6 +648,27 @@ function confirmCompleteSop() {
   });
 }
 
+function confirmAdvanceStage() {
+  if (!canAdvance.value) return;
+
+  Modal.confirm({
+    content: $t('page.bd.sop.detail.remittance.advance-confirm-content'),
+    okText: $t('page.bd.sop.detail.remittance.advance-button'),
+    title: $t('page.bd.sop.detail.remittance.advance-confirm-title'),
+    async onOk() {
+      try {
+        advancing.value = true;
+        await advanceStageBDSop({ task_sop_id: props.sopId });
+        message.success($t('page.bd.sop.detail.advance-success'));
+        await loadRemittanceList();
+        emit('refreshDetail');
+      } finally {
+        advancing.value = false;
+      }
+    },
+  });
+}
+
 async function handleAttachmentImageError() {
   if (
     detailLoading.value ||
@@ -757,6 +792,15 @@ watch(
                 </Button>
                 <Button @click="loadRemittanceList()">
                   {{ $t('page.bd.sop.detail.remittance.refresh') }}
+                </Button>
+                <Button
+                  v-if="hasBudget"
+                  type="primary"
+                  :disabled="!canAdvance"
+                  :loading="advancing"
+                  @click="confirmAdvanceStage"
+                >
+                  {{ $t('page.bd.sop.detail.remittance.advance-button') }}
                 </Button>
                 <Button
                   v-if="hasBudget"

@@ -90,9 +90,16 @@ export namespace BDSopApi {
   }
 
   export interface UpdateContactParams {
-    budget: number;
     contact_information: string;
     task_sop_id: number | string;
+  }
+
+  export interface AdvanceStageParams {
+    task_sop_id: number | string;
+  }
+
+  export interface AdvanceStageResult {
+    sop_status: Status;
   }
 
   export interface UpdateContactResult {
@@ -456,6 +463,14 @@ export async function abandonBDSopRemittance(
 export async function completeBDSop(data: BDSopApi.CompleteSopParams) {
   return requestClient.put<BDSopApi.CompleteSopResult>(
     '/bd/sop/complete',
+    data,
+  );
+}
+
+/** BD 用户手动推进 SOP 阶段 */
+export async function advanceStageBDSop(data: BDSopApi.AdvanceStageParams) {
+  return requestClient.put<BDSopApi.AdvanceStageResult>(
+    '/bd/sop/advance-stage',
     data,
   );
 }

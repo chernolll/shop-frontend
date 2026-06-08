@@ -20,8 +20,8 @@ import {
 } from 'ant-design-vue';
 
 import {
+  advanceStageBDSop,
   BDSopApi,
-  completeBDSop,
   getBDSopVideoDetail,
   updateBDSopVideo,
 } from '#/api/bd/sop';
@@ -39,7 +39,7 @@ const detailLoading = ref(false);
 const detailLoaded = ref(false);
 const detailError = ref('');
 const videoDetail = ref<BDSopApi.VideoDetail | null>(null);
-const completing = ref(false);
+const advancing = ref(false);
 const submitting = ref(false);
 
 const formState = reactive<{
@@ -52,26 +52,30 @@ const formState = reactive<{
   video_url: '',
 });
 
-const isRecoverStage = computed(
-  () => videoDetail.value?.sop_status === BDSopApi.Status.RECOVER,
-);
 const hasSubmittedVideo = computed(() => {
   const videoUrl = videoDetail.value?.video_url?.trim();
   const uploadTime = Number(videoDetail.value?.upload_time ?? 0);
   return Boolean(videoUrl) && uploadTime > 0;
 });
-const canSubmit = computed(
-  () =>
-    Boolean(videoDetail.value) &&
-    isRecoverStage.value &&
-    !hasSubmittedVideo.value,
+const canSubmit = computed(() => Boolean(videoDetail.value));
+const hasBudget = computed(
+  () => Number(videoDetail.value?.has_budget ?? 0) === 1,
 );
-const canCompleteSop = computed(
-  () =>
-    Boolean(videoDetail.value) &&
-    Number(videoDetail.value?.has_budget ?? 0) !== 1 &&
-    isRecoverStage.value &&
-    hasSubmittedVideo.value,
+const canAdvance = computed(() => {
+  if (!videoDetail.value) return false;
+  if (videoDetail.value.sop_status !== BDSopApi.Status.RECOVER) return false;
+  if (!hasSubmittedVideo.value) return false;
+  return true;
+});
+const advanceButtonLabel = computed(() =>
+  hasBudget.value
+    ? $t('page.bd.sop.detail.video.advance-to-remittance-button')
+    : $t('page.bd.sop.detail.video.advance-to-complete-button'),
+);
+const advanceConfirmContent = computed(() =>
+  hasBudget.value
+    ? $t('page.bd.sop.detail.video.advance-to-remittance-confirm-content')
+    : $t('page.bd.sop.detail.video.advance-to-complete-confirm-content'),
 );
 
 watch(
@@ -189,24 +193,22 @@ async function loadVideoDetail() {
   }
 }
 
-function confirmCompleteSop() {
-  if (!canCompleteSop.value) {
-    return;
-  }
+function confirmAdvanceStage() {
+  if (!canAdvance.value) return;
 
   Modal.confirm({
-    content: $t('page.bd.sop.detail.video.complete-confirm-content'),
-    okText: $t('page.bd.sop.detail.video.complete'),
-    title: $t('page.bd.sop.detail.video.complete-confirm-title'),
+    content: advanceConfirmContent.value,
+    okText: advanceButtonLabel.value,
+    title: $t('page.bd.sop.detail.video.advance-confirm-title'),
     async onOk() {
       try {
-        completing.value = true;
-        await completeBDSop({ task_sop_id: props.sopId });
-        message.success($t('page.bd.sop.detail.video.complete-success'));
+        advancing.value = true;
+        await advanceStageBDSop({ task_sop_id: props.sopId });
+        message.success($t('page.bd.sop.detail.advance-success'));
         await loadVideoDetail();
         emit('refreshDetail');
       } finally {
-        completing.value = false;
+        advancing.value = false;
       }
     },
   });
@@ -304,14 +306,12 @@ watch(
           </Space>
 
           <Alert
-            v-if="videoDetail && !isRecoverStage"
+            v-if="videoDetail"
             show-icon
-            type="warning"
-            :message="$t('page.bd.sop.detail.video.stage-changed-title')"
+            type="info"
+            :message="$t('page.bd.sop.detail.video.panel-title')"
             :description="
-              $t('page.bd.sop.detail.video.stage-changed-description', [
-                getSopStatusText(videoDetail.sop_status),
-              ])
+              $t('page.bd.sop.detail.video.panel-editable-description')
             "
             class="rounded-xl"
           />
@@ -458,23 +458,23 @@ watch(
                     <div
                       class="text-xs uppercase tracking-wide text-muted-foreground"
                     >
-                      {{ $t('page.bd.sop.detail.video.complete-card-title') }}
+                      {{ $t('page.bd.sop.detail.video.advance-card-title') }}
                     </div>
                     <div class="mt-2 text-sm leading-6 text-muted-foreground">
                       {{
-                        canCompleteSop
-                          ? $t('page.bd.sop.detail.video.complete-ready-tip')
-                          : $t('page.bd.sop.detail.video.complete-disabled-tip')
+                        canAdvance
+                          ? $t('page.bd.sop.detail.video.advance-ready-tip')
+                          : $t('page.bd.sop.detail.video.advance-disabled-tip')
                       }}
                     </div>
                     <Button
                       class="mt-4"
                       type="primary"
-                      :disabled="!canCompleteSop"
-                      :loading="completing"
-                      @click="confirmCompleteSop"
+                      :disabled="!canAdvance"
+                      :loading="advancing"
+                      @click="confirmAdvanceStage"
                     >
-                      {{ $t('page.bd.sop.detail.video.complete') }}
+                      {{ advanceButtonLabel }}
                     </Button>
                   </div>
                 </div>

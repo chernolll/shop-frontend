@@ -21,10 +21,12 @@ import {
   Spin,
   Table,
   Tag,
+  Tooltip,
 } from 'ant-design-vue';
 
 import {
   abandonBDSopSampleRequest,
+  advanceStageBDSop,
   BDSopApi,
   confirmBDSopSampleReceived,
   createBDSopSampleRequest,
@@ -57,6 +59,7 @@ const createModalOpen = ref(false);
 const createSubmitting = ref(false);
 const actionSubmittingIds = ref<number[]>([]);
 const confirmReceivedSubmitting = ref(false);
+const advancing = ref(false);
 
 const createForm = reactive<{
   address: ThailandAddress;
@@ -66,12 +69,7 @@ const createForm = reactive<{
   quantity: undefined,
 });
 
-const isSampleStage = computed(
-  () => sampleDetail.value?.sop_status === BDSopApi.Status.SAMPLE,
-);
-const canCreateRequest = computed(
-  () => Boolean(sampleDetail.value) && isSampleStage.value,
-);
+const canCreateRequest = computed(() => Boolean(sampleDetail.value));
 
 function formatAddressForCopy(detail?: BDSopApi.SampleDetail | null) {
   if (!detail) return '';
@@ -113,7 +111,6 @@ const isPackageReceived = computed(
 const canConfirmPackageReceived = computed(
   () =>
     Boolean(sampleDetail.value) &&
-    isSampleStage.value &&
     !isPackageReceived.value &&
     hasReceiptAddress.value &&
     hasReceiptTrackingNumber.value,
@@ -121,9 +118,6 @@ const canConfirmPackageReceived = computed(
 const confirmReceivedHint = computed(() => {
   if (!sampleDetail.value) {
     return $t('page.bd.sop.detail.sample.confirm-received-empty-tip');
-  }
-  if (!isSampleStage.value) {
-    return $t('page.bd.sop.detail.sample.confirm-received-stage-tip');
   }
   if (isPackageReceived.value) {
     return $t('page.bd.sop.detail.sample.confirm-received-done-tip');
@@ -141,6 +135,10 @@ const confirmReceivedHint = computed(() => {
   }
   return $t('page.bd.sop.detail.sample.confirm-received-ready-tip');
 });
+
+const canAdvance = computed(
+  () => sampleDetail.value?.sop_status === BDSopApi.Status.SAMPLE,
+);
 const hasCurrentSampleData = computed(() => {
   if (!sampleDetail.value) {
     return false;
@@ -155,30 +153,68 @@ const hasCurrentSampleData = computed(() => {
 
 const requestColumns = computed<TableColumnsType<BDSopApi.SampleRequestItem>>(
   () => [
+    // {
+    //   dataIndex: 'request_id',
+    //   key: 'request_id',
+    //   title: $t('page.bd.sop.detail.sample.request-columns.request-id'),
+    //   width: 100,
+    // },
     {
-      dataIndex: 'created_at',
-      key: 'created_at',
-      title: $t('page.bd.sop.detail.sample.request-columns.created-at'),
-      customRender: ({ value }) => formatTimestamp(value),
-      width: 180,
+      dataIndex: 'contact_name',
+      key: 'contact_name',
+      title: $t('page.bd.sop.detail.sample.request-columns.contact-name'),
+      customRender: ({ value }) => value || '-',
+      width: 100,
     },
     {
-      dataIndex: 'address',
+      dataIndex: 'contact_phone',
+      key: 'contact_phone',
+      title: $t('page.bd.sop.detail.sample.request-columns.contact-phone'),
+      customRender: ({ value }) => value || '-',
+      width: 130,
+    },
+    {
       key: 'address',
       title: $t('page.bd.sop.detail.sample.request-columns.address'),
       ellipsis: true,
+      minWidth: 200,
+      customRender: ({ record }) => {
+        const detail = record.detail_address || record.address || '-';
+        const parts = [
+          record.district,
+          record.city,
+          record.province,
+          record.postcode,
+        ].filter(Boolean);
+        if (parts.length === 0) {
+          return detail;
+        }
+        return h(
+          Tooltip,
+          { title: parts.join(' ') },
+          {
+            default: () => detail,
+          },
+        );
+      },
     },
     {
       dataIndex: 'quantity',
       key: 'quantity',
       title: $t('page.bd.sop.detail.sample.request-columns.quantity'),
-      width: 110,
+      width: 80,
+    },
+    {
+      dataIndex: 'product_listing_id',
+      key: 'product_listing_id',
+      title: $t('page.bd.sop.detail.sample.request-columns.product-listing-id'),
+      width: 130,
     },
     {
       dataIndex: 'status',
       key: 'status',
       title: $t('page.bd.sop.detail.sample.request-columns.status'),
-      width: 140,
+      width: 100,
       customRender: ({ record }) =>
         h(
           Tag,
@@ -196,21 +232,32 @@ const requestColumns = computed<TableColumnsType<BDSopApi.SampleRequestItem>>(
       customRender: ({ value }) => value || '-',
     },
     {
+      dataIndex: 'created_at',
+      key: 'created_at',
+      title: $t('page.bd.sop.detail.sample.request-columns.created-at'),
+      customRender: ({ value }) => formatTimestamp(value),
+      width: 160,
+    },
+    // {
+    //   dataIndex: 'updated_at',
+    //   key: 'updated_at',
+    //   title: $t('page.bd.sop.detail.sample.request-columns.updated-at'),
+    //   customRender: ({ value }) => formatTimestamp(value),
+    //   width: 160,
+    // },
+    {
       dataIndex: 'reviewed_at',
       key: 'reviewed_at',
       title: $t('page.bd.sop.detail.sample.request-columns.reviewed-at'),
       customRender: ({ value }) => formatTimestamp(value),
-      width: 180,
+      width: 160,
     },
     {
       key: 'action',
       title: $t('page.bd.sop.detail.sample.request-columns.action'),
-      width: 140,
+      width: 100,
       customRender: ({ record }) => {
-        if (
-          record.status !== BDSopApi.SampleRequestStatus.PENDING ||
-          !isSampleStage.value
-        ) {
+        if (record.status !== BDSopApi.SampleRequestStatus.PENDING) {
           return '-';
         }
         return h(
@@ -462,6 +509,27 @@ async function handleCreateRequest() {
   }
 }
 
+function confirmAdvanceStage() {
+  if (!canAdvance.value) return;
+
+  Modal.confirm({
+    content: $t('page.bd.sop.detail.sample.advance-confirm-content'),
+    okText: $t('page.bd.sop.detail.sample.advance-button'),
+    title: $t('page.bd.sop.detail.sample.advance-confirm-title'),
+    async onOk() {
+      try {
+        advancing.value = true;
+        await advanceStageBDSop({ task_sop_id: props.sopId });
+        message.success($t('page.bd.sop.detail.advance-success'));
+        await reloadAll();
+        emit('refreshDetail');
+      } finally {
+        advancing.value = false;
+      }
+    },
+  });
+}
+
 function confirmPackageReceived() {
   if (!canConfirmPackageReceived.value) {
     return;
@@ -563,11 +631,7 @@ watch(
               <div
                 class="mt-2 max-w-3xl text-sm leading-6 text-muted-foreground"
               >
-                {{
-                  isSampleStage
-                    ? $t('page.bd.sop.detail.sample.editable-tip')
-                    : $t('page.bd.sop.detail.sample.readonly-tip')
-                }}
+                {{ $t('page.bd.sop.detail.sample.panel-tip') }}
               </div>
             </div>
             <Space wrap>
@@ -585,18 +649,24 @@ watch(
               >
                 {{ $t('page.bd.sop.detail.sample.create-request') }}
               </Button>
+              <Button
+                v-if="canAdvance"
+                type="primary"
+                :loading="advancing"
+                @click="confirmAdvanceStage"
+              >
+                {{ $t('page.bd.sop.detail.sample.advance-button') }}
+              </Button>
             </Space>
           </Space>
 
           <Alert
-            v-if="sampleDetail && !isSampleStage"
+            v-if="sampleDetail"
             show-icon
-            type="warning"
-            :message="$t('page.bd.sop.detail.sample.stage-changed-title')"
+            type="info"
+            :message="$t('page.bd.sop.detail.sample.panel-title')"
             :description="
-              $t('page.bd.sop.detail.sample.stage-changed-description', [
-                getSopStatusText(sampleDetail.sop_status),
-              ])
+              $t('page.bd.sop.detail.sample.panel-editable-description')
             "
             class="rounded-xl"
           />
@@ -890,6 +960,7 @@ watch(
           :loading="requestsLoading"
           :pagination="false"
           :row-key="(record) => record.request_id"
+          :scroll="{ x: 1300 }"
           size="middle"
           :locale="{
             emptyText: requestsLoaded

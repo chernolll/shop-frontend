@@ -10,15 +10,15 @@ import {
   Col,
   Empty,
   Input,
-  InputNumber,
   message,
+  Modal,
   Row,
   Space,
   Spin,
   Tag,
 } from 'ant-design-vue';
 
-import { BDSopApi, updateBDSopContact } from '#/api/bd/sop';
+import { advanceStageBDSop, BDSopApi, updateBDSopContact } from '#/api/bd/sop';
 import { $t } from '#/locales';
 
 const props = defineProps<{
@@ -34,83 +34,37 @@ const emit = defineEmits<{
 }>();
 
 const formState = reactive<{
-  budget: number | undefined;
   contact_information: string;
 }>({
-  budget: undefined,
   contact_information: '',
 });
 
 const submitting = ref(false);
+const advancing = ref(false);
 
 const hasBudget = computed(() => Number(props.detail?.has_budget ?? 0) === 1);
 const canEdit = computed(
-  () => props.detail?.sop_status === BDSopApi.Status.CONTACT,
+  () =>
+    Boolean(props.detail) &&
+    props.detail?.sop_status !== BDSopApi.Status.TERMINATED,
 );
-const budgetAmount = computed(() => Number(props.detail?.contact?.budget ?? 0));
 const hasSavedContact = computed(() => Boolean(props.detail?.contact));
 const hasContactContent = computed(() => {
   const information = props.detail?.contact?.contact_information?.trim();
-  return Boolean(information) || budgetAmount.value > 0;
+  return Boolean(information);
 });
 
-const budgetReviewMeta = computed(() => {
-  if (budgetAmount.value <= 0) {
-    return {
-      color: 'default',
-      text: $t('page.bd.sop.detail.contact.budget-status-none'),
-    };
-  }
-
-  const reviewStatus =
-    props.detail?.remittance_status ??
-    props.detail?.contact?.budget_status ??
-    BDSopApi.BudgetReviewStatus.PENDING;
-
-  switch (reviewStatus) {
-    case BDSopApi.BudgetReviewStatus.APPROVED: {
-      return {
-        color: 'success',
-        text: $t('page.bd.sop.detail.contact.budget-status-approved'),
-      };
-    }
-    case BDSopApi.BudgetReviewStatus.REJECTED: {
-      return {
-        color: 'error',
-        text: $t('page.bd.sop.detail.contact.budget-status-rejected'),
-      };
-    }
-    default: {
-      return {
-        color: 'processing',
-        text: $t('page.bd.sop.detail.contact.budget-status-pending'),
-      };
-    }
-  }
-});
-
-const normalizedBudgetReviewReason = computed(() => {
-  const reason = props.detail?.budget_review_reason;
-  return typeof reason === 'string' && reason.trim() ? reason.trim() : null;
-});
-
-const showBudgetReviewReason = computed(() => {
-  const reviewStatus =
-    props.detail?.remittance_status ??
-    props.detail?.contact?.budget_status ??
-    BDSopApi.BudgetReviewStatus.PENDING;
-  return (
-    reviewStatus === BDSopApi.BudgetReviewStatus.REJECTED &&
-    Boolean(normalizedBudgetReviewReason.value)
-  );
+const canAdvance = computed(() => {
+  if (!props.detail) return false;
+  if (props.detail.sop_status !== BDSopApi.Status.CONTACT) return false;
+  const info = props.detail.contact?.contact_information?.trim();
+  return Boolean(info);
 });
 
 watch(
   () => props.detail,
   (detail) => {
     formState.contact_information = detail?.contact?.contact_information ?? '';
-    const budget = Number(detail?.contact?.budget ?? 0);
-    formState.budget = budget > 0 ? budget : undefined;
   },
   { immediate: true },
 );
@@ -122,8 +76,6 @@ function formatTimestamp(value?: null | number) {
 function resetForm() {
   formState.contact_information =
     props.detail?.contact?.contact_information ?? '';
-  const budget = Number(props.detail?.contact?.budget ?? 0);
-  formState.budget = budget > 0 ? budget : undefined;
 }
 
 function resolveTaskSopId() {
@@ -145,12 +97,9 @@ async function handleSubmit() {
     return;
   }
 
-  const budget = Number(formState.budget ?? 0);
-
   try {
     submitting.value = true;
     await updateBDSopContact({
-      budget: Math.max(budget, 0),
       contact_information: contactInformation,
       task_sop_id: resolveTaskSopId(),
     });
@@ -163,6 +112,26 @@ async function handleSubmit() {
   } finally {
     submitting.value = false;
   }
+}
+
+function confirmAdvanceStage() {
+  if (!canAdvance.value) return;
+
+  Modal.confirm({
+    content: $t('page.bd.sop.detail.contact.advance-confirm-content'),
+    okText: $t('page.bd.sop.detail.contact.advance-button'),
+    title: $t('page.bd.sop.detail.contact.advance-confirm-title'),
+    async onOk() {
+      try {
+        advancing.value = true;
+        await advanceStageBDSop({ task_sop_id: resolveTaskSopId() });
+        message.success($t('page.bd.sop.detail.advance-success'));
+        emit('refreshDetail');
+      } finally {
+        advancing.value = false;
+      }
+    },
+  });
 }
 </script>
 
@@ -201,9 +170,6 @@ async function handleSubmit() {
                     ? $t('page.bd.sop.detail.budget-tag')
                     : $t('page.bd.sop.detail.no-budget-tag')
                 }}
-              </Tag>
-              <Tag :color="budgetReviewMeta.color">
-                {{ budgetReviewMeta.text }}
               </Tag>
             </Space>
           </Space>
@@ -260,42 +226,7 @@ async function handleSubmit() {
                     />
                   </div>
 
-                  <div class="space-y-2">
-                    <div class="text-sm font-medium text-foreground">
-                      {{ $t('page.bd.sop.detail.contact.budget-label') }}
-                    </div>
-                    <InputNumber
-                      v-model:value="formState.budget"
-                      class="w-full"
-                      :disabled="!canEdit"
-                      :min="0"
-                      :precision="2"
-                      :placeholder="
-                        $t('page.bd.sop.detail.contact.budget-placeholder')
-                      "
-                    />
-                    <div class="text-xs leading-5 text-muted-foreground">
-                      {{ $t('page.bd.sop.detail.contact.budget-helper') }}
-                    </div>
-                  </div>
-
                   <div class="grid gap-3 sm:grid-cols-2">
-                    <div
-                      class="rounded-xl border border-border bg-muted/40 p-4"
-                    >
-                      <div
-                        class="text-xs uppercase tracking-wide text-muted-foreground"
-                      >
-                        {{
-                          $t('page.bd.sop.detail.contact.budget-status-label')
-                        }}
-                      </div>
-                      <div class="mt-2">
-                        <Tag :color="budgetReviewMeta.color">
-                          {{ budgetReviewMeta.text }}
-                        </Tag>
-                      </div>
-                    </div>
                     <div
                       class="rounded-xl border border-border bg-muted/40 p-4"
                     >
@@ -313,19 +244,6 @@ async function handleSubmit() {
                       </div>
                     </div>
                   </div>
-
-                  <Alert
-                    v-if="showBudgetReviewReason"
-                    show-icon
-                    type="error"
-                    :message="
-                      $t(
-                        'page.bd.sop.detail.contact.budget-review-reason-title',
-                      )
-                    "
-                    :description="normalizedBudgetReviewReason ?? ''"
-                    class="rounded-xl"
-                  />
 
                   <div
                     v-if="!hasContactContent && !canEdit"
@@ -348,6 +266,14 @@ async function handleSubmit() {
                     </Button>
                     <Button :disabled="submitting" @click="resetForm">
                       {{ $t('page.bd.sop.detail.contact.reset') }}
+                    </Button>
+                    <Button
+                      type="primary"
+                      :disabled="!canAdvance"
+                      :loading="advancing"
+                      @click="confirmAdvanceStage"
+                    >
+                      {{ $t('page.bd.sop.detail.contact.advance-button') }}
                     </Button>
                   </Space>
                 </Space>
