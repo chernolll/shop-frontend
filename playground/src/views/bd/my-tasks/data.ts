@@ -36,6 +36,18 @@ export function useColumns(): VxeTableGridColumns<MyTaskItem> {
       title: $t('page.bd.my-task.columns.task-code'),
     },
     {
+      field: 'taskName',
+      minWidth: 160,
+      slots: { default: 'taskName' },
+      title: $t('page.bd.my-task.columns.task-name'),
+    },
+    {
+      field: 'taskTags',
+      minWidth: 180,
+      slots: { default: 'taskTags' },
+      title: $t('page.bd.my-task.columns.task-tags'),
+    },
+    {
       field: 'productUrl',
       minWidth: 220,
       slots: { default: 'productUrl' },

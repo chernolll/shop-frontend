@@ -35,17 +35,40 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
-      // 我的任务（BD用）
+      // 任务中心（BD用）- 整合任务广场 + 我的任务
       {
-        name: 'BD-MyTasks',
-        path: '/bd/my-tasks',
-        component: () => import('#/views/bd/my-tasks/index.vue'),
+        name: 'BD-TaskCenter',
+        path: '/bd/task-center',
+        component: () => import('#/views/bd/task-center/index.vue'),
         meta: {
-          icon: 'lucide:inbox',
-          title: $t('page.bd.my-task.title'),
+          icon: 'lucide:layout-grid',
+          title: '任务中心',
           authority: [RoleEnum.BD],
         },
       },
+      {
+        name: 'BD-TaskCenter-Detail',
+        path: '/bd/task-center/:taskId',
+        component: () => import('#/views/bd/task-center/detail.vue'),
+        meta: {
+          hideInMenu: true,
+          hideInTab: true,
+          title: '任务详情',
+          activeMenu: '/bd/task-center',
+          authority: [RoleEnum.BD],
+        },
+      },
+      // 我的任务（BD用）- 旧版，保留兼容
+      // {
+      //   name: 'BD-MyTasks',
+      //   path: '/bd/my-tasks',
+      //   component: () => import('#/views/bd/my-tasks/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:inbox',
+      //     title: $t('page.bd.my-task.title'),
+      //     authority: [RoleEnum.BD],
+      //   },
+      // },
       // {
       //   name: 'BD-Kols',
       //   path: '/bd/kols',

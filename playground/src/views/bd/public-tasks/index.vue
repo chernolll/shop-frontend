@@ -6,7 +6,15 @@ import { ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 
-import { Alert, Button, Empty, message, Modal, Tag } from 'ant-design-vue';
+import {
+  Alert,
+  Button,
+  Empty,
+  message,
+  Modal,
+  Space,
+  Tag,
+} from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import { getBDPublicTaskList, joinPublicTask } from '#/api';
@@ -91,6 +99,18 @@ const [Grid] = useVbenVxeGrid<BdPublicTaskApi.BdPublicTaskItem>({
         field: 'task_id',
         title: $t('page.bd.publicTasks.columns.task-id'),
         width: 80,
+      },
+      {
+        field: 'name',
+        title: $t('page.bd.publicTasks.columns.name'),
+        minWidth: 160,
+        slots: { default: 'name' },
+      },
+      {
+        field: 'tags',
+        title: $t('page.bd.publicTasks.columns.tags'),
+        minWidth: 180,
+        slots: { default: 'tags' },
       },
       {
         field: 'product_url',
@@ -178,6 +198,21 @@ function formatDate(timestamp: null | number | undefined): string {
 function formatCurrency(value: number): string {
   return `฿${value.toFixed(2)}`;
 }
+
+const TAG_COLORS = [
+  'blue',
+  'purple',
+  'cyan',
+  'green',
+  'orange',
+  'magenta',
+  'gold',
+  'geekblue',
+] as const;
+
+function getTagColor(index: number): string {
+  return TAG_COLORS[index % TAG_COLORS.length] ?? 'default';
+}
 </script>
 
 <template>
@@ -204,6 +239,17 @@ function formatCurrency(value: number): string {
             </template>
           </Empty>
         </div>
+      </template>
+      <template #name="{ row }">
+        <span>{{ row.name || '-' }}</span>
+      </template>
+      <template #tags="{ row }">
+        <Space v-if="row.tags?.length" :size="[4, 4]" wrap>
+          <Tag v-for="(tag, i) in row.tags" :key="tag" :color="getTagColor(i)">
+            {{ tag }}
+          </Tag>
+        </Space>
+        <span v-else>-</span>
       </template>
       <template #product_url="{ row }">
         <a
@@ -252,6 +298,20 @@ function formatCurrency(value: number): string {
         v-if="applyTargetTask"
         class="rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-800"
       >
+        <p v-if="applyTargetTask.name">
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.name') }}</strong>{{ applyTargetTask.name }}
+        </p>
+        <p v-if="applyTargetTask.tags?.length">
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.tags') }}</strong>
+          <Tag
+            v-for="(tag, i) in applyTargetTask.tags"
+            :key="tag"
+            :color="getTagColor(i)"
+            class="ml-1"
+          >
+            {{ tag }}
+          </Tag>
+        </p>
         <p>
           <strong>{{ $t('page.bd.publicTasks.apply-modal.task-id') }}</strong>{{ applyTargetTask.task_id }}
         </p>

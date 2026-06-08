@@ -308,6 +308,17 @@ function getPrepareSummaryText(row: BdTaskApi.BDTaskRow) {
         </Tooltip>
         <span v-else>{{ row.task_code || '-' }}</span>
       </template>
+      <template #taskName="{ row }">
+        <span>{{ row.taskName || '-' }}</span>
+      </template>
+      <template #taskTags="{ row }">
+        <Space v-if="row.taskTags?.length" :size="[4, 4]" wrap>
+          <Tag v-for="tag in row.taskTags" :key="tag" color="blue">
+            {{ tag }}
+          </Tag>
+        </Space>
+        <span v-else>-</span>
+      </template>
       <template #productUrl="{ row }">
         <a
           :href="row.productUrl"

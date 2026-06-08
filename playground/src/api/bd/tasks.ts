@@ -77,7 +77,9 @@ export namespace AdminTaskApi {
     bd_codes: string[];
     commission: number;
     deadline?: number;
+    name?: string;
     product_listing_id: number | string;
+    tags?: string[];
     type: TaskType;
     video_num: number;
   }
@@ -94,8 +96,10 @@ export namespace AdminTaskApi {
     commission: number;
     created_at: number;
     deadline: null | number;
+    name: string;
     product_listing_id: number;
     status: Status;
+    tags: string[];
     task_id: number;
     type: TaskType;
     updated_at: number;
@@ -122,10 +126,12 @@ export namespace AdminTaskApi {
     main_sku_id: number;
     main_sku_name: string;
     main_sku_status: number;
+    name: string;
     product_listing_id: number;
     product_status: number;
     product_url: string;
     status: Status;
+    tags: string[];
     task_code: string;
     task_id: number;
     type: TaskType;
@@ -152,8 +158,10 @@ export namespace AdminTaskApi {
   }
 
   export interface RelationsResult {
+    name: string;
     relations: RelationItem[];
     status: Status;
+    tags: string[];
     task_id: number;
     video_num: number;
   }

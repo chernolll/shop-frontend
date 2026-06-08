@@ -37,7 +37,9 @@ export namespace BdTaskApi {
     task_status?: TaskStatus;
     taskCode?: string;
     taskId: number; // task_main.id
+    taskName?: string; // 任务名称
     taskStatus?: TaskStatus;
+    taskTags?: string[]; // 任务标签
     totalVideos: number; // 总视频数 task_bd_relation.video_quantity
   }
 
@@ -64,8 +66,10 @@ export namespace BdPublicTaskApi {
     main_sku_code?: string;
     main_sku_name?: string;
     main_sku_status?: number;
+    name?: string;
     product_listing_id: number;
     product_url: string;
+    tags?: string[];
     task_id: number;
     video_num: number;
   }

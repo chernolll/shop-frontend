@@ -15,6 +15,7 @@ import {
   Empty,
   Form,
   FormItem,
+  Input,
   InputNumber,
   message,
   Modal,
@@ -67,14 +68,18 @@ const createForm = reactive<{
   bd_codes: string[];
   commission: number | undefined;
   deadline: string | undefined;
+  name: string;
   product_listing_id: number | undefined;
+  tags: string[];
   type: AdminTaskApi.TaskType;
   video_num: number | undefined;
 }>({
   bd_codes: [],
   commission: undefined,
   deadline: undefined,
+  name: '',
   product_listing_id: undefined,
+  tags: [],
   type: AdminTaskApi.TaskType.CUSTOM,
   video_num: undefined,
 });
@@ -238,11 +243,28 @@ function getTaskTypeText(type?: number) {
     : $t('page.bd.task-center.task-type-text.custom');
 }
 
+const TAG_COLORS = [
+  'blue',
+  'purple',
+  'cyan',
+  'green',
+  'orange',
+  'magenta',
+  'gold',
+  'geekblue',
+] as const;
+
+function getTagColor(index: number): string {
+  return TAG_COLORS[index % TAG_COLORS.length] ?? 'default';
+}
+
 function resetCreateForm() {
   createForm.bd_codes = [];
   createForm.commission = undefined;
   createForm.deadline = undefined;
+  createForm.name = '';
   createForm.product_listing_id = undefined;
+  createForm.tags = [];
   createForm.type = AdminTaskApi.TaskType.CUSTOM;
   createForm.video_num = undefined;
 }
@@ -406,7 +428,9 @@ async function submitCreateTask() {
           : [],
       commission: createForm.commission,
       deadline: toOptionalNumber(createForm.deadline),
+      name: createForm.name.trim() || undefined,
       product_listing_id: createForm.product_listing_id,
+      tags: createForm.tags.length > 0 ? createForm.tags : undefined,
       type: createForm.type,
       video_num:
         createForm.type === AdminTaskApi.TaskType.CUSTOM
@@ -558,6 +582,18 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
       title: $t('page.bd.task-center.columns.task-code'),
     },
     {
+      field: 'name',
+      minWidth: 160,
+      slots: { default: 'name' },
+      title: $t('page.bd.task-center.columns.name'),
+    },
+    {
+      field: 'tags',
+      minWidth: 180,
+      slots: { default: 'tags' },
+      title: $t('page.bd.task-center.columns.tags'),
+    },
+    {
       field: 'product_url',
       minWidth: 220,
       slots: { default: 'product_url' },
@@ -698,6 +734,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
         </Tooltip>
       </template>
 
+      <template #name="{ row }">
+        <span>{{ row.name || '-' }}</span>
+      </template>
+
+      <template #tags="{ row }">
+        <Space v-if="row.tags?.length" :size="[4, 4]" wrap>
+          <Tag v-for="(tag, i) in row.tags" :key="tag" :color="getTagColor(i)">
+            {{ tag }}
+          </Tag>
+        </Space>
+        <span v-else>-</span>
+      </template>
+
       <template #product_url="{ row }">
         <Space direction="vertical" :size="4">
           <a
@@ -819,6 +868,30 @@ const [Grid, gridApi] = useVbenVxeGrid({
           />
         </FormItem>
 
+        <FormItem :label="$t('page.bd.task-center.create-modal.name')">
+          <Input
+            v-model:value="createForm.name"
+            class="w-full"
+            :placeholder="
+              $t('page.bd.task-center.create-modal.name-placeholder')
+            "
+            :maxlength="200"
+            allow-clear
+          />
+        </FormItem>
+
+        <FormItem :label="$t('page.bd.task-center.create-modal.tags')">
+          <Select
+            v-model:value="createForm.tags"
+            mode="tags"
+            class="w-full"
+            :placeholder="
+              $t('page.bd.task-center.create-modal.tags-placeholder')
+            "
+            :options="[]"
+          />
+        </FormItem>
+
         <FormItem
           :label="$t('page.bd.task-center.create-modal.commission')"
           required
@@ -897,6 +970,19 @@ const [Grid, gridApi] = useVbenVxeGrid({
     >
       <Space direction="vertical" :size="16" class="w-full">
         <div v-if="relationTask" class="flex flex-wrap items-center gap-3">
+          <span
+            v-if="relationData?.name || relationTask.name"
+            class="text-base font-semibold"
+          >
+            {{ relationData?.name || relationTask.name }}
+          </span>
+          <Tag
+            v-for="(tag, i) in relationData?.tags || relationTask.tags || []"
+            :key="tag"
+            :color="getTagColor(i)"
+          >
+            {{ tag }}
+          </Tag>
           <Tag color="blue">
             {{
               $t('page.bd.task-center.relations.task-id', [
@@ -941,6 +1027,22 @@ const [Grid, gridApi] = useVbenVxeGrid({
       <Form layout="vertical" class="pt-2">
         <FormItem v-if="assignTaskRow" label="任务信息">
           <div class="text-sm text-gray-500">
+            <div
+              v-if="assignTaskRow.name"
+              class="mb-1 font-medium text-gray-700"
+            >
+              {{ assignTaskRow.name }}
+            </div>
+            <div v-if="assignTaskRow.tags?.length" class="mb-1">
+              <Tag
+                v-for="(tag, i) in assignTaskRow.tags"
+                :key="tag"
+                :color="getTagColor(i)"
+                class="mr-1"
+              >
+                {{ tag }}
+              </Tag>
+            </div>
             任务ID: {{ assignTaskRow.task_id }} | 佣金: ฿{{
               assignTaskRow.commission
             }}
@@ -996,6 +1098,22 @@ const [Grid, gridApi] = useVbenVxeGrid({
           :label="$t('page.bd.task-center.dispatch.task-info')"
         >
           <div class="text-sm text-gray-500">
+            <div
+              v-if="dispatchTaskRow.name"
+              class="mb-1 font-medium text-gray-700"
+            >
+              {{ dispatchTaskRow.name }}
+            </div>
+            <div v-if="dispatchTaskRow.tags?.length" class="mb-1">
+              <Tag
+                v-for="(tag, i) in dispatchTaskRow.tags"
+                :key="tag"
+                :color="getTagColor(i)"
+                class="mr-1"
+              >
+                {{ tag }}
+              </Tag>
+            </div>
             {{
               $t('page.bd.task-center.dispatch.task-info-template', [
                 String(dispatchTaskRow.task_id),
