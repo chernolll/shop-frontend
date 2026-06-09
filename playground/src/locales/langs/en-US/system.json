@@ -238,5 +238,76 @@
     "operation": "Operation",
     "permissions": "Permissions",
     "setPermissions": "Permissions"
+  },
+  "user": {
+    "title": "Account Management",
+    "list": "Account List",
+    "filters": {
+      "username": "Username",
+      "real-name": "Real Name",
+      "employee-id": "Employee ID",
+      "role": "Role",
+      "status": "Status",
+      "all-status": "All Status"
+    },
+    "columns": {
+      "username": "Username",
+      "real-name": "Real Name",
+      "employee-id": "Employee ID",
+      "role": "Role",
+      "status": "Status",
+      "last-login": "Last Login",
+      "created-at": "Created At",
+      "operation": "Action"
+    },
+    "status": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "actions": {
+      "create": "Create Account",
+      "edit": "Edit",
+      "reset-password": "Reset Password",
+      "delete": "Delete",
+      "toggle-enable": "Enable",
+      "toggle-disable": "Disable"
+    },
+    "form": {
+      "username": "Username",
+      "username-placeholder": "Enter login username",
+      "password": "Password",
+      "password-placeholder": "Enter password",
+      "new-password": "New Password",
+      "new-password-placeholder": "Enter new password",
+      "employee": "Linked Employee",
+      "employee-placeholder": "Search and select an employee",
+      "real-name": "Real Name",
+      "real-name-placeholder": "Enter real name",
+      "employee-id": "Employee ID",
+      "employee-id-placeholder": "Enter employee ID (optional)",
+      "role": "Role",
+      "role-placeholder": "Select a role",
+      "status": "Status"
+    },
+    "delete": {
+      "confirm-title": "Confirm Delete Account",
+      "confirm-content": "Are you sure you want to delete account {0}? This action cannot be undone."
+    },
+    "reset-password": {
+      "title": "Reset Password - {0}"
+    },
+    "empty": "No account data",
+    "messages": {
+      "username-required": "Please enter a username",
+      "password-required": "Please enter a password",
+      "new-password-required": "Please enter a new password",
+      "role-required": "Please select a role",
+      "create-success": "Account created successfully",
+      "update-success": "Account updated successfully",
+      "delete-success": "Account {0} deleted successfully",
+      "reset-password-success": "Password reset successfully",
+      "toggle-status-success": "Status updated successfully",
+      "cannot-delete-self": "Cannot delete your own account"
+    }
   }
 }

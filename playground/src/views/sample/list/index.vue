@@ -1103,7 +1103,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
               <span class="font-mono text-sm">{{ item.order_number }}</span>
               <span
                 class="font-mono text-sm text-green-600 dark:text-green-400"
-                >{{ item.tracking_number }}</span>
+                >{{ item.tracking_number }}</span
+              >
               <span class="text-sm text-muted-foreground">{{
                 item.logistics_name || '-'
               }}</span>

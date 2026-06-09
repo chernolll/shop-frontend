@@ -24,16 +24,16 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.ADMIN],
         },
       },
-      {
-        name: 'KOL-Candidate',
-        path: '/kol/candidate',
-        component: () => import('#/views/kol/candidate.vue'),
-        meta: {
-          icon: 'lucide:clipboard-list',
-          title: $t('page.kol.kolCandidate.title'),
-          authority: [RoleEnum.ADMIN],
-        },
-      },
+      // {
+      //   name: 'KOL-Candidate',
+      //   path: '/kol/candidate',
+      //   component: () => import('#/views/kol/candidate.vue'),
+      //   meta: {
+      //     icon: 'lucide:clipboard-list',
+      //     title: $t('page.kol.kolCandidate.title'),
+      //     authority: [RoleEnum.ADMIN],
+      //   },
+      // },
       {
         name: 'KOL-Pool',
         path: '/kol/pool',

@@ -15,6 +15,7 @@ interface EmployeeSelectOption {
 export function useAdminEmployeeSelect(
   status: AdminEmployeeApi.Status = AdminEmployeeApi.Status.ACTIVE,
 ) {
+  const employeeItems = ref<AdminEmployeeApi.EmployeeItem[]>([]);
   const loading = ref(false);
   const options = ref<EmployeeSelectOption[]>([]);
 
@@ -29,6 +30,7 @@ export function useAdminEmployeeSelect(
         page_size: 100,
         status,
       });
+      employeeItems.value = result.list;
       options.value = result.list.map((item) => ({
         label: `${item.employee_no} / ${item.display_name}`,
         value: item.id,
@@ -58,6 +60,7 @@ export function useAdminEmployeeSelect(
 
   return {
     componentProps,
+    employeeItems,
     loadOptions,
   };
 }

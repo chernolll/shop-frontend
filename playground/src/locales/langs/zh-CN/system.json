@@ -240,5 +240,76 @@
     "operation": "操作",
     "permissions": "权限",
     "setPermissions": "授权"
+  },
+  "user": {
+    "title": "账号管理",
+    "list": "账号列表",
+    "filters": {
+      "username": "用户名",
+      "real-name": "真实姓名",
+      "employee-id": "员工ID",
+      "role": "角色",
+      "status": "状态",
+      "all-status": "全部状态"
+    },
+    "columns": {
+      "username": "用户名",
+      "real-name": "真实姓名",
+      "employee-id": "员工ID",
+      "role": "角色",
+      "status": "状态",
+      "last-login": "最后登录",
+      "created-at": "创建时间",
+      "operation": "操作"
+    },
+    "status": {
+      "enabled": "正常",
+      "disabled": "禁用"
+    },
+    "actions": {
+      "create": "新建账号",
+      "edit": "编辑",
+      "reset-password": "重置密码",
+      "delete": "删除",
+      "toggle-enable": "启用",
+      "toggle-disable": "禁用"
+    },
+    "form": {
+      "username": "用户名",
+      "username-placeholder": "请输入登录用户名",
+      "password": "密码",
+      "password-placeholder": "请输入密码",
+      "new-password": "新密码",
+      "new-password-placeholder": "请输入新密码",
+      "employee": "关联员工",
+      "employee-placeholder": "请搜索并选择员工",
+      "real-name": "真实姓名",
+      "real-name-placeholder": "请输入真实姓名",
+      "employee-id": "员工ID",
+      "employee-id-placeholder": "请输入员工ID（可选）",
+      "role": "角色",
+      "role-placeholder": "请选择角色",
+      "status": "状态"
+    },
+    "delete": {
+      "confirm-title": "确认删除账号",
+      "confirm-content": "确认删除账号 {0} 吗？此操作不可恢复。"
+    },
+    "reset-password": {
+      "title": "重置密码 - {0}"
+    },
+    "empty": "暂无账号数据",
+    "messages": {
+      "username-required": "请输入用户名",
+      "password-required": "请输入密码",
+      "new-password-required": "请输入新密码",
+      "role-required": "请选择角色",
+      "create-success": "账号创建成功",
+      "update-success": "账号更新成功",
+      "delete-success": "账号 {0} 删除成功",
+      "reset-password-success": "密码重置成功",
+      "toggle-status-success": "状态更新成功",
+      "cannot-delete-self": "不能删除自己的账号"
+    }
   }
 }

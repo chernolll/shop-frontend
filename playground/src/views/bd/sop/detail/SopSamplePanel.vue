@@ -737,31 +737,36 @@ watch(
                           <div>
                             <span class="text-muted-foreground">{{
                               $t('page.bd.sop.detail.sample.contact-name-label')
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.contact_name || '-' }}
                           </div>
                           <div>
                             <span class="text-muted-foreground">{{
                               $t('page.bd.sop.detail.sample.postcode-label')
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.postcode || '-' }}
                           </div>
                           <div>
                             <span class="text-muted-foreground">{{
                               $t('page.bd.sop.detail.sample.district-label')
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.district || '-' }}
                           </div>
                           <div>
                             <span class="text-muted-foreground">{{
                               $t('page.bd.sop.detail.sample.city-label')
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.city || '-' }}
                           </div>
                           <div>
                             <span class="text-muted-foreground">{{
                               $t('page.bd.sop.detail.sample.province-label')
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.province || '-' }}
                           </div>
                           <div>
@@ -769,7 +774,8 @@ watch(
                               $t(
                                 'page.bd.sop.detail.sample.detail-address-label',
                               )
-                            }}</span>:
+                            }}</span
+                            >:
                             {{
                               sampleDetail.detail_address ||
                               sampleDetail.address ||
@@ -781,7 +787,8 @@ watch(
                               $t(
                                 'page.bd.sop.detail.sample.contact-phone-label',
                               )
-                            }}</span>:
+                            }}</span
+                            >:
                             {{ sampleDetail.contact_phone || '-' }}
                           </div>
                         </template>

@@ -662,7 +662,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <span
           v-if="!row.payment_attachments?.length"
           class="text-xs text-muted-foreground"
-          >-</span>
+          >-</span
+        >
         <Space v-else wrap :size="4">
           <Image
             v-for="(item, idx) in row.payment_attachments"
@@ -724,7 +725,8 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <span
           v-if="!row.chat_attachments?.length"
           class="text-xs text-muted-foreground"
-          >-</span>
+          >-</span
+        >
         <Space v-else wrap :size="4">
           <Image
             v-for="(item, idx) in row.chat_attachments"

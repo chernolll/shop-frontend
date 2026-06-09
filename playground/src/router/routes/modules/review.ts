@@ -14,16 +14,16 @@ const routes: RouteRecordRaw[] = [
     name: 'Review',
     path: '/review',
     children: [
-      {
-        name: 'Review-Budget',
-        path: '/review/budget',
-        component: () => import('#/views/review/budget/index.vue'),
-        meta: {
-          icon: 'lucide:badge-dollar-sign',
-          title: $t('page.review.budget.list-title'),
-          authority: [RoleEnum.ADMIN],
-        },
-      },
+      // {
+      //   name: 'Review-Budget',
+      //   path: '/review/budget',
+      //   component: () => import('#/views/review/budget/index.vue'),
+      //   meta: {
+      //     icon: 'lucide:badge-dollar-sign',
+      //     title: $t('page.review.budget.list-title'),
+      //     authority: [RoleEnum.ADMIN],
+      //   },
+      // },
       {
         name: 'Review-Remittance',
         path: '/review/remittance',

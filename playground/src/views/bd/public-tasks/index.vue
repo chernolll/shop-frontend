@@ -299,7 +299,8 @@ function getTagColor(index: number): string {
         class="rounded-lg bg-gray-50 p-3 text-sm dark:bg-gray-800"
       >
         <p v-if="applyTargetTask.name">
-          <strong>{{ $t('page.bd.publicTasks.apply-modal.name') }}</strong>{{ applyTargetTask.name }}
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.name') }}</strong
+          >{{ applyTargetTask.name }}
         </p>
         <p v-if="applyTargetTask.tags?.length">
           <strong>{{ $t('page.bd.publicTasks.apply-modal.tags') }}</strong>
@@ -313,16 +314,20 @@ function getTagColor(index: number): string {
           </Tag>
         </p>
         <p>
-          <strong>{{ $t('page.bd.publicTasks.apply-modal.task-id') }}</strong>{{ applyTargetTask.task_id }}
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.task-id') }}</strong
+          >{{ applyTargetTask.task_id }}
         </p>
         <p>
-          <strong>{{ $t('page.bd.publicTasks.apply-modal.sku') }}</strong>{{ applyTargetTask.main_sku_name || '-' }}
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.sku') }}</strong
+          >{{ applyTargetTask.main_sku_name || '-' }}
         </p>
         <p>
-          <strong>{{ $t('page.bd.publicTasks.apply-modal.commission') }}</strong>{{ formatCurrency(applyTargetTask.commission) }}
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.commission') }}</strong
+          >{{ formatCurrency(applyTargetTask.commission) }}
         </p>
         <p>
-          <strong>{{ $t('page.bd.publicTasks.apply-modal.video-num') }}</strong>{{ applyTargetTask.video_num }}
+          <strong>{{ $t('page.bd.publicTasks.apply-modal.video-num') }}</strong
+          >{{ applyTargetTask.video_num }}
         </p>
       </div>
       <p class="mt-3 text-gray-500 text-sm">

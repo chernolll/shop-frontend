@@ -1,4 +1,5 @@
 export * from './admin-bd-person';
+export * from './admin-user';
 export * from './admin-department';
 export * from './admin-employee';
 export * from './admin-post';

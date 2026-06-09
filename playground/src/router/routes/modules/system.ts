@@ -44,6 +44,16 @@ const routes: RouteRecordRaw[] = [
         },
         component: () => import('#/views/system/bd-person/index.vue'),
       },
+      {
+        path: '/system/users',
+        name: 'SystemUsers',
+        meta: {
+          icon: 'lucide:users',
+          title: $t('system.user.title'),
+          authority: [RoleEnum.ADMIN],
+        },
+        component: () => import('#/views/system/user/index.vue'),
+      },
     ],
   },
 ];
