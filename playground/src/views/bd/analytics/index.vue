@@ -638,9 +638,9 @@ function formatCompactCurrency(value: number): string {
                   <div class="podium-medal medal-silver">2</div>
                   <div
                     class="podium-name"
-                    :title="bdRanking[1]?.bd_name || bdRanking[1]?.bd_code"
+                    :title="bdRanking[1]?.bd_code || bdRanking[1]?.bd_name"
                   >
-                    {{ bdRanking[1]?.bd_name || bdRanking[1]?.bd_code }}
+                    {{ bdRanking[1]?.bd_code || bdRanking[1]?.bd_name }}
                   </div>
                   <div class="podium-gmv">
                     {{ formatCompactCurrency(bdRanking[1]?.gmv ?? 0) }}
@@ -664,9 +664,9 @@ function formatCompactCurrency(value: number): string {
                   <div class="podium-medal medal-gold">1</div>
                   <div
                     class="podium-name podium-name-hero"
-                    :title="bdRanking[0]?.bd_name || bdRanking[0]?.bd_code"
+                    :title="bdRanking[0]?.bd_code || bdRanking[0]?.bd_name"
                   >
-                    {{ bdRanking[0]?.bd_name || bdRanking[0]?.bd_code }}
+                    {{ bdRanking[0]?.bd_code || bdRanking[0]?.bd_name }}
                   </div>
                   <div class="podium-gmv podium-gmv-hero">
                     {{ formatCompactCurrency(bdRanking[0]?.gmv ?? 0) }}
@@ -688,9 +688,9 @@ function formatCompactCurrency(value: number): string {
                   <div class="podium-medal medal-bronze">3</div>
                   <div
                     class="podium-name"
-                    :title="bdRanking[2]?.bd_name || bdRanking[2]?.bd_code"
+                    :title="bdRanking[2]?.bd_code || bdRanking[2]?.bd_name"
                   >
-                    {{ bdRanking[2]?.bd_name || bdRanking[2]?.bd_code }}
+                    {{ bdRanking[2]?.bd_code || bdRanking[2]?.bd_name }}
                   </div>
                   <div class="podium-gmv">
                     {{ formatCompactCurrency(bdRanking[2]?.gmv ?? 0) }}

@@ -1,24 +1,18 @@
+<!-- eslint-disable unicorn/prefer-add-event-listener -->
 <script lang="ts" setup>
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 import type { AdminVideoApi } from '#/api/video';
 
-import { computed, h, ref } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
 
-import {
-  Button,
-  InputNumber,
-  message,
-  Modal,
-  Space,
-  Tag,
-} from 'ant-design-vue';
+import { Button, InputNumber, message, Modal } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
-import { getAdminVideoList, scoreAdminVideos } from '#/api/video';
+import { getAdminVideoList, updateAdminVideos } from '#/api/video';
 import { $t } from '#/locales';
 import NumberRangeField from '#/views/kol/modules/NumberRangeField.vue';
 import {
@@ -29,27 +23,90 @@ import { useAdminBdSelect } from '#/views/review/shared/useAdminBdSelect';
 
 const { componentProps: bdCodeSelectProps } = useAdminBdSelect();
 
-const selectedRows = ref<AdminVideoApi.ListItem[]>([]);
-const scoreModalOpen = ref(false);
-const scoreSubmitting = ref(false);
-const scoreDrafts = ref<
-  Array<{
-    bd_code: string;
-    current_score: null | number;
-    kol_id: string;
-    score: number | undefined;
-    video_id: number;
-    video_url: string;
-  }>
->([]);
+// --- Edit Modal State ---
+const editModalOpen = ref(false);
+const editSubmitting = ref(false);
+const editingRow = ref<AdminVideoApi.ListItem | null>(null);
 
-const selectedCount = computed(() => selectedRows.value.length);
-const scoreModalTitle = computed(() =>
-  scoreDrafts.value.length > 1
-    ? $t('page.video.score-modal.batch-title')
-    : $t('page.video.score-modal.single-title'),
-);
+const editForm = reactive({
+  score: undefined as number | undefined,
+  play_count: undefined as number | undefined,
+  gmv: undefined as number | undefined,
+});
 
+const editOriginals = reactive({
+  play_count: undefined as number | undefined,
+  gmv: undefined as number | undefined,
+});
+
+function openEditModal(row: AdminVideoApi.ListItem) {
+  editingRow.value = row;
+  editForm.score = row.score ?? undefined;
+  editForm.play_count = row.play_count ?? undefined;
+  editForm.gmv = row.gmv ?? undefined;
+  editOriginals.play_count = row.play_count ?? undefined;
+  editOriginals.gmv = row.gmv ?? undefined;
+  editModalOpen.value = true;
+}
+
+function closeEditModal() {
+  if (editSubmitting.value) return;
+  editModalOpen.value = false;
+  editingRow.value = null;
+}
+
+async function submitEdit() {
+  const row = editingRow.value;
+  if (!row) return;
+
+  if (
+    editForm.score === undefined ||
+    editForm.score === null ||
+    Number.isNaN(Number(editForm.score))
+  ) {
+    message.warning($t('page.video.edit-modal.score-required'));
+    return;
+  }
+
+  const payload: AdminVideoApi.UpdateItem = {
+    video_id: row.id,
+    score: Number(editForm.score),
+  };
+
+  // Only include play_count / gmv when the value actually changed
+  if (
+    editForm.play_count !== undefined &&
+    editForm.play_count !== editOriginals.play_count
+  ) {
+    payload.play_count = editForm.play_count;
+  }
+  if (editForm.gmv !== undefined && editForm.gmv !== editOriginals.gmv) {
+    payload.gmv = editForm.gmv;
+  }
+
+  try {
+    editSubmitting.value = true;
+    const result = await updateAdminVideos({ list: [payload] });
+    const item = result[0];
+    if (item && item.success) {
+      message.success($t('page.video.messages.update-success'));
+    } else {
+      message.error(item?.reason || $t('page.video.messages.update-failed'));
+    }
+    closeEditModal();
+    await gridApi.reload();
+  } catch (error: any) {
+    message.error(
+      error?.response?.data?.message ||
+        error?.message ||
+        $t('page.video.messages.update-failed'),
+    );
+  } finally {
+    editSubmitting.value = false;
+  }
+}
+
+// --- Formatters ---
 function formatTimestamp(value?: null | number) {
   return value ? formatDateTime(value) : '-';
 }
@@ -83,122 +140,7 @@ function resolveNumberRange(value: unknown) {
   };
 }
 
-function syncSelectedRows() {
-  selectedRows.value =
-    ((
-      gridApi.grid as any
-    )?.getCheckboxRecords?.() as AdminVideoApi.ListItem[]) ?? [];
-}
-
-function clearSelections() {
-  selectedRows.value = [];
-  (gridApi.grid as any)?.clearCheckboxRow?.();
-  (gridApi.grid as any)?.clearCheckboxReserve?.();
-}
-
-function openScoreModal(rows = selectedRows.value) {
-  if (rows.length === 0) {
-    message.warning($t('page.video.messages.select-videos-first'));
-    return;
-  }
-
-  scoreDrafts.value = rows.map((row) => ({
-    bd_code: row.bd_code,
-    current_score: row.score,
-    kol_id: row.kol_id,
-    score: row.score ?? undefined,
-    video_id: row.id,
-    video_url: row.video_url,
-  }));
-  scoreModalOpen.value = true;
-}
-
-function closeScoreModal() {
-  if (scoreSubmitting.value) {
-    return;
-  }
-  scoreModalOpen.value = false;
-}
-
-function showScoreFailures(result: AdminVideoApi.ScoreResultItem[]) {
-  const failedItems = result.filter((item) => !item.success);
-  if (failedItems.length === 0) {
-    return;
-  }
-
-  Modal.warning({
-    okText: $t('common.confirm'),
-    title: $t('page.video.messages.partial-failed-title'),
-    content: h(
-      'div',
-      { class: 'space-y-2 text-sm leading-6' },
-      failedItems.map((item) =>
-        h(
-          'div',
-          { key: item.video_id },
-          `#${item.video_id} ${item.reason || $t('page.video.messages.unknown-failure')}`,
-        ),
-      ),
-    ),
-  });
-}
-
-async function submitScores() {
-  if (scoreDrafts.value.length === 0) {
-    return;
-  }
-
-  if (
-    scoreDrafts.value.some(
-      (item) =>
-        item.score === undefined ||
-        item.score === null ||
-        Number.isNaN(Number(item.score)),
-    )
-  ) {
-    message.warning($t('page.video.messages.score-required'));
-    return;
-  }
-
-  try {
-    scoreSubmitting.value = true;
-    const result = await scoreAdminVideos({
-      list: scoreDrafts.value.map((item) => ({
-        score: Number(item.score),
-        video_id: item.video_id,
-      })),
-    });
-
-    const successCount = result.filter((item) => item.success).length;
-    const failedCount = result.length - successCount;
-
-    if (failedCount === 0) {
-      message.success(
-        $t('page.video.messages.score-success', [String(successCount)]),
-      );
-    } else if (successCount === 0) {
-      message.warning(
-        $t('page.video.messages.score-all-failed', [String(failedCount)]),
-      );
-    } else {
-      message.warning(
-        $t('page.video.messages.score-partial-success', [
-          String(successCount),
-          String(failedCount),
-        ]),
-      );
-    }
-
-    showScoreFailures(result);
-    scoreModalOpen.value = false;
-    scoreDrafts.value = [];
-    clearSelections();
-    await gridApi.query();
-  } finally {
-    scoreSubmitting.value = false;
-  }
-}
-
+// --- Form Options ---
 const formOptions: VbenFormProps = {
   collapsed: false,
   schema: [
@@ -261,18 +203,27 @@ const formOptions: VbenFormProps = {
         precision: 2,
       },
     },
+    {
+      component: 'Select',
+      componentProps: {
+        allowClear: true,
+        options: [
+          { label: $t('common.yes'), value: 1 },
+          { label: $t('common.no'), value: 0 },
+        ],
+      },
+      fieldName: 'has_ads_code',
+      label: $t('page.video.filters.has-ads-code'),
+    },
   ],
   submitOnChange: false,
   submitOnEnter: false,
 };
 
+// --- Grid ---
 const gridOptions: VxeTableGridOptions<AdminVideoApi.ListItem> = {
-  checkboxConfig: {
-    highlight: true,
-  },
   columns: [
     { type: 'seq', width: 60 },
-    { type: 'checkbox', width: 56 },
     {
       field: 'kol_id',
       minWidth: 140,
@@ -328,7 +279,7 @@ const gridOptions: VxeTableGridOptions<AdminVideoApi.ListItem> = {
     {
       field: 'operation',
       fixed: 'right',
-      minWidth: 120,
+      minWidth: 100,
       slots: { default: 'operation' },
       title: $t('page.video.columns.operation'),
     },
@@ -338,7 +289,6 @@ const gridOptions: VxeTableGridOptions<AdminVideoApi.ListItem> = {
   proxyConfig: {
     ajax: {
       query: async ({ page }, formValues = {}) => {
-        selectedRows.value = [];
         const uploadTimeRange = resolveDateRange(formValues.upload_time_range);
         const scoreRange = resolveNumberRange(formValues.score_range);
         const playCountRange = resolveNumberRange(formValues.play_count_range);
@@ -348,6 +298,11 @@ const gridOptions: VxeTableGridOptions<AdminVideoApi.ListItem> = {
           bd_code: formValues.bd_code?.trim() || undefined,
           gmv_max: gmvRange.end,
           gmv_min: gmvRange.start,
+          has_ads_code:
+            formValues.has_ads_code !== undefined &&
+            formValues.has_ads_code !== ''
+              ? Number(formValues.has_ads_code)
+              : undefined,
           kol_id: formValues.kol_id?.trim() || undefined,
           page: page.currentPage,
           page_size: page.pageSize,
@@ -379,10 +334,6 @@ const gridOptions: VxeTableGridOptions<AdminVideoApi.ListItem> = {
 
 const [Grid, gridApi] = useVbenVxeGrid({
   formOptions,
-  gridEvents: {
-    'checkbox-all': syncSelectedRows,
-    'checkbox-change': syncSelectedRows,
-  } as any,
   gridOptions,
 });
 </script>
@@ -390,21 +341,6 @@ const [Grid, gridApi] = useVbenVxeGrid({
 <template>
   <Page auto-content-height>
     <Grid :table-title="$t('page.video.list-title')">
-      <template #toolbar-tools>
-        <Space wrap>
-          <Tag color="processing">
-            {{ $t('page.video.selected-count', [String(selectedCount)]) }}
-          </Tag>
-          <Button
-            type="primary"
-            :disabled="selectedCount === 0"
-            @click="openScoreModal()"
-          >
-            {{ $t('page.video.actions.batch-score') }}
-          </Button>
-        </Space>
-      </template>
-
       <template #video_url="{ row }">
         <a
           :href="row.video_url"
@@ -440,84 +376,126 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <span>{{ formatDecimal(row.commission) }}</span>
       </template>
 
-      <template #created_at="{ row }">
-        <span>{{ formatTimestamp(row.created_at) }}</span>
-      </template>
-
-      <template #updated_at="{ row }">
-        <span>{{ formatTimestamp(row.updated_at) }}</span>
-      </template>
-
       <template #operation="{ row }">
-        <Button type="link" size="small" @click="openScoreModal([row])">
-          {{ $t('page.video.actions.score') }}
+        <Button type="link" size="small" @click="openEditModal(row)">
+          {{ $t('page.video.actions.edit') }}
         </Button>
       </template>
     </Grid>
 
+    <!-- Single-Edit Modal -->
     <Modal
-      :open="scoreModalOpen"
-      :confirm-loading="scoreSubmitting"
-      :ok-text="$t('page.video.actions.confirm-score')"
+      :open="editModalOpen"
+      :confirm-loading="editSubmitting"
+      :ok-text="$t('page.video.actions.confirm-edit')"
       :cancel-text="$t('common.cancel')"
-      :title="scoreModalTitle"
-      @cancel="closeScoreModal"
-      @ok="submitScores"
+      :title="$t('page.video.edit-modal.title')"
+      @cancel="closeEditModal"
+      @ok="submitEdit"
     >
-      <Space direction="vertical" :size="16" class="w-full pt-2">
-        <div class="text-sm leading-6 text-muted-foreground">
-          {{
-            $t('page.video.score-modal.description', [
-              String(scoreDrafts.length),
-            ])
-          }}
+      <template v-if="editingRow">
+        <!-- Video Identity -->
+        <div class="mb-4 rounded-xl border border-border bg-muted/30 p-4">
+          <div class="space-y-1 text-sm leading-6">
+            <div class="text-muted-foreground">
+              KOL ID：{{ editingRow.kol_id }}
+            </div>
+            <div class="text-muted-foreground">
+              BD：{{ editingRow.bd_code }}
+            </div>
+          </div>
+          <a
+            :href="editingRow.video_url"
+            target="_blank"
+            rel="noreferrer"
+            class="mt-1 inline-block text-sm text-blue-500 hover:underline"
+          >
+            {{ editingRow.video_url }}
+          </a>
         </div>
 
-        <div class="max-h-[420px] space-y-3 overflow-y-auto pr-1">
+        <!-- Current Values -->
+        <div class="mb-5 grid grid-cols-3 gap-3">
           <div
-            v-for="item in scoreDrafts"
-            :key="item.video_id"
-            class="rounded-xl border border-border bg-muted/30 p-4"
+            class="rounded-lg border border-border bg-muted/20 p-3 text-center"
           >
-            <div class="mb-3 space-y-1 text-sm leading-6">
-              <div>
-                {{ $t('page.video.score-modal.kol-id', [item.kol_id]) }}
-              </div>
-              <div>
-                {{ $t('page.video.score-modal.bd-code', [item.bd_code]) }}
-              </div>
-              <div>
-                {{
-                  $t('page.video.score-modal.current-score', [
-                    String(item.current_score ?? '-'),
-                  ])
-                }}
-              </div>
-              <a
-                :href="item.video_url"
-                target="_blank"
-                rel="noreferrer"
-                class="text-blue-500 hover:underline"
-              >
-                {{ item.video_url }}
-              </a>
+            <div class="text-xs text-muted-foreground">
+              {{ $t('page.video.edit-modal.current-score') }}
             </div>
-
-            <div class="space-y-2">
-              <div class="text-sm font-medium text-foreground">
-                {{ $t('page.video.score-modal.score-label') }}
-              </div>
-              <InputNumber
-                v-model:value="item.score"
-                class="w-full"
-                :min="0"
-                :max="100"
-                :precision="0"
-              />
+            <div class="mt-1 text-lg font-semibold text-foreground">
+              {{ editingRow.score ?? '-' }}
+            </div>
+          </div>
+          <div
+            class="rounded-lg border border-border bg-muted/20 p-3 text-center"
+          >
+            <div class="text-xs text-muted-foreground">
+              {{ $t('page.video.edit-modal.current-play-count') }}
+            </div>
+            <div class="mt-1 text-lg font-semibold text-foreground">
+              {{ formatInteger(editingRow.play_count) }}
+            </div>
+          </div>
+          <div
+            class="rounded-lg border border-border bg-muted/20 p-3 text-center"
+          >
+            <div class="text-xs text-muted-foreground">
+              {{ $t('page.video.edit-modal.current-gmv') }}
+            </div>
+            <div class="mt-1 text-lg font-semibold text-foreground">
+              {{ formatDecimal(editingRow.gmv) }}
             </div>
           </div>
         </div>
-      </Space>
+
+        <!-- Edit Fields -->
+        <div class="space-y-4">
+          <div class="space-y-2">
+            <div class="text-sm font-medium text-foreground">
+              {{ $t('page.video.edit-modal.field-score') }}
+              <span class="text-red-500">*</span>
+            </div>
+            <InputNumber
+              v-model:value="editForm.score"
+              class="w-full"
+              :min="0"
+              :max="100"
+              :precision="0"
+              :placeholder="$t('page.video.edit-modal.score-placeholder')"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-sm font-medium text-foreground">
+              {{ $t('page.video.edit-modal.field-play-count') }}
+            </div>
+            <InputNumber
+              v-model:value="editForm.play_count"
+              class="w-full"
+              :min="0"
+              :precision="0"
+              :placeholder="$t('page.video.edit-modal.play-count-placeholder')"
+            />
+          </div>
+
+          <div class="space-y-2">
+            <div class="text-sm font-medium text-foreground">
+              {{ $t('page.video.edit-modal.field-gmv') }}
+            </div>
+            <InputNumber
+              v-model:value="editForm.gmv"
+              class="w-full"
+              :min="0"
+              :precision="2"
+              :placeholder="$t('page.video.edit-modal.gmv-placeholder')"
+            />
+          </div>
+        </div>
+
+        <div class="mt-4 text-xs text-muted-foreground">
+          {{ $t('page.video.edit-modal.unchanged-hint') }}
+        </div>
+      </template>
     </Modal>
   </Page>
 </template>

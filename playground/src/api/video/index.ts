@@ -5,6 +5,7 @@ export namespace AdminVideoApi {
     bd_code?: string;
     gmv_max?: number;
     gmv_min?: number;
+    has_ads_code?: number;
     kol_id?: string;
     page: number;
     page_size: number;
@@ -40,16 +41,20 @@ export namespace AdminVideoApi {
     total: number;
   }
 
-  export interface ScoreItem {
-    score: number;
+  export interface UpdateItem {
     video_id: number;
+    score: number;
+    play_count?: number;
+    gmv?: number;
   }
 
-  export interface ScoreParams {
-    list: ScoreItem[];
+  export interface UpdateParams {
+    list: UpdateItem[];
   }
 
-  export interface ScoreResultItem {
+  export interface UpdateResultItem {
+    gmv?: number;
+    play_count?: number;
     reason: null | string;
     score: null | number;
     success: boolean;
@@ -63,8 +68,8 @@ export async function getAdminVideoList(params: AdminVideoApi.ListParams) {
   });
 }
 
-export async function scoreAdminVideos(data: AdminVideoApi.ScoreParams) {
-  return requestClient.put<AdminVideoApi.ScoreResultItem[]>(
+export async function updateAdminVideos(data: AdminVideoApi.UpdateParams) {
+  return requestClient.put<AdminVideoApi.UpdateResultItem[]>(
     '/admin/videos/score',
     data,
   );

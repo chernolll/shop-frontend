@@ -766,15 +766,14 @@
   "video": {
     "title": "Video Management",
     "list-title": "Video Management",
-    "selected-count": "{0} selected",
     "actions": {
-      "batch-score": "Batch Score",
-      "confirm-score": "Confirm Score",
-      "score": "Score"
+      "confirm-edit": "Confirm",
+      "edit": "Edit"
     },
     "filters": {
       "bd-code": "BD Code",
       "gmv-range": "GMV Range",
+      "has-ads-code": "Ads Code",
       "kol-id": "KOL ID",
       "play-count-range": "Play Count Range",
       "range-end": "End",
@@ -796,22 +795,23 @@
       "upload-time": "Upload Time",
       "video-url": "Video URL"
     },
-    "score-modal": {
-      "batch-title": "Batch Video Scoring",
-      "bd-code": "BD Code: {0}",
-      "current-score": "Current Score: {0}",
-      "description": "Submit scores for {0} selected video(s).",
-      "kol-id": "KOL ID: {0}",
-      "score-label": "Score"
+    "edit-modal": {
+      "title": "Edit Video",
+      "current-score": "Current Score",
+      "current-play-count": "Current Play Count",
+      "current-gmv": "Current GMV",
+      "field-score": "Score",
+      "field-play-count": "Play Count",
+      "field-gmv": "GMV",
+      "score-required": "Please enter a score between 0 and 100",
+      "score-placeholder": "0 ~ 100",
+      "play-count-placeholder": "Leave empty to skip",
+      "gmv-placeholder": "Leave empty to skip",
+      "unchanged-hint": "Unchanged fields will not be submitted"
     },
     "messages": {
-      "partial-failed-title": "Some Videos Failed to Score",
-      "score-all-failed": "All scoring operations failed, total {0}",
-      "score-partial-success": "Scoring finished: {0} succeeded, {1} failed",
-      "score-required": "Please enter a score between 0 and 100 for all selected videos",
-      "score-success": "Scored successfully for {0} video(s)",
-      "select-videos-first": "Select at least one video first",
-      "unknown-failure": "Unknown failure reason"
+      "update-success": "Update successful",
+      "update-failed": "Update failed"
     }
   },
   "bd": {

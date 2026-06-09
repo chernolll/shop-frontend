@@ -766,15 +766,14 @@
   "video": {
     "title": "视频管理",
     "list-title": "视频管理",
-    "selected-count": "已选 {0} 条",
     "actions": {
-      "batch-score": "批量打分",
-      "confirm-score": "确认打分",
-      "score": "打分"
+      "confirm-edit": "确认提交",
+      "edit": "编辑"
     },
     "filters": {
       "bd-code": "BD 编码",
       "gmv-range": "GMV范围",
+      "has-ads-code": "Ads Code",
       "kol-id": "达人 ID",
       "play-count-range": "播放量范围",
       "range-end": "结束值",
@@ -791,27 +790,28 @@
       "kol-id": "达人 ID",
       "operation": "操作",
       "play-count": "播放量",
-      "score": "打分",
+      "score": "评分",
       "updated-at": "更新时间",
       "upload-time": "上传时间",
       "video-url": "视频链接"
     },
-    "score-modal": {
-      "batch-title": "批量视频打分",
-      "bd-code": "BD 编码：{0}",
-      "current-score": "当前分数：{0}",
-      "description": "将对选中的 {0} 条视频提交打分。",
-      "kol-id": "达人 ID：{0}",
-      "score-label": "打分"
+    "edit-modal": {
+      "title": "编辑视频",
+      "current-score": "当前评分",
+      "current-play-count": "当前播放量",
+      "current-gmv": "当前 GMV",
+      "field-score": "评分",
+      "field-play-count": "播放量",
+      "field-gmv": "GMV",
+      "score-required": "请输入 0-100 的评分",
+      "score-placeholder": "0 ~ 100",
+      "play-count-placeholder": "留空则不修改",
+      "gmv-placeholder": "留空则不修改",
+      "unchanged-hint": "未修改的字段不会提交更新"
     },
     "messages": {
-      "partial-failed-title": "部分视频打分失败",
-      "score-all-failed": "本次打分全部失败，共 {0} 条",
-      "score-partial-success": "打分已完成，成功 {0} 条，失败 {1} 条",
-      "score-required": "请为所有选中视频填写 0-100 的分数",
-      "score-success": "打分成功，共处理 {0} 条",
-      "select-videos-first": "请先选择至少 1 条视频",
-      "unknown-failure": "未知失败原因"
+      "update-success": "更新成功",
+      "update-failed": "更新失败"
     }
   },
   "bd": {
