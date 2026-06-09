@@ -704,7 +704,8 @@
       "actions": {
         "create": "Create Listing",
         "delete": "Delete",
-        "edit": "Edit"
+        "edit": "Edit",
+        "view-brief": "View Brief"
       },
       "filters": {
         "product-url": "Product URL",
@@ -714,6 +715,7 @@
       },
       "columns": {
         "active-sop-count": "Active SOP Count",
+        "brief": "Brief",
         "commission-private": "Private Commission",
         "commission-public": "Public Commission",
         "country": "Country",
@@ -730,6 +732,11 @@
         "updated-at": "Updated At"
       },
       "form": {
+        "brief-file": "Product Brief",
+        "brief-file-placeholder": "Select PDF file",
+        "brief-file-uploading": "Uploading…",
+        "brief-file-remove": "Remove",
+        "brief-file-tip": "Upload a product brief in PDF format (optional)",
         "commission-private": "Private Commission",
         "commission-public": "Public Commission",
         "main-sku-id": "Main SKU",
@@ -739,6 +746,9 @@
       },
       "empty": "No product listing data",
       "messages": {
+        "brief-not-found": "No brief file found for this product listing",
+        "brief-upload-failed": "File upload failed",
+        "brief-upload-success": "File uploaded successfully",
         "create-success": "Product listing created successfully",
         "delete-success": "Product listing deleted successfully",
         "input-product-url": "Please enter the product URL",

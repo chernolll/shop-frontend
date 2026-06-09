@@ -24,6 +24,12 @@ import {
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
 import {
+  attachBriefToProduct,
+  getBriefAccessUrl,
+  getFileUploadUrl,
+  registerUploadedFile,
+} from '#/api/core/file';
+import {
   AdminProductApi,
   createAdminProductListing,
   deleteAdminProductListing,
@@ -45,6 +51,21 @@ const drawerOpen = ref(false);
 const detailLoading = ref(false);
 const submitting = ref(false);
 const editingRow = ref<AdminProductApi.ProductListingItem | null>(null);
+
+const briefFile = ref<File | null>(null);
+const briefUploading = ref(false);
+const briefFileKey = ref<string | undefined>(undefined);
+const briefFileName = ref('');
+const briefFileInputRef = ref<HTMLInputElement | null>(null);
+
+function onBriefFileInputChange(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (file) {
+    handleBriefFileChange(file);
+  }
+  input.value = '';
+}
 
 const formState = reactive<{
   commission_private: number | undefined;
@@ -109,6 +130,76 @@ function resetForm() {
   formState.product_url = '';
   formState.shop_id = undefined;
   formState.status = AdminProductApi.Status.ON_SALE;
+  briefFile.value = null;
+  briefUploading.value = false;
+  briefFileKey.value = undefined;
+  briefFileName.value = '';
+}
+
+async function handleBriefFileChange(file: File) {
+  briefFile.value = file;
+  briefFileName.value = file.name;
+  briefUploading.value = true;
+  briefFileKey.value = undefined;
+
+  try {
+    const uploadUrlResult = await getFileUploadUrl({
+      biz_type: 'brief-file',
+      file_name: file.name,
+      content_type: file.type || 'application/pdf',
+    });
+
+    await fetch(uploadUrlResult.upload_url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type || 'application/pdf',
+        ...uploadUrlResult.headers,
+      },
+      body: file,
+    });
+
+    await registerUploadedFile({
+      file_key: uploadUrlResult.file_key,
+      file_name: file.name,
+    });
+
+    briefFileKey.value = uploadUrlResult.file_key;
+    message.success($t('page.product.listing.messages.brief-upload-success'));
+  } catch {
+    briefFile.value = null;
+    briefFileName.value = '';
+    message.error($t('page.product.listing.messages.brief-upload-failed'));
+  } finally {
+    briefUploading.value = false;
+  }
+}
+
+function handleBriefRemove() {
+  briefFile.value = null;
+  briefFileKey.value = undefined;
+  briefFileName.value = '';
+}
+
+const briefViewLoading = ref<Record<number, boolean>>({});
+
+async function viewBrief(productListingId: number) {
+  briefViewLoading.value = {
+    ...briefViewLoading.value,
+    [productListingId]: true,
+  };
+  try {
+    const result = await getBriefAccessUrl({
+      product_listing_id: productListingId,
+    });
+    window.open(result.access_url, '_blank', 'noreferrer');
+  } catch {
+    message.warning($t('page.product.listing.messages.brief-not-found'));
+  } finally {
+    briefViewLoading.value = {
+      ...briefViewLoading.value,
+      [productListingId]: false,
+    };
+  }
 }
 
 function assignForm(detail: AdminProductApi.ProductListingItem) {
@@ -191,8 +282,17 @@ async function submitForm() {
         id: editingRow.value.id,
         ...payload,
       });
+      if (briefFileKey.value) {
+        await attachBriefToProduct({
+          product_listing_id: editingRow.value.id,
+          file_key: briefFileKey.value,
+        });
+      }
       message.success($t('page.product.listing.messages.update-success'));
     } else {
+      if (briefFileKey.value) {
+        payload.file_key = briefFileKey.value;
+      }
       await createAdminProductListing(payload);
       message.success($t('page.product.listing.messages.create-success'));
     }
@@ -285,6 +385,12 @@ const gridOptions: VxeTableGridOptions<AdminProductApi.ProductListingItem> = {
       field: 'commission_private',
       minWidth: 120,
       title: $t('page.product.listing.columns.commission-private'),
+    },
+    {
+      field: 'brief',
+      minWidth: 120,
+      slots: { default: 'brief' },
+      title: $t('page.product.listing.columns.brief'),
     },
     {
       field: 'status',
@@ -399,6 +505,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <span v-else>-</span>
       </template>
 
+      <template #brief="{ row }">
+        <Button
+          type="link"
+          size="small"
+          :loading="briefViewLoading[row.id]"
+          @click="viewBrief(row.id)"
+        >
+          {{ $t('page.product.listing.actions.view-brief') }}
+        </Button>
+      </template>
+
       <template #status="{ row }">
         <Tag :color="getStatusColor(row.status)">
           {{ getStatusText(row.status) }}
@@ -478,6 +595,43 @@ const [Grid, gridApi] = useVbenVxeGrid({
             :min="0"
             :precision="2"
           />
+        </Form.Item>
+        <Form.Item :label="$t('page.product.listing.form.brief-file')">
+          <div class="space-y-2">
+            <div class="flex items-center gap-2">
+              <input
+                ref="briefFileInputRef"
+                type="file"
+                accept=".pdf"
+                class="hidden"
+                @change="onBriefFileInputChange"
+              />
+              <Button
+                :loading="briefUploading"
+                @click="briefFileInputRef?.click()"
+              >
+                {{ $t('page.product.listing.form.brief-file-placeholder') }}
+              </Button>
+              <Button
+                v-if="briefFileName"
+                danger
+                :disabled="briefUploading"
+                size="small"
+                @click="handleBriefRemove"
+              >
+                {{ $t('page.product.listing.form.brief-file-remove') }}
+              </Button>
+            </div>
+            <div v-if="briefUploading" class="text-xs text-blue-500">
+              {{ $t('page.product.listing.form.brief-file-uploading') }}
+            </div>
+            <div v-else-if="briefFileName" class="text-xs text-green-600">
+              {{ briefFileName }}
+            </div>
+            <div v-else class="text-xs text-gray-400">
+              {{ $t('page.product.listing.form.brief-file-tip') }}
+            </div>
+          </div>
         </Form.Item>
         <Form.Item :label="$t('page.product.listing.form.status')" required>
           <Select v-model:value="formState.status" :options="statusOptions" />

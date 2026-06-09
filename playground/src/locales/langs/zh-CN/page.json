@@ -704,7 +704,8 @@
       "actions": {
         "create": "新增商品链接",
         "delete": "删除",
-        "edit": "编辑"
+        "edit": "编辑",
+        "view-brief": "查看Brief"
       },
       "filters": {
         "product-url": "商品链接",
@@ -714,6 +715,7 @@
       },
       "columns": {
         "active-sop-count": "进行中SOP数",
+        "brief": "Brief",
         "commission-private": "私佣",
         "commission-public": "公佣",
         "country": "国家",
@@ -730,6 +732,11 @@
         "updated-at": "更新时间"
       },
       "form": {
+        "brief-file": "商品Brief",
+        "brief-file-placeholder": "选择 PDF 文件",
+        "brief-file-uploading": "正在上传…",
+        "brief-file-remove": "移除",
+        "brief-file-tip": "上传 PDF 格式的商品Brief文件（可选）",
         "commission-private": "私佣",
         "commission-public": "公佣",
         "main-sku-id": "主SKU",
@@ -739,6 +746,9 @@
       },
       "empty": "暂无商品链接数据",
       "messages": {
+        "brief-not-found": "该商品链接暂无Brief文件",
+        "brief-upload-failed": "文件上传失败",
+        "brief-upload-success": "文件上传成功",
         "create-success": "商品链接创建成功",
         "delete-success": "商品链接删除成功",
         "input-product-url": "请输入商品链接",

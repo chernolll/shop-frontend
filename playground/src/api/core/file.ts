@@ -40,6 +40,18 @@ export namespace FileApi {
     file_name: string;
     id: number;
   }
+
+  export interface AttachBriefParams {
+    file_key: string;
+    product_listing_id: number;
+  }
+
+  export interface AttachBriefResult {
+    file_key: string;
+    file_name: string;
+    product_listing_id: number;
+    r2_file_id: number;
+  }
 }
 
 /** 获取文件预签名上传地址 */
@@ -60,4 +72,12 @@ export async function getBriefAccessUrl(params: FileApi.BriefAccessUrlParams) {
 /** 登记已上传文件 */
 export async function registerUploadedFile(data: FileApi.RegisterFileParams) {
   return requestClient.post<FileApi.RegisterFileResult>('/file/register', data);
+}
+
+/** 关联 Brief 文件到商品链接 */
+export async function attachBriefToProduct(data: FileApi.AttachBriefParams) {
+  return requestClient.post<FileApi.AttachBriefResult>(
+    '/file/brief/attach',
+    data,
+  );
 }
