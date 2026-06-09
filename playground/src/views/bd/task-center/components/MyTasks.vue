@@ -6,6 +6,7 @@ import {
   DatePicker,
   Empty,
   Input,
+  message,
   Progress,
   Select,
   Space,
@@ -15,6 +16,7 @@ import {
 } from 'ant-design-vue';
 
 import { BdTaskApi, getBdTaskList } from '#/api';
+import { getBriefAccessUrl } from '#/api/core/file';
 import { $t } from '#/locales';
 
 import KolSelectDialog from './KolSelectDialog.vue';
@@ -30,6 +32,23 @@ const pageSize = ref(10);
 const searchTaskCode = ref('');
 const statusFilter = ref<number | undefined>(undefined);
 const deadlineRange = ref<[any, any] | null>(null);
+
+// --- Brief ---
+const briefViewLoading = ref<Record<number, boolean>>({});
+
+async function viewBrief(productListingId: number, rowKey: number) {
+  briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: true };
+  try {
+    const result = await getBriefAccessUrl({
+      product_listing_id: productListingId,
+    });
+    window.open(result.access_url, '_blank', 'noreferrer');
+  } catch {
+    message.warning($t('page.product.listing.messages.brief-not-found'));
+  } finally {
+    briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: false };
+  }
+}
 
 // --- KOL Dialog ---
 const kolDialogOpen = ref(false);
@@ -169,15 +188,16 @@ const columns = [
   },
   {
     dataIndex: 'task_code',
+    ellipsis: true,
     key: 'task_code',
     title: $t('page.bd.my-task.columns.task-code'),
-    width: 180,
+    width: 250,
   },
   {
     dataIndex: 'taskTags',
     key: 'taskTags',
     title: $t('page.bd.my-task.columns.task-tags'),
-    width: 200,
+    width: 180,
   },
   {
     dataIndex: 'main_sku_brand',
@@ -195,6 +215,12 @@ const columns = [
     dataIndex: 'commission',
     key: 'commission',
     title: $t('page.bd.my-task.columns.commission'),
+    width: 100,
+  },
+  {
+    dataIndex: 'brief',
+    key: 'brief',
+    title: $t('page.product.listing.columns.brief'),
     width: 100,
   },
   {
@@ -220,7 +246,6 @@ const columns = [
     key: 'operation',
     title: $t('page.bd.my-task.columns.action'),
     width: 160,
-    fixed: 'right' as const,
   },
 ];
 </script>
@@ -269,7 +294,7 @@ const columns = [
           onChange: onPageChange,
         }"
         size="middle"
-        :scroll="{ x: 1500 }"
+        :scroll="{ x: 1700 }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'taskName'">
@@ -288,27 +313,40 @@ const columns = [
                   </div>
                 </div>
               </template>
-              <span class="cursor-help text-blue-500 hover:underline">
+              <span
+                class="block truncate cursor-help text-blue-500 hover:underline"
+              >
                 {{ record.task_code || '-' }}
               </span>
             </Tooltip>
-            <span v-else>{{ record.task_code || '-' }}</span>
+            <Tooltip v-else :title="record.task_code">
+              <span class="block truncate">{{ record.task_code || '-' }}</span>
+            </Tooltip>
           </template>
 
           <template v-if="column.key === 'taskTags'">
-            <Space
-              v-if="(record.taskTags ?? []).length > 0"
-              :size="[4, 4]"
-              wrap
-            >
-              <Tag
-                v-for="(tag, i) in record.taskTags ?? []"
-                :key="tag"
-                :color="getTagColor(i)"
-              >
-                {{ tag }}
-              </Tag>
-            </Space>
+            <Tooltip v-if="(record.taskTags ?? []).length > 0">
+              <template #title>
+                <Space :size="[4, 4]" wrap>
+                  <Tag
+                    v-for="(tag, i) in record.taskTags ?? []"
+                    :key="tag"
+                    :color="getTagColor(i)"
+                  >
+                    {{ tag }}
+                  </Tag>
+                </Space>
+              </template>
+              <div class="task-tags-display">
+                <Tag
+                  v-for="(tag, i) in record.taskTags ?? []"
+                  :key="tag"
+                  :color="getTagColor(i)"
+                >
+                  {{ tag }}
+                </Tag>
+              </div>
+            </Tooltip>
             <span v-else>-</span>
           </template>
 
@@ -332,25 +370,34 @@ const columns = [
             {{ formatCurrency(record.commission) }}
           </template>
 
+          <template v-if="column.key === 'brief'">
+            <Button
+              type="link"
+              size="small"
+              :loading="briefViewLoading[record.relationId]"
+              @click="
+                viewBrief(
+                  record.product_listing_id ?? record.productListingId,
+                  record.relationId,
+                )
+              "
+            >
+              {{ $t('page.product.listing.actions.view-brief') }}
+            </Button>
+          </template>
+
           <template v-if="column.key === 'videoProgress'">
-            <div class="min-w-[136px] pr-2 text-center">
-              <span
-                :class="
-                  isVideoCompleted(record)
-                    ? 'font-medium text-success'
-                    : 'text-foreground'
-                "
-              >
-                {{ record.completedVideos }} / {{ record.totalVideos }}
-              </span>
+            <Tooltip
+              :title="`${record.completedVideos ?? 0} / ${record.totalVideos ?? 0}`"
+            >
               <Progress
-                class="mt-1"
                 :percent="getVideoProgressPercent(record)"
                 :show-info="false"
                 :status="isVideoCompleted(record) ? 'success' : 'active'"
                 size="small"
+                class="cursor-help"
               />
-            </div>
+            </Tooltip>
           </template>
 
           <template v-if="column.key === 'deadline'">
@@ -387,6 +434,17 @@ const columns = [
 </template>
 
 <style scoped>
+.task-tags-display {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.task-tags-display :deep(.ant-tag) {
+  flex-shrink: 0;
+}
+
 .my-tasks-table :deep(.ant-table) {
   overflow: hidden;
   border: 1px solid hsl(var(--border) / 50%);

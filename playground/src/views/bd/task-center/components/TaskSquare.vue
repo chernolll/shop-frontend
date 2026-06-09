@@ -8,12 +8,15 @@ import {
   DatePicker,
   Empty,
   Input,
+  message,
   Pagination,
   Select,
   Tag,
 } from 'ant-design-vue';
 
 import { getBDPublicTaskList } from '#/api';
+import { getBriefAccessUrl } from '#/api/core/file';
+import { $t } from '#/locales';
 
 import KolSelectDialog from './KolSelectDialog.vue';
 
@@ -28,6 +31,23 @@ const pageSize = ref(12);
 const totalItems = ref(0);
 const taskList = ref<BdPublicTaskApi.BdPublicTaskItem[]>([]);
 const loading = ref(false);
+
+// --- Brief ---
+const briefViewLoading = ref<Record<number, boolean>>({});
+
+async function viewBrief(productListingId: number, rowKey: number) {
+  briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: true };
+  try {
+    const result = await getBriefAccessUrl({
+      product_listing_id: productListingId,
+    });
+    window.open(result.access_url, '_blank', 'noreferrer');
+  } catch {
+    message.warning($t('page.product.listing.messages.brief-not-found'));
+  } finally {
+    briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: false };
+  }
+}
 
 // --- KOL Dialog ---
 const kolDialogOpen = ref(false);
@@ -263,6 +283,20 @@ function formatCurrency(value: number): string {
             <span class="task-card-label">截止时间</span>
             <span class="task-card-value">{{ formatDate(task.deadline) }}</span>
           </div>
+          <div class="task-card-field">
+            <span class="task-card-label">{{
+              $t('page.product.listing.columns.brief')
+            }}</span>
+            <Button
+              type="link"
+              size="small"
+              class="task-card-brief-btn"
+              :loading="briefViewLoading[task.task_id]"
+              @click.stop="viewBrief(task.product_listing_id, task.task_id)"
+            >
+              {{ $t('page.product.listing.actions.view-brief') }}
+            </Button>
+          </div>
         </div>
 
         <!-- Card Footer -->
@@ -439,6 +473,14 @@ function formatCurrency(value: number): string {
   font-size: 15px;
   font-weight: 600;
   color: hsl(var(--primary));
+}
+
+/* --- Brief Button --- */
+.task-card-brief-btn {
+  align-self: flex-start;
+  height: auto;
+  padding: 0;
+  font-size: 13px;
 }
 
 /* --- Card Footer --- */

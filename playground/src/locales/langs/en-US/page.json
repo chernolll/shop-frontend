@@ -1132,7 +1132,7 @@
         "task-name": "Task Name",
         "task-tags": "Tags",
         "task-status": "Task Status",
-        "video-progress": "Video(completed/total)"
+        "video-progress": "Video"
       },
       "filters": {
         "deadline-end": "Deadline To",

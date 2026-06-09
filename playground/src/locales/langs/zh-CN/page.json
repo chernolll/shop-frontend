@@ -1133,7 +1133,7 @@
         "task-name": "任务名称",
         "task-tags": "标签",
         "task-status": "任务状态",
-        "video-progress": "视频进度 (已完成/总数)"
+        "video-progress": "视频进度"
       },
       "filters": {
         "deadline-end": "截止时间止",

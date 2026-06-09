@@ -38,6 +38,7 @@ import {
   getAdminTaskList,
   getAdminTaskRelations,
 } from '#/api/bd/tasks';
+import { getBriefAccessUrl } from '#/api/core/file';
 import { $t } from '#/locales';
 
 interface BdOption {
@@ -63,6 +64,22 @@ const relationsDrawerOpen = ref(false);
 const relationsLoading = ref(false);
 const relationTask = ref<AdminTaskApi.ListItem | null>(null);
 const relationData = ref<AdminTaskApi.RelationsResult | null>(null);
+
+const briefViewLoading = ref<Record<number, boolean>>({});
+
+async function viewBrief(productListingId: number, rowKey: number) {
+  briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: true };
+  try {
+    const result = await getBriefAccessUrl({
+      product_listing_id: productListingId,
+    });
+    window.open(result.access_url, '_blank', 'noreferrer');
+  } catch {
+    message.warning($t('page.product.listing.messages.brief-not-found'));
+  } finally {
+    briefViewLoading.value = { ...briefViewLoading.value, [rowKey]: false };
+  }
+}
 
 const createForm = reactive<{
   bd_codes: string[];
@@ -605,6 +622,12 @@ const gridOptions: VxeTableGridOptions<AdminTaskApi.ListItem> = {
       title: $t('page.bd.task-center.columns.commission'),
     },
     {
+      field: 'brief',
+      minWidth: 120,
+      slots: { default: 'brief' },
+      title: $t('page.product.listing.columns.brief'),
+    },
+    {
       field: 'video_num',
       minWidth: 120,
       title: $t('page.bd.task-center.columns.video-num'),
@@ -759,6 +782,17 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
           <span v-else>-</span>
         </Space>
+      </template>
+
+      <template #brief="{ row }">
+        <Button
+          type="link"
+          size="small"
+          :loading="briefViewLoading[row.task_id]"
+          @click="viewBrief(row.product_listing_id, row.task_id)"
+        >
+          {{ $t('page.product.listing.actions.view-brief') }}
+        </Button>
       </template>
 
       <template #deadline="{ row }">
