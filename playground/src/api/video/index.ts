@@ -42,10 +42,10 @@ export namespace AdminVideoApi {
   }
 
   export interface UpdateItem {
-    video_id: number;
-    score: number;
-    play_count?: number;
     gmv?: number;
+    play_count?: number;
+    score: number;
+    video_id: number;
   }
 
   export interface UpdateParams {

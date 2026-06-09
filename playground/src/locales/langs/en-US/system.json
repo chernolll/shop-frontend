@@ -83,7 +83,8 @@
       "edit": "Edit"
     },
     "form": {
-      "avatar": "Avatar URL",
+      "avatar": "Avatar",
+      "avatar-upload-hint": "Supports JPG/PNG, max 2MB",
       "country": "Country",
       "department": "Department",
       "employee-no": "Employee No",
@@ -124,7 +125,11 @@
     },
     "empty": "No employee data",
     "messages": {
-      "avatar-required": "Please enter the avatar URL",
+      "avatar-required": "Please upload an avatar",
+      "avatar-format-invalid": "Avatar only supports JPG/PNG format",
+      "avatar-size-invalid": "Avatar size cannot exceed 2MB",
+      "avatar-upload-failed": "Avatar upload failed",
+      "avatar-uploading": "Uploading avatar...",
       "country-required": "Please select a country",
       "create-success": "Employee created successfully",
       "delete-success": "Employee {0} deleted successfully",

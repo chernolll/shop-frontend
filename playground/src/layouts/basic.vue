@@ -105,8 +105,18 @@ const menus = computed(() => [
   },
 ]);
 
+function isValidUrl(str: string): boolean {
+  try {
+    const url = new URL(str);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 const avatar = computed(() => {
-  return userStore.userInfo?.avatar ?? preferences.app.defaultAvatar;
+  const src = userStore.userInfo?.avatar;
+  return src && isValidUrl(src) ? src : preferences.app.defaultAvatar;
 });
 
 async function handleLogout() {

@@ -32,6 +32,7 @@ export namespace AdminEmployeeApi {
 
   export interface EmployeeItem {
     avatar: string;
+    avatar_file_key?: string;
     bd_code: null | string;
     country: string;
     created_at: number;
@@ -73,7 +74,8 @@ export namespace AdminEmployeeApi {
   }
 
   export interface CreateParams {
-    avatar: string;
+    avatar?: string;
+    avatar_file_key?: string;
     country: string;
     dept_id?: null | number;
     emergency_contact?: string;

@@ -2,7 +2,7 @@
 import type { VbenFormProps } from '#/adapter/form';
 import type { VxeTableGridOptions } from '#/adapter/vxe-table';
 
-import { computed, reactive, ref } from 'vue';
+import { computed, onUnmounted, reactive, ref } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { formatDateTime } from '@vben/utils';
@@ -31,6 +31,7 @@ import {
   getAdminEmployeeList,
   updateAdminEmployee,
 } from '#/api/system/admin-employee';
+import { getFileUploadUrl, registerUploadedFile } from '#/api/core';
 import { $t } from '#/locales';
 
 import { useAdminDepartmentSelect } from '../shared/useAdminDepartmentSelect';
@@ -48,8 +49,106 @@ const detailLoading = ref(false);
 const submitting = ref(false);
 const editingRow = ref<AdminEmployeeApi.EmployeeItem | null>(null);
 
+// --- Avatar Upload State ---
+const AVATAR_MAX_SIZE = 2 * 1024 * 1024; // 2MB
+const AVATAR_ACCEPT = 'image/jpeg,image/png';
+const avatarFile = ref<File | null>(null);
+const avatarPreviewUrl = ref<string>('');
+const avatarUploading = ref(false);
+const currentAvatarUrl = ref<string>('');
+const avatarInput = ref<HTMLInputElement>();
+
+function triggerAvatarInput() {
+  avatarInput.value?.click();
+}
+
+function revokeAvatarPreview() {
+  if (avatarPreviewUrl.value) {
+    URL.revokeObjectURL(avatarPreviewUrl.value);
+    avatarPreviewUrl.value = '';
+  }
+}
+
+function validateAvatarFile(file: File): boolean {
+  const validTypes = ['image/jpeg', 'image/png'];
+  if (!validTypes.includes(file.type)) {
+    message.warning($t('system.employee.messages.avatar-format-invalid'));
+    return false;
+  }
+  if (file.size > AVATAR_MAX_SIZE) {
+    message.warning($t('system.employee.messages.avatar-size-invalid'));
+    return false;
+  }
+  return true;
+}
+
+function handleAvatarFileChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  if (!validateAvatarFile(file)) {
+    // Reset the input so the same file can be re-selected after fixing
+    input.value = '';
+    return;
+  }
+
+  revokeAvatarPreview();
+  avatarFile.value = file;
+  avatarPreviewUrl.value = URL.createObjectURL(file);
+}
+
+function clearAvatar() {
+  avatarFile.value = null;
+  revokeAvatarPreview();
+  currentAvatarUrl.value = '';
+}
+
+async function uploadAvatar(): Promise<string | null> {
+  if (!avatarFile.value) return null;
+
+  avatarUploading.value = true;
+  try {
+    // Step 1: Get presigned upload URL
+    const result = await getFileUploadUrl({
+      biz_type: 'user-avatars',
+      content_type: avatarFile.value.type,
+      file_name: avatarFile.value.name,
+    });
+
+    // Step 2: PUT file directly to R2
+    const uploadResponse = await fetch(result.upload_url, {
+      body: avatarFile.value,
+      headers: result.headers,
+      method: 'PUT',
+    });
+
+    if (!uploadResponse.ok) {
+      throw new Error(`R2 upload failed with status ${uploadResponse.status}`);
+    }
+
+    // Step 3: Register file metadata
+    await registerUploadedFile({
+      file_key: result.file_key,
+      file_name: result.file_name,
+    });
+
+    return result.file_key;
+  } catch (error: any) {
+    message.error(
+      error?.message || $t('system.employee.messages.avatar-upload-failed'),
+    );
+    return null;
+  } finally {
+    avatarUploading.value = false;
+  }
+}
+
+onUnmounted(() => {
+  revokeAvatarPreview();
+});
+
 const formState = reactive<{
-  avatar: string;
   country: string;
   dept_id: number | undefined;
   emergency_contact: string;
@@ -71,7 +170,6 @@ const formState = reactive<{
   status: AdminEmployeeApi.Status;
   subsidy: number | undefined;
 }>({
-  avatar: '',
   country: 'CN',
   dept_id: undefined,
   emergency_contact: '',
@@ -163,7 +261,7 @@ function normalizeOptionalString(value: string) {
 }
 
 function resetForm() {
-  formState.avatar = '';
+  clearAvatar();
   formState.country = 'CN';
   formState.dept_id = undefined;
   formState.emergency_contact = '';
@@ -187,7 +285,8 @@ function resetForm() {
 }
 
 function assignForm(detail: AdminEmployeeApi.EmployeeItem) {
-  formState.avatar = detail.avatar;
+  clearAvatar();
+  currentAvatarUrl.value = detail.avatar || '';
   formState.country = detail.country;
   formState.dept_id = detail.dept_id ?? undefined;
   formState.emergency_contact = detail.emergency_contact ?? '';
@@ -274,7 +373,7 @@ function validateForm() {
     message.warning($t('system.employee.messages.leave-time-required'));
     return false;
   }
-  if (!formState.avatar.trim()) {
+  if (!editingRow.value && !avatarFile.value) {
     message.warning($t('system.employee.messages.avatar-required'));
     return false;
   }
@@ -293,9 +392,8 @@ function validateForm() {
   return true;
 }
 
-function buildPayload() {
-  return {
-    avatar: formState.avatar.trim(),
+function buildPayload(avatarFileKey?: string): AdminEmployeeApi.CreateParams {
+  const payload: AdminEmployeeApi.CreateParams = {
     country: formState.country,
     dept_id: formState.dept_id ?? null,
     emergency_contact: normalizeOptionalString(formState.emergency_contact),
@@ -319,6 +417,10 @@ function buildPayload() {
     status: formState.status,
     subsidy: Number(formState.subsidy ?? 0),
   };
+  if (avatarFileKey) {
+    payload.avatar_file_key = avatarFileKey;
+  }
+  return payload;
 }
 
 async function submitForm() {
@@ -328,7 +430,22 @@ async function submitForm() {
 
   try {
     submitting.value = true;
-    const payload = buildPayload();
+
+    // Upload avatar first if a new file was selected
+    let avatarFileKey: string | undefined;
+    if (avatarFile.value) {
+      message.loading({
+        content: $t('system.employee.messages.avatar-uploading'),
+        duration: 0,
+        key: 'avatar-upload',
+      });
+      const key = await uploadAvatar();
+      message.destroy('avatar-upload');
+      if (!key) return; // upload failed — error already shown in uploadAvatar
+      avatarFileKey = key;
+    }
+
+    const payload = buildPayload(avatarFileKey);
     if (editingRow.value) {
       await updateAdminEmployee({
         employee_no: formState.employee_no.trim(),
@@ -664,8 +781,82 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <Form.Item :label="$t('system.employee.form.id-card')">
           <Input v-model:value="formState.id_card" />
         </Form.Item>
-        <Form.Item :label="$t('system.employee.form.avatar')" required>
-          <Input v-model:value="formState.avatar" />
+        <Form.Item
+          :label="$t('system.employee.form.avatar')"
+          :required="!isEditMode"
+        >
+          <div class="space-y-2">
+            <!-- Upload trigger area -->
+            <div
+              class="group relative flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/20 transition-colors hover:border-primary/50 hover:bg-muted/40"
+              :class="
+                avatarPreviewUrl || currentAvatarUrl
+                  ? 'h-40 w-40 overflow-hidden'
+                  : 'h-32 w-full'
+              "
+              @click="triggerAvatarInput"
+            >
+              <!-- Preview image -->
+              <img
+                v-if="avatarPreviewUrl || currentAvatarUrl"
+                :src="avatarPreviewUrl || currentAvatarUrl"
+                alt="Avatar preview"
+                class="h-full w-full object-cover"
+              />
+              <!-- Empty state -->
+              <div
+                v-else
+                class="flex flex-col items-center gap-2 text-muted-foreground"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-8 w-8"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                  />
+                </svg>
+                <span class="text-sm">{{
+                  $t('system.employee.form.avatar-upload-hint')
+                }}</span>
+              </div>
+
+              <!-- Hover overlay for re-upload -->
+              <div
+                v-if="avatarPreviewUrl || currentAvatarUrl"
+                class="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                <span class="text-xs text-white">
+                  {{ avatarPreviewUrl ? '更换图片' : '点击上传' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Hidden file input -->
+            <input
+              ref="avatarInput"
+              type="file"
+              :accept="AVATAR_ACCEPT"
+              class="hidden"
+              @change="handleAvatarFileChange"
+            />
+
+            <!-- Clear button -->
+            <Button
+              v-if="avatarPreviewUrl || currentAvatarUrl"
+              size="small"
+              danger
+              @click="clearAvatar()"
+            >
+              移除图片
+            </Button>
+          </div>
         </Form.Item>
         <Form.Item :label="$t('system.employee.form.salary')" required>
           <InputNumber

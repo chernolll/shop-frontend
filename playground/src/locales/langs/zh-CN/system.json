@@ -84,7 +84,8 @@
       "edit": "编辑"
     },
     "form": {
-      "avatar": "头像链接",
+      "avatar": "头像",
+      "avatar-upload-hint": "支持 JPG/PNG 格式，大小不超过 2MB",
       "country": "国家",
       "department": "部门",
       "employee-no": "员工编号",
@@ -125,7 +126,11 @@
     },
     "empty": "暂无员工数据",
     "messages": {
-      "avatar-required": "请输入头像链接",
+      "avatar-required": "请上传头像",
+      "avatar-format-invalid": "头像仅支持 JPG/PNG 格式",
+      "avatar-size-invalid": "头像大小不能超过 2MB",
+      "avatar-upload-failed": "头像上传失败",
+      "avatar-uploading": "头像上传中...",
       "country-required": "请选择国家",
       "create-success": "员工创建成功",
       "delete-success": "员工 {0} 删除成功",
