@@ -5,6 +5,7 @@ export default defineConfig(async () => {
     application: {},
     vite: {
       server: {
+        allowedHosts: ['assistant-posting-junior-tongue.trycloudflare.com'],
         proxy: {
           '/api': {
             changeOrigin: true,

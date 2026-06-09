@@ -1,45 +1,124 @@
 <script lang="ts" setup>
-import type { BdAnalyticsApi } from '#/api';
+import type { BdDashboardApi } from '#/api';
 
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import { Page } from '@vben/common-ui';
 import { IconifyIcon } from '@vben/icons';
 import { usePreferences } from '@vben/preferences';
 
-import { Card, Empty, Skeleton } from 'ant-design-vue';
+import {
+  Card,
+  DatePicker,
+  Empty,
+  Progress,
+  Radio,
+  Skeleton,
+} from 'ant-design-vue';
 
-import { getBDAnalytics } from '#/api';
+import { getBdDashboard } from '#/api';
 import { $t } from '#/locales';
 
 const { isDark } = usePreferences();
 const loading = ref(true);
 const mounted = ref(false);
-const data = ref<BdAnalyticsApi.BDAnalyticsResult | null>(null);
+const data = ref<BdDashboardApi.DashboardResult | null>(null);
 
-onMounted(async () => {
+// --- Time Range ---
+type TimePreset = 'custom' | 'this_month' | 'this_week' | 'today';
+
+const timeRange = ref<TimePreset>('this_month');
+const customRange = ref<any>();
+
+const RADIO_OPTIONS: { label: string; value: TimePreset }[] = [
+  { label: '本月', value: 'this_month' },
+  { label: '本周', value: 'this_week' },
+  { label: '今日', value: 'today' },
+  { label: '自定义', value: 'custom' },
+];
+
+// --- Fetch ---
+async function fetchDashboard() {
+  loading.value = true;
   try {
-    data.value = await getBDAnalytics();
+    const params: BdDashboardApi.DashboardParams = {
+      time_range: timeRange.value,
+    };
+    if (
+      timeRange.value === 'custom' &&
+      customRange.value?.[0] &&
+      customRange.value?.[1]
+    ) {
+      params.start_time = Number(customRange.value[0].valueOf());
+      params.end_time = Number(customRange.value[1].valueOf());
+    }
+    data.value = await getBdDashboard(params);
   } catch {
     data.value = null;
   } finally {
     loading.value = false;
-    // Trigger enter animations after mount
-    requestAnimationFrame(() => {
-      mounted.value = true;
-    });
+    if (!mounted.value) {
+      requestAnimationFrame(() => {
+        mounted.value = true;
+      });
+    }
+  }
+}
+
+onMounted(() => {
+  fetchDashboard();
+});
+
+watch(timeRange, (val) => {
+  if (val !== 'custom') {
+    customRange.value = undefined;
+    fetchDashboard();
   }
 });
 
-const kolRanking = computed(() => data.value?.kol_sales_ranking ?? []);
-const bdRanking = computed(() => data.value?.bd_sales_ranking ?? []);
+watch(customRange, (val) => {
+  if (timeRange.value === 'custom' && val?.[0] && val?.[1]) {
+    fetchDashboard();
+  }
+});
+
+// --- Derived ---
+const overview = computed(() => data.value?.overview);
+
+const kolRanking = computed(() => data.value?.kol_rank ?? []);
+const bdRanking = computed(() => data.value?.bd_rank ?? []);
 const kolRest = computed(() => kolRanking.value.slice(3));
 
+// SOP segmented progress: running / completed / terminated
+const sopSegments = computed(() => {
+  const running = overview.value?.sop_running ?? 0;
+  const completed = overview.value?.sop_completed ?? 0;
+  const terminated = overview.value?.sop_terminated ?? 0;
+  const total = running + completed + terminated;
+  if (total <= 0) return { running: 0, completed: 0, terminated: 0, total: 0 };
+  return {
+    completed: Math.round((completed / total) * 100),
+    running: Math.round((running / total) * 100),
+    terminated: Math.round((terminated / total) * 100),
+    total,
+  };
+});
+
+function recycleRateColor(rate: number): string {
+  if (rate >= 80) return '#22c55e';
+  if (rate >= 50) return '#f59e0b';
+  return '#ef4444';
+}
+
+// --- Formatting ---
 function formatCurrency(value: number): string {
   if (value >= 10_000) {
     return `฿${(value / 10_000).toFixed(1)}万`;
   }
-  return `฿${value.toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;
+  return `฿${value.toLocaleString('zh-CN', {
+    maximumFractionDigits: 0,
+    minimumFractionDigits: 0,
+  })}`;
 }
 
 function formatCompactCurrency(value: number): string {
@@ -57,9 +136,10 @@ function formatCompactCurrency(value: number): string {
   <Page auto-content-height>
     <!-- Loading skeleton -->
     <div v-if="loading" class="space-y-6">
+      <Skeleton active :paragraph="{ rows: 0 }" :title="{ width: '30%' }" />
       <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Skeleton
-          v-for="i in 4"
+          v-for="i in 8"
           :key="i"
           active
           :paragraph="{ rows: 1 }"
@@ -90,7 +170,29 @@ function formatCompactCurrency(value: number): string {
       :class="{ 'animate-ready': mounted, dark: isDark }"
       class="analytics-root space-y-6"
     >
-      <!-- Stat cards: mobile 2-col → lg 4-col -->
+      <!-- ================================================================
+           Time Range Filter
+           ================================================================ -->
+      <div class="flex flex-wrap items-center gap-4">
+        <Radio.Group
+          v-model:value="timeRange"
+          :options="RADIO_OPTIONS"
+          option-type="button"
+          button-style="solid"
+          size="small"
+        />
+        <DatePicker.RangePicker
+          v-if="timeRange === 'custom'"
+          v-model:value="customRange"
+          size="small"
+          class="!w-[260px]"
+          :placeholder="['开始日期', '结束日期']"
+        />
+      </div>
+
+      <!-- ================================================================
+           Row 1 — Core KPIs (4 cols)
+           ================================================================ -->
       <div class="stat-grid">
         <!-- Monthly GMV -->
         <Card :bordered="false" class="analytics-card enter-y">
@@ -103,7 +205,7 @@ function formatCompactCurrency(value: number): string {
                 {{ $t('page.bd.analytics.monthly-gmv') }}
               </div>
               <div class="card-value">
-                {{ formatCurrency(data.monthly_gmv) }}
+                {{ formatCurrency(overview?.month_gmv ?? 0) }}
               </div>
               <div class="card-sub">
                 {{ $t('page.bd.analytics.monthly-gmv-sub') }}
@@ -112,7 +214,7 @@ function formatCompactCurrency(value: number): string {
           </div>
         </Card>
 
-        <!-- Monthly completed tasks -->
+        <!-- Completed Tasks -->
         <Card :bordered="false" class="analytics-card enter-y">
           <div class="card-inner">
             <div class="card-icon card-icon-blue">
@@ -123,7 +225,7 @@ function formatCompactCurrency(value: number): string {
                 {{ $t('page.bd.analytics.monthly-tasks') }}
               </div>
               <div class="card-value">
-                {{ data.monthly_completed_tasks }}
+                {{ overview?.completed_task_count ?? 0 }}
               </div>
               <div class="card-sub">
                 {{ $t('page.bd.analytics.monthly-tasks-sub') }}
@@ -132,21 +234,21 @@ function formatCompactCurrency(value: number): string {
           </div>
         </Card>
 
-        <!-- Deadline 14 days -->
+        <!-- Total Active Tasks -->
         <Card :bordered="false" class="analytics-card enter-y">
           <div class="card-inner">
-            <div class="card-icon card-icon-amber">
-              <IconifyIcon icon="mdi:clock-alert-outline" class="size-5" />
+            <div class="card-icon card-icon-blue">
+              <IconifyIcon icon="mdi:clipboard-list-outline" class="size-5" />
             </div>
             <div class="card-text">
               <div class="card-label">
-                {{ $t('page.bd.analytics.deadline-14d') }}
+                {{ $t('page.bd.analytics.total-tasks') }}
               </div>
-              <div class="card-value card-value-amber">
-                {{ data.deadline_14days_tasks }}
+              <div class="card-value">
+                {{ overview?.total_task_count ?? 0 }}
               </div>
               <div class="card-sub">
-                {{ $t('page.bd.analytics.deadline-14d-sub') }}
+                {{ $t('page.bd.analytics.total-tasks-sub') }}
               </div>
             </div>
           </div>
@@ -163,7 +265,7 @@ function formatCompactCurrency(value: number): string {
                 {{ $t('page.bd.analytics.total-kols') }}
               </div>
               <div class="card-value">
-                {{ data.total_kols }}
+                {{ overview?.kol_total ?? 0 }}
               </div>
               <div class="card-sub">
                 {{ $t('page.bd.analytics.total-kols-sub') }}
@@ -173,7 +275,225 @@ function formatCompactCurrency(value: number): string {
         </Card>
       </div>
 
-      <!-- Ranking sections: mobile 1-col → lg 2-col -->
+      <!-- ================================================================
+           Row 2 — SOP Status + Deadline Warning (4 cols)
+           ================================================================ -->
+      <div class="stat-grid">
+        <!-- Deadline 14 Days — Warning -->
+        <Card :bordered="false" class="analytics-card enter-y card-warning">
+          <div class="card-inner">
+            <div class="card-icon card-icon-amber">
+              <IconifyIcon icon="mdi:clock-alert-outline" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.deadline-14d') }}
+              </div>
+              <div class="card-value card-value-amber">
+                {{ overview?.deadline_14days ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.deadline-14d-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- SOP Running -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-teal">
+              <IconifyIcon icon="mdi:progress-check" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.sop-running') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.sop_running ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.sop-running-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- SOP Completed -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-green">
+              <IconifyIcon icon="mdi:check-all" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.sop-completed') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.sop_completed ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.sop-completed-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- SOP Terminated -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-red">
+              <IconifyIcon icon="mdi:cancel" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.sop-terminated') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.sop_terminated ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.sop-terminated-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <!-- SOP Segmented Progress Bar -->
+      <div v-if="sopSegments.total > 0" class="sop-segmented-bar enter-y">
+        <div class="sop-segmented-header">
+          <span class="sop-segmented-label">
+            SOP
+            {{ overview?.sop_total ?? sopSegments.total }}
+          </span>
+          <span class="sop-segmented-legend">
+            <span class="legend-dot legend-dot-running"></span>
+            {{ overview?.sop_running ?? 0 }} 进行中
+            <span class="legend-dot legend-dot-completed"></span>
+            {{ overview?.sop_completed ?? 0 }} 已完成
+            <span class="legend-dot legend-dot-terminated"></span>
+            {{ overview?.sop_terminated ?? 0 }} 已终止
+          </span>
+        </div>
+        <div class="sop-segmented-track">
+          <div
+            v-if="sopSegments.running > 0"
+            class="sop-segmented-fill sop-fill-running"
+            :style="{ width: `${sopSegments.running}%` }"
+          ></div>
+          <div
+            v-if="sopSegments.completed > 0"
+            class="sop-segmented-fill sop-fill-completed"
+            :style="{ width: `${sopSegments.completed}%` }"
+          ></div>
+          <div
+            v-if="sopSegments.terminated > 0"
+            class="sop-segmented-fill sop-fill-terminated"
+            :style="{ width: `${sopSegments.terminated}%` }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- ================================================================
+           Row 3 — Shipment & Video (4 cols)
+           ================================================================ -->
+      <div class="stat-grid">
+        <!-- Shipment Count -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-indigo">
+              <IconifyIcon icon="mdi:package-variant-closed" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.shipment-count') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.shipment_count ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.shipment-count-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Shipment Wait Receive -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-indigo">
+              <IconifyIcon icon="mdi:truck-delivery-outline" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.shipment-wait-receive') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.shipment_wait_receive ?? 0 }}
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.shipment-wait-receive-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Video Wait Recycle -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner">
+            <div class="card-icon card-icon-violet">
+              <IconifyIcon icon="mdi:filmstrip-box-multiple" class="size-5" />
+            </div>
+            <div class="card-text">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.video-wait-recycle') }}
+              </div>
+              <div class="card-value">
+                {{ overview?.video_wait_recycle ?? 0 }}
+                <span class="card-value-suffix">
+                  / {{ overview?.video_total_recycle ?? 0 }}
+                </span>
+              </div>
+              <div class="card-sub">
+                {{ $t('page.bd.analytics.video-wait-recycle-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <!-- Recycle Rate — Circular Progress -->
+        <Card :bordered="false" class="analytics-card enter-y">
+          <div class="card-inner card-inner-recycle">
+            <Progress
+              type="circle"
+              :percent="overview?.recycle_rate ?? 0"
+              :stroke-color="recycleRateColor(overview?.recycle_rate ?? 0)"
+              :width="72"
+              :stroke-width="8"
+              :format="(p?: number) => `${(p ?? 0).toFixed(1)}%`"
+            >
+              <template #default>
+                <span class="recycle-percent-label">
+                  {{ (overview?.recycle_rate ?? 0).toFixed(1) }}%
+                </span>
+              </template>
+            </Progress>
+            <div class="card-text ml-3">
+              <div class="card-label">
+                {{ $t('page.bd.analytics.recycle-rate') }}
+              </div>
+              <div class="card-sub !mt-1">
+                {{ $t('page.bd.analytics.recycle-rate-sub') }}
+              </div>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <!-- ================================================================
+           Row 4 — Rankings (2 cols)
+           ================================================================ -->
       <div class="ranking-grid">
         <!-- KOL Sales Ranking -->
         <Card
@@ -399,11 +719,30 @@ function formatCompactCurrency(value: number): string {
   --icon-blue-fg: #3b82f6;
   --icon-amber-bg: #fffbeb;
   --icon-amber-fg: #f59e0b;
+  --icon-teal-bg: #f0fdfa;
+  --icon-teal-fg: #14b8a6;
+  --icon-green-bg: #f0fdf4;
+  --icon-green-fg: #22c55e;
+  --icon-red-bg: #fef2f2;
+  --icon-red-fg: #ef4444;
+  --icon-indigo-bg: #eef2ff;
+  --icon-indigo-fg: #6366f1;
+  --icon-violet-bg: #f5f3ff;
+  --icon-violet-fg: #8b5cf6;
 
   /* Card surfaces */
   --card-border-color: #e5e7eb;
   --card-shadow: 0 1px 3px rgb(0 0 0 / 4%);
   --card-shadow-hover: 0 8px 24px rgb(0 0 0 / 8%);
+
+  /* Warning card */
+  --card-warning-bg: #fff7ed;
+  --card-warning-border: #fdba74;
+
+  /* SOP segmented bar */
+  --seg-running: #0ea5e9;
+  --seg-completed: #22c55e;
+  --seg-terminated: #94a3b8;
 
   /* Podium block gold */
   --podium-gold-stop-1: #fbbf24;
@@ -464,9 +803,24 @@ function formatCompactCurrency(value: number): string {
   --icon-blue-fg: #60a5fa;
   --icon-amber-bg: #3d2e0a;
   --icon-amber-fg: #fbbf24;
+  --icon-teal-bg: #134e4a;
+  --icon-teal-fg: #2dd4bf;
+  --icon-green-bg: #14532d;
+  --icon-green-fg: #4ade80;
+  --icon-red-bg: #450a0a;
+  --icon-red-fg: #f87171;
+  --icon-indigo-bg: #1e1b4b;
+  --icon-indigo-fg: #818cf8;
+  --icon-violet-bg: #2e1065;
+  --icon-violet-fg: #a78bfa;
   --card-border-color: #1e293b;
   --card-shadow: 0 1px 3px rgb(0 0 0 / 20%);
   --card-shadow-hover: 0 8px 24px rgb(0 0 0 / 40%);
+  --card-warning-bg: #3d2e0a;
+  --card-warning-border: #92400e;
+  --seg-running: #38bdf8;
+  --seg-completed: #4ade80;
+  --seg-terminated: #64748b;
 
   /* Gold pops brighter against dark bg */
   --podium-gold-stop-1: #fcd34d;
@@ -578,6 +932,12 @@ function formatCompactCurrency(value: number): string {
   }
 }
 
+/* Warning card — amber background */
+.card-warning {
+  background: var(--card-warning-bg) !important;
+  border-color: var(--card-warning-border) !important;
+}
+
 /* ================================================
    Card Inner
    ================================================ */
@@ -591,6 +951,11 @@ function formatCompactCurrency(value: number): string {
   .card-inner {
     gap: 16px;
   }
+}
+
+/* Recycle rate card — row layout with circle progress */
+.card-inner-recycle {
+  align-items: center;
 }
 
 .card-icon {
@@ -619,6 +984,31 @@ function formatCompactCurrency(value: number): string {
 .card-icon-amber {
   color: var(--icon-amber-fg);
   background: var(--icon-amber-bg);
+}
+
+.card-icon-teal {
+  color: var(--icon-teal-fg);
+  background: var(--icon-teal-bg);
+}
+
+.card-icon-green {
+  color: var(--icon-green-fg);
+  background: var(--icon-green-bg);
+}
+
+.card-icon-red {
+  color: var(--icon-red-fg);
+  background: var(--icon-red-bg);
+}
+
+.card-icon-indigo {
+  color: var(--icon-indigo-fg);
+  background: var(--icon-indigo-bg);
+}
+
+.card-icon-violet {
+  color: var(--icon-violet-fg);
+  background: var(--icon-violet-bg);
 }
 
 .card-text {
@@ -660,6 +1050,18 @@ function formatCompactCurrency(value: number): string {
   color: #fbbf24;
 }
 
+.card-value-suffix {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-sub);
+}
+
+@media (min-width: 768px) {
+  .card-value-suffix {
+    font-size: 16px;
+  }
+}
+
 .card-sub {
   margin-top: 2px;
   font-size: 10px;
@@ -671,6 +1073,107 @@ function formatCompactCurrency(value: number): string {
   .card-sub {
     font-size: 11px;
   }
+}
+
+/* ================================================
+   SOP Segmented Progress Bar
+   ================================================ */
+.sop-segmented-bar {
+  padding: 0 2px;
+}
+
+.sop-segmented-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.sop-segmented-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-value);
+}
+
+.sop-segmented-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-sub);
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.legend-dot-running {
+  background: var(--seg-running);
+}
+
+.legend-dot-completed {
+  background: var(--seg-completed);
+}
+
+.legend-dot-terminated {
+  background: var(--seg-terminated);
+}
+
+.sop-segmented-track {
+  display: flex;
+  height: 12px;
+  overflow: hidden;
+  background: hsl(var(--border) / 25%);
+  border-radius: 6px;
+}
+
+.sop-segmented-fill {
+  height: 100%;
+  transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.sop-fill-running {
+  background: var(--seg-running);
+  border-radius: 6px 0 0 6px;
+}
+
+.sop-fill-completed {
+  background: var(--seg-completed);
+}
+
+.sop-fill-terminated {
+  background: var(--seg-terminated);
+  border-radius: 0 6px 6px 0;
+}
+
+/* First segment should have left radius */
+.sop-fill-running:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+/* Last segment should have right radius */
+.sop-segmented-fill:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+/* Only one segment: full radius */
+.sop-segmented-fill:only-child {
+  border-radius: 6px;
+}
+
+/* ================================================
+   Recycle Rate
+   ================================================ */
+.recycle-percent-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-value);
 }
 
 /* ================================================
