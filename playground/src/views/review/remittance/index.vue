@@ -64,6 +64,7 @@ const uploadFileList = ref<UploadFile[]>([]);
 const previewModalOpen = ref(false);
 const previewImageSrc = ref('');
 const previewImageTitle = ref('');
+const paymentFileIds = ref<number[]>([]);
 
 const reviewForm = reactive<{
   amount: number | undefined;
@@ -260,12 +261,18 @@ async function handleReview(
     const list: ReviewRemittanceApi.ReviewItem[] = reviewTargetRows.value.map(
       (row) => {
         const base: ReviewRemittanceApi.ReviewItem = {
-          reason: reviewForm.review_remark?.trim() || undefined,
+          review_remark: reviewForm.review_remark?.trim() || undefined,
           remittance_id: row.remittance_id,
         };
         if (action === 'review') {
           base.status = reviewForm.status;
           base.amount = reviewForm.amount;
+        }
+        if (action === 'payment') {
+          base.payment_attachment_file_ids =
+            paymentFileIds.value.length > 0
+              ? [...paymentFileIds.value]
+              : undefined;
         }
         return base;
       },
@@ -300,6 +307,7 @@ function openReviewModal(
   reviewForm.status = ReviewRemittanceApi.RemittanceStatus.APPROVED;
   reviewModalMode.value = mode;
   uploadFileList.value = [];
+  paymentFileIds.value = [];
   reviewTargetRows.value = row ? [row] : [...selectedRows.value];
   reviewModalOpen.value = true;
 }
@@ -361,19 +369,26 @@ async function handleCustomRequest(options: any) {
   const { file, onSuccess, onError } = options;
   try {
     const uploadUrlResult = await getFileUploadUrl({
+      biz_type: 'remittance-images',
+      content_type: file.type || 'application/octet-stream',
       file_name: file.name,
-      content_type: file.type,
     });
-    const { upload_url, access_url } = uploadUrlResult;
+    const { upload_url, file_key, file_name, headers, method } =
+      uploadUrlResult;
     const uploadResponse = await fetch(upload_url, {
-      method: 'PUT',
+      method: method || 'PUT',
       body: file,
+      headers,
     });
     if (!uploadResponse.ok) {
       throw new Error('Upload failed');
     }
-    await registerUploadedFile({ url: access_url } as any);
-    onSuccess({ url: access_url }, file);
+    const registeredFile = await registerUploadedFile({
+      file_key,
+      file_name,
+    });
+    paymentFileIds.value = [...paymentFileIds.value, registeredFile.id];
+    onSuccess({ id: registeredFile.id, file_key }, file);
   } catch (error: any) {
     onError(error);
   }
@@ -950,9 +965,7 @@ const [Grid, gridApi] = useVbenVxeGrid({
     <Modal
       v-model:open="reviewModalOpen"
       :title="reviewModalTitle"
-      :on-before-ok="
-        () => handleReview(isPaymentMode ? 'payment' : 'review', () => {})
-      "
+      @ok="handleReview(isPaymentMode ? 'payment' : 'review', () => {})"
       :ok-button-props="{
         loading: reviewSubmitting,
         disabled: reviewSubmitting,

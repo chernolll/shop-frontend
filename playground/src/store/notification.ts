@@ -179,10 +179,6 @@ export const useNotificationStore = defineStore('notification', () => {
     for (const { event, data } of completeEvents) {
       try {
         switch (event) {
-          case 'heartbeat': {
-            // 忽略心跳
-            break;
-          }
           case 'notification': {
             const item: NotificationApi.MessageItem = JSON.parse(data);
             prependMessage(item);
@@ -198,8 +194,13 @@ export const useNotificationStore = defineStore('notification', () => {
             break;
           }
         }
-      } catch {
-        // JSON 解析失败，忽略该事件
+      } catch (error) {
+        console.error(
+          '[NotificationStore] SSE event parse error:',
+          event,
+          data,
+          error,
+        );
       }
     }
   }
@@ -250,7 +251,9 @@ export const useNotificationStore = defineStore('notification', () => {
         ...filters,
       });
 
-      const notificationItems = result.list.map((element) => mapMessageToNotificationItem(element));
+      const notificationItems = result.list.map((element) =>
+        mapMessageToNotificationItem(element),
+      );
 
       if (page === 1) {
         // 第一页：替换列表
@@ -274,6 +277,8 @@ export const useNotificationStore = defineStore('notification', () => {
         audit: unreadCounts.value.audit,
         message: unreadCounts.value.message,
       });
+    } catch (error) {
+      console.error('[NotificationStore] fetchMessages failed:', error);
     } finally {
       listLoading.value = false;
     }
@@ -284,8 +289,8 @@ export const useNotificationStore = defineStore('notification', () => {
     try {
       const result = await getUnreadCount();
       unreadCounts.value = result;
-    } catch {
-      // 静默失败，不阻塞 UI
+    } catch (error) {
+      console.error('[NotificationStore] fetchUnreadCounts failed:', error);
     }
   }
 
@@ -466,8 +471,9 @@ export const useNotificationStore = defineStore('notification', () => {
         // SSE 连接正常结束
         handleSseEnd();
       })
-      .catch(() => {
+      .catch((error) => {
         // 连接失败（非主动断开）
+        console.error('[NotificationStore] SSE connection failed:', error);
         handleSseEnd();
       });
 
@@ -492,6 +498,30 @@ export const useNotificationStore = defineStore('notification', () => {
     sseConnected.value = false;
     sseBuffer = '';
     reconnectDelay = 3000;
+  }
+
+  /** Pinia $reset() — setup store 需手动实现，供 logout 时 resetAllStores() 调用 */
+  function $reset() {
+    disconnectSSE();
+    messages.value = [];
+    unreadCounts.value = {
+      total: 0,
+      system: 0,
+      task: 0,
+      audit: 0,
+      message: 0,
+    };
+    settings.value = {
+      accountPassword: true,
+      systemMessage: true,
+      todoTask: true,
+      emailEnabled: false,
+      smsEnabled: false,
+    };
+    listTotal.value = 0;
+    listLoading.value = false;
+    settingsLoading.value = false;
+    currentPage.value = 1;
   }
 
   // ---------- 导出 ----------
@@ -521,5 +551,6 @@ export const useNotificationStore = defineStore('notification', () => {
     connectSSE,
     disconnectSSE,
     prependMessage,
+    $reset,
   };
 });

@@ -294,6 +294,7 @@
         "status-label": "目标状态"
       },
       "payment-modal": {
+        "amount-placeholder": "请输入汇款金额",
         "attachments-label": "付款截图",
         "description": "为选中的 {0} 条汇款申请补充付款截图。",
         "title": "补付款截图",

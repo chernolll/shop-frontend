@@ -56,27 +56,26 @@ export namespace NotificationApi {
   }
 }
 
-/** 分页获取通知列表 */
+/** 分页获取消息列表 */
 export async function getNotificationList(
   params: NotificationApi.MessageListParams,
 ) {
-  return requestClient.get<NotificationApi.MessageListResult>(
-    '/notifications',
-    { params },
-  );
+  return requestClient.get<NotificationApi.MessageListResult>('/messages', {
+    params,
+  });
 }
 
 /** 获取各类型未读数量 */
 export async function getUnreadCount() {
   return requestClient.get<NotificationApi.UnreadCounts>(
-    '/notifications/unread-count',
+    '/messages/unread-count',
   );
 }
 
-/** 标记单条通知已读 */
+/** 标记单条消息已读 */
 export async function markNotificationRead(id: number) {
   return requestClient.put<{ readAt: number; success: boolean }>(
-    `/notifications/${id}/read`,
+    `/messages/${id}/read`,
   );
 }
 
@@ -85,22 +84,22 @@ export async function markAllNotificationsRead(data?: {
   type?: NotificationApi.MessageType;
 }) {
   return requestClient.put<{ affectedCount: number }>(
-    '/notifications/read-all',
+    '/messages/read-all',
     data,
   );
 }
 
-/** 删除单条通知 */
+/** 删除单条消息 */
 export async function deleteNotification(id: number) {
-  return requestClient.delete<{ success: boolean }>(`/notifications/${id}`);
+  return requestClient.delete<{ success: boolean }>(`/messages/${id}`);
 }
 
-/** 清空通知（按类型可选） */
+/** 清空消息（按类型可选） */
 export async function clearNotifications(data?: {
   type?: NotificationApi.MessageType;
 }) {
   return requestClient.delete<{ deletedCount: number }>(
-    '/notifications/clear',
+    '/messages/clear',
     data ? { data } : undefined,
   );
 }
@@ -108,7 +107,7 @@ export async function clearNotifications(data?: {
 /** 获取用户通知偏好设置 */
 export async function getNotificationSettings() {
   return requestClient.get<NotificationApi.MessageSettings>(
-    '/notifications/settings',
+    '/messages/settings',
   );
 }
 
@@ -116,13 +115,10 @@ export async function getNotificationSettings() {
 export async function updateNotificationSettings(
   data: Partial<NotificationApi.MessageSettings>,
 ) {
-  return requestClient.put<{ success: boolean }>(
-    '/notifications/settings',
-    data,
-  );
+  return requestClient.put<{ success: boolean }>('/messages/settings', data);
 }
 
 /** 建立 SSE 实时推送连接 */
 export async function connectNotificationStream(options: SseRequestOptions) {
-  return requestClient.postSSE('/notifications/stream', {}, options);
+  return requestClient.postSSE('/messages/stream', {}, options);
 }

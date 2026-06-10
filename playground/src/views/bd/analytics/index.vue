@@ -363,10 +363,10 @@ function formatCompactCurrency(value: number): string {
       <!-- SOP Segmented Progress Bar -->
       <div v-if="sopSegments.total > 0" class="sop-segmented-bar enter-y">
         <div class="sop-segmented-header">
-          <span class="sop-segmented-label">
+          <!-- <span class="sop-segmented-label">
             SOP
             {{ overview?.sop_total ?? sopSegments.total }}
-          </span>
+          </span> -->
           <span class="sop-segmented-legend">
             <span class="legend-dot legend-dot-running"></span>
             {{ overview?.sop_running ?? 0 }} 进行中
@@ -1087,7 +1087,7 @@ function formatCompactCurrency(value: number): string {
   flex-wrap: wrap;
   gap: 8px 16px;
   align-items: baseline;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-bottom: 8px;
 }
 

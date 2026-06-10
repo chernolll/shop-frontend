@@ -218,16 +218,10 @@ onMounted(() => {
             :key="tab.key"
             class="notif-pill"
             :class="{ 'notif-pill--active': activeType === tab.key }"
-            :style="
-              activeType === tab.key
-                ? {
-                    '--pill-color':
-                      tab.key === 'all'
-                        ? '#1677ff'
-                        : getTypeConfig(tab.key).color,
-                  }
-                : {}
-            "
+            :style="{
+              '--pill-color':
+                tab.key === 'all' ? '#1677ff' : getTypeConfig(tab.key).color,
+            }"
             @click="handleTypeChange(tab.key)"
           >
             {{ tab.label }}
@@ -276,8 +270,12 @@ onMounted(() => {
           >
             <div class="notif-skeleton__avatar"></div>
             <div class="notif-skeleton__body">
-              <div class="notif-skeleton__line notif-skeleton__line--title"></div>
-              <div class="notif-skeleton__line notif-skeleton__line--text"></div>
+              <div
+                class="notif-skeleton__line notif-skeleton__line--title"
+              ></div>
+              <div
+                class="notif-skeleton__line notif-skeleton__line--text"
+              ></div>
             </div>
           </div>
         </template>
@@ -579,8 +577,6 @@ onMounted(() => {
    ============================== */
 .notif-pill {
   --pill-color: var(--text-color-tertiary);
-  --pill-bg: transparent;
-  --pill-border: var(--border-color);
 
   display: inline-flex;
   gap: 6px;
@@ -597,15 +593,24 @@ onMounted(() => {
   transition: all var(--notif-transition);
 
   &:hover {
-    color: var(--text-color);
-    background: var(--bg-color-container-hover);
+    color: var(--pill-color);
+    background: color-mix(in srgb, var(--pill-color) 6%, transparent);
+    border-color: color-mix(in srgb, var(--pill-color) 20%, transparent);
+    box-shadow: 0 2px 6px color-mix(in srgb, var(--pill-color) 10%, transparent);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    box-shadow: none;
+    transform: translateY(0);
   }
 
   &--active {
     font-weight: 600;
-    color: var(--pill-color);
-    background: color-mix(in srgb, var(--pill-color) 8%, transparent);
-    border-color: color-mix(in srgb, var(--pill-color) 25%, transparent);
+    color: #fff;
+    background: var(--pill-color);
+    border-color: var(--pill-color);
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--pill-color) 30%, transparent);
   }
 }
 
@@ -613,31 +618,51 @@ onMounted(() => {
    Segmented Control (已读/未读)
    ============================== */
 .notif-segment {
+  --segment-accent: #1677ff;
+
   display: inline-flex;
-  padding: 2px;
-  background: var(--bg-color-container-hover);
-  border-radius: var(--notif-radius-sm);
+  gap: 4px;
+  align-items: center;
 
   &__btn {
-    padding: 4px 12px;
-    font-size: 12px;
+    padding: 3px 14px;
+    font-size: 13px;
     font-weight: 500;
-    color: var(--text-color-tertiary);
+    color: var(--text-color-secondary);
     cursor: pointer;
-    background: transparent;
-    border: none;
-    border-radius: 6px;
+    user-select: none;
+    background: var(--bg-color-container);
+    border: 1px solid var(--border-color);
+    border-radius: var(--notif-radius-pill);
     transition: all var(--notif-transition);
 
     &:hover {
-      color: var(--text-color);
+      color: var(--segment-accent);
+      background: color-mix(in srgb, var(--segment-accent) 6%, transparent);
+      border-color: color-mix(in srgb, var(--segment-accent) 20%, transparent);
+      box-shadow: 0 2px 6px
+        color-mix(in srgb, var(--segment-accent) 10%, transparent);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      box-shadow: none;
+      transform: translateY(0);
     }
 
     &--active {
       font-weight: 600;
-      color: var(--text-color);
-      background: var(--bg-color-container);
-      box-shadow: var(--notif-shadow-sm);
+      color: #fff;
+      background: var(--segment-accent);
+      border-color: var(--segment-accent);
+      box-shadow: 0 2px 8px
+        color-mix(in srgb, var(--segment-accent) 30%, transparent);
+
+      &:hover {
+        color: #fff;
+        background: var(--segment-accent);
+        transform: none;
+      }
     }
   }
 }

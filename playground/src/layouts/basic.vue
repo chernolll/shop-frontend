@@ -150,8 +150,14 @@ onBeforeMount(() => {
   }
 });
 
-// 通知：初始加载 + SSE 连接
+// 通知：初始加载 + SSE 连接（需 token 就绪，否则 401 会触发注销）
 onMounted(async () => {
+  if (!accessStore.accessToken) {
+    console.warn(
+      '[BasicLayout] accessToken not available, skipping notification init',
+    );
+    return;
+  }
   await notificationStore.fetchMessages(1);
   notificationStore.connectSSE();
 });

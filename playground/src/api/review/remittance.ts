@@ -8,6 +8,11 @@ export namespace ReviewRemittanceApi {
     ABANDONED = 3,
   }
 
+  export enum ApprovalStatus {
+    UNAPPROVED = 0,
+    APPROVED = 1,
+  }
+
   export enum SopStatus {
     CONTACT = 0,
     SAMPLE = 1,
@@ -47,6 +52,7 @@ export namespace ReviewRemittanceApi {
     payee_name: string;
     payment_attachment_count: number;
     payment_attachments: AttachmentItem[];
+    payment_status?: ApprovalStatus;
     product_listing_id: number;
     product_url: string;
     remark: null | string;

@@ -294,6 +294,7 @@
         "status-label": "Target Status"
       },
       "payment-modal": {
+        "amount-placeholder": "Please enter the remittance amount",
         "attachments-label": "Payment Screenshots",
         "description": "Add payment screenshots for {0} selected remittance request(s).",
         "title": "Add Payment Screenshots",

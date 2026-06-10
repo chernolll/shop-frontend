@@ -110,7 +110,7 @@ function setupAccessGuard(router: Router) {
     if (from.query.redirect) {
       redirectPath = from.query.redirect as string;
     } else if (to.fullPath === preferences.app.defaultHomePath) {
-      redirectPath = preferences.app.defaultHomePath;
+      redirectPath = userInfo.homePath || preferences.app.defaultHomePath;
     } else if (userInfo.homePath && to.fullPath === userInfo.homePath) {
       redirectPath = userInfo.homePath;
     } else {
