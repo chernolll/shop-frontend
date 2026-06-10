@@ -98,6 +98,17 @@ const routes: RouteRecordRaw[] = [
           authority: [RoleEnum.BD],
         },
       },
+      // 兼容旧路由 /bd/kols → 达人池
+      {
+        name: 'BD-Kols-Legacy',
+        path: '/bd/kols',
+        redirect: '/bd/kol-pool',
+        meta: {
+          hideInMenu: true,
+          hideInTab: true,
+          authority: [RoleEnum.BD],
+        },
+      },
       // 达人池（BD 查看并认领）
       {
         name: 'BD-KolPool',

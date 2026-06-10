@@ -23,6 +23,7 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { getFileUploadUrl, registerUploadedFile } from '#/api/core';
 import {
   AdminEmployeeApi,
   createAdminEmployee,
@@ -31,7 +32,6 @@ import {
   getAdminEmployeeList,
   updateAdminEmployee,
 } from '#/api/system/admin-employee';
-import { getFileUploadUrl, registerUploadedFile } from '#/api/core';
 import { $t } from '#/locales';
 
 import { useAdminDepartmentSelect } from '../shared/useAdminDepartmentSelect';
@@ -104,7 +104,7 @@ function clearAvatar() {
   currentAvatarUrl.value = '';
 }
 
-async function uploadAvatar(): Promise<string | null> {
+async function uploadAvatar(): Promise<null | string> {
   if (!avatarFile.value) return null;
 
   avatarUploading.value = true;
