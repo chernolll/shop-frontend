@@ -27,6 +27,10 @@ export namespace AdminBdPersonApi {
     leave_time: null | number;
     post_id: null | number;
     post_name: null | string;
+    prepare_kol_count: number;
+    total_gmv: number;
+    total_kol_count: number;
+    total_video_count: number;
     updated_at: number;
   }
 
@@ -52,6 +56,19 @@ export namespace AdminBdPersonApi {
 
   export interface DeleteResult {
     id: number;
+  }
+
+  // --- Release Departed BD's KOLs ---
+
+  export interface ReleaseDepartedBDParams {
+    bd_code: string;
+  }
+
+  export interface ReleaseDepartedBDResult {
+    bd_code: string;
+    released_count: number;
+    skipped_count: number;
+    total_kols: number;
   }
 }
 
@@ -85,5 +102,15 @@ export async function deleteAdminBdPerson(
     {
       params,
     },
+  );
+}
+
+/** Admin 释放离职BD的筹备达人到达人池 */
+export async function releaseDepartedBDKOLs(
+  data: AdminBdPersonApi.ReleaseDepartedBDParams,
+) {
+  return requestClient.post<AdminBdPersonApi.ReleaseDepartedBDResult>(
+    '/admin/kols/release-departed-bd',
+    data,
   );
 }

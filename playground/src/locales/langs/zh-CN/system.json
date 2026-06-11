@@ -163,6 +163,10 @@
       "employee-no": "员工编号",
       "employee-status": "员工状态",
       "leave-time": "离职时间",
+      "prepare-kol-count": "筹备达人",
+      "total-gmv": "GMV总额",
+      "total-kol-count": "绑定达人",
+      "total-video-count": "视频数量",
       "operation": "操作",
       "post": "岗位",
       "updated-at": "更新时间"
@@ -183,6 +187,13 @@
     "delete": {
       "confirm-content": "确认删除BD绑定 {0} 吗？",
       "confirm-title": "确认删除BD绑定"
+    },
+    "release": {
+      "action": "释放达人",
+      "confirm-content": "将释放 BD代号 {0} 名下所有筹备达人（共 {1} 个）至达人池。存在进行中 SOP 的达人将被自动跳过，确认释放？",
+      "confirm-title": "释放筹备达人",
+      "result-all-released": "{0} 的筹备达人已释放：共 {1} 个，全部释放成功",
+      "result-skipped": "{0} 的筹备达人已释放：共 {1} 个，成功释放 {2} 个，跳过 {3} 个（存在进行中SOP）"
     },
     "empty": "暂无BD人员数据",
     "messages": {

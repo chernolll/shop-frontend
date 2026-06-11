@@ -26,6 +26,7 @@ import {
   createAdminBdPerson,
   deleteAdminBdPerson,
   getAdminBdPersonList,
+  releaseDepartedBDKOLs,
   updateAdminBdPerson,
 } from '#/api/system/admin-bd-person';
 import { AdminEmployeeApi } from '#/api/system/admin-employee';
@@ -168,6 +169,38 @@ function confirmDelete(row: AdminBdPersonApi.BdPersonItem) {
   });
 }
 
+async function confirmReleaseKols(row: AdminBdPersonApi.BdPersonItem) {
+  Modal.confirm({
+    okText: $t('common.confirm'),
+    title: $t('system.bdPerson.release.confirm-title'),
+    content: $t('system.bdPerson.release.confirm-content', [
+      row.bd_code,
+      String(row.prepare_kol_count),
+    ]),
+    async onOk() {
+      const result = await releaseDepartedBDKOLs({ bd_code: row.bd_code });
+      if (result.skipped_count > 0) {
+        message.warning(
+          $t('system.bdPerson.release.result-skipped', [
+            result.bd_code,
+            String(result.total_kols),
+            String(result.released_count),
+            String(result.skipped_count),
+          ]),
+        );
+      } else {
+        message.success(
+          $t('system.bdPerson.release.result-all-released', [
+            result.bd_code,
+            String(result.total_kols),
+          ]),
+        );
+      }
+      await gridApi.query();
+    },
+  });
+}
+
 const formOptions: VbenFormProps = {
   collapsed: true,
   collapsedRows: 1,
@@ -239,6 +272,30 @@ const gridOptions: VxeTableGridOptions<AdminBdPersonApi.BdPersonItem> = {
       minWidth: 140,
       slots: { default: 'post_name' },
       title: $t('system.bdPerson.columns.post'),
+    },
+    {
+      field: 'total_kol_count',
+      minWidth: 120,
+      slots: { default: 'total_kol_count' },
+      title: $t('system.bdPerson.columns.total-kol-count'),
+    },
+    {
+      field: 'prepare_kol_count',
+      minWidth: 120,
+      slots: { default: 'prepare_kol_count' },
+      title: $t('system.bdPerson.columns.prepare-kol-count'),
+    },
+    {
+      field: 'total_video_count',
+      minWidth: 120,
+      slots: { default: 'total_video_count' },
+      title: $t('system.bdPerson.columns.total-video-count'),
+    },
+    {
+      field: 'total_gmv',
+      minWidth: 140,
+      slots: { default: 'total_gmv' },
+      title: $t('system.bdPerson.columns.total-gmv'),
     },
     {
       field: 'leave_time',
@@ -325,6 +382,24 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <span>{{ row.post_name || '-' }}</span>
       </template>
 
+      <template #total_kol_count="{ row }">
+        <span>{{ row.total_kol_count ?? '-' }}</span>
+      </template>
+
+      <template #prepare_kol_count="{ row }">
+        <span>{{ row.prepare_kol_count ?? '-' }}</span>
+      </template>
+
+      <template #total_video_count="{ row }">
+        <span>{{ row.total_video_count ?? '-' }}</span>
+      </template>
+
+      <template #total_gmv="{ row }">
+        <span>{{
+          row.total_gmv != null ? row.total_gmv.toLocaleString() : '-'
+        }}</span>
+      </template>
+
       <template #leave_time="{ row }">
         <span>{{ formatTimestamp(row.leave_time) }}</span>
       </template>
@@ -337,6 +412,14 @@ const [Grid, gridApi] = useVbenVxeGrid({
         <Space size="small">
           <Button type="link" size="small" @click="openEdit(row)">
             {{ $t('system.bdPerson.actions.edit') }}
+          </Button>
+          <Button
+            v-if="row.employee_status === 2 && row.prepare_kol_count > 0"
+            type="link"
+            size="small"
+            @click="confirmReleaseKols(row)"
+          >
+            {{ $t('system.bdPerson.release.action') }}
           </Button>
           <Button danger type="link" size="small" @click="confirmDelete(row)">
             {{ $t('system.bdPerson.actions.delete') }}
