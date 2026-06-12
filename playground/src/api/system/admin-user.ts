@@ -19,6 +19,7 @@ export namespace AdminUserApi {
     id: number;
     last_login_at: null | number;
     real_name: string;
+    remark: null | string;
     role_code: string;
     role_name: string;
     status: 0 | 1;
@@ -36,6 +37,7 @@ export namespace AdminUserApi {
     employee_id?: null | number;
     password: string;
     real_name?: string;
+    remark?: string;
     role_code: string;
     username: string;
   }
@@ -46,6 +48,7 @@ export namespace AdminUserApi {
     employee_id?: null | number;
     id: number;
     real_name?: string;
+    remark?: string;
     role_code?: string;
     status?: 0 | 1;
   }

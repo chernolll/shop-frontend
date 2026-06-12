@@ -75,6 +75,7 @@
       "operation": "操作",
       "phone": "联系电话",
       "post": "岗位",
+      "remark": "备注",
       "status": "员工状态",
       "updated-at": "更新时间"
     },
@@ -273,6 +274,7 @@
       "real-name": "真实姓名",
       "employee-id": "员工ID",
       "role": "角色",
+      "remark": "备注",
       "status": "状态",
       "last-login": "最后登录",
       "created-at": "创建时间",
@@ -303,6 +305,8 @@
       "real-name-placeholder": "请输入真实姓名",
       "employee-id": "员工ID",
       "employee-id-placeholder": "请输入员工ID（可选）",
+      "remark": "备注",
+      "remark-placeholder": "请输入备注（可选）",
       "role": "角色",
       "role-placeholder": "请选择角色",
       "status": "状态"

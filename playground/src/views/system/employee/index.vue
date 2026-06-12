@@ -589,6 +589,12 @@ const gridOptions: VxeTableGridOptions<AdminEmployeeApi.EmployeeItem> = {
       title: $t('system.employee.columns.leave-time'),
     },
     {
+      field: 'remark',
+      minWidth: 160,
+      slots: { default: 'remark' },
+      title: $t('system.employee.columns.remark'),
+    },
+    {
       field: 'updated_at',
       minWidth: 180,
       slots: { default: 'updated_at' },
@@ -681,6 +687,10 @@ const [Grid, gridApi] = useVbenVxeGrid({
 
       <template #leave_time="{ row }">
         <span>{{ formatTimestamp(row.leave_time) }}</span>
+      </template>
+
+      <template #remark="{ row }">
+        <span>{{ row.remark || '-' }}</span>
       </template>
 
       <template #updated_at="{ row }">

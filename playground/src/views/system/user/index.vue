@@ -25,6 +25,7 @@ import {
 } from 'ant-design-vue';
 
 import { useVbenVxeGrid } from '#/adapter/vxe-table';
+import { getAdminEmployeeDetail } from '#/api/system/admin-employee';
 import {
   createAdminUser,
   deleteAdminUser,
@@ -34,7 +35,6 @@ import {
   toggleAdminUserStatus,
   updateAdminUser,
 } from '#/api/system/admin-user';
-import { getAdminEmployeeDetail } from '#/api/system/admin-employee';
 import { $t } from '#/locales';
 
 import { useAdminEmployeeSelect } from '../shared/useAdminEmployeeSelect';
@@ -80,6 +80,7 @@ const formState = reactive<{
   employee_id: null | number;
   password: string;
   real_name: string;
+  remark: string;
   role_code: string | undefined;
   status: 0 | 1;
   username: string;
@@ -87,6 +88,7 @@ const formState = reactive<{
   employee_id: null,
   password: '',
   real_name: '',
+  remark: '',
   role_code: undefined,
   status: 1,
   username: '',
@@ -112,6 +114,7 @@ function resetForm() {
   formState.employee_id = null;
   formState.password = '';
   formState.real_name = '';
+  formState.remark = '';
   formState.role_code = undefined;
   formState.status = 1;
   formState.username = '';
@@ -121,6 +124,7 @@ function assignForm(row: AdminUserApi.ListItem) {
   formState.username = row.username;
   formState.role_code = row.role_code || undefined;
   formState.status = row.status;
+  formState.remark = row.remark || '';
   formState.password = '';
   // employee_id and real_name are handled by employee select + watch
 }
@@ -195,19 +199,22 @@ async function submitForm() {
   try {
     if (isEditMode.value) {
       const payload: AdminUserApi.UpdateParams = {
-        id: editingRow.value!.id,
+        id: editingRow.value?.id || -1,
       };
-      if (formState.real_name !== (editingRow.value!.real_name || '')) {
+      if (formState.real_name !== (editingRow.value?.real_name || '')) {
         payload.real_name = formState.real_name || undefined;
       }
-      if (formState.employee_id !== (editingRow.value!.employee_id || null)) {
+      if (formState.employee_id !== (editingRow.value?.employee_id || null)) {
         payload.employee_id = formState.employee_id;
       }
-      if (formState.role_code !== editingRow.value!.role_code) {
+      if (formState.role_code !== editingRow.value?.role_code) {
         payload.role_code = formState.role_code;
       }
-      if (formState.status !== editingRow.value!.status) {
+      if (formState.status !== editingRow.value?.status) {
         payload.status = formState.status;
+      }
+      if (formState.remark !== (editingRow.value?.remark || '')) {
+        payload.remark = formState.remark || undefined;
       }
       await updateAdminUser(payload);
       message.success($t('system.user.messages.update-success'));
@@ -216,7 +223,8 @@ async function submitForm() {
         employee_id: formState.employee_id,
         password: formState.password,
         real_name: formState.real_name || undefined,
-        role_code: formState.role_code!,
+        remark: formState.remark || undefined,
+        role_code: formState?.role_code || '',
         username: formState.username.trim(),
       });
       message.success($t('system.user.messages.create-success'));
@@ -252,7 +260,7 @@ async function submitResetPassword() {
   resetPwdSubmitting.value = true;
   try {
     await resetAdminUserPassword({
-      id: resetPwdTarget.value!.id,
+      id: resetPwdTarget.value?.id || -1,
       password: resetPwdForm.password,
     });
     message.success($t('system.user.messages.reset-password-success'));
@@ -418,6 +426,12 @@ const gridOptions: VxeTableGridOptions<AdminUserApi.ListItem> = {
       title: $t('system.user.columns.created-at'),
     },
     {
+      field: 'remark',
+      minWidth: 160,
+      slots: { default: 'remark' },
+      title: $t('system.user.columns.remark'),
+    },
+    {
       field: 'operation',
       fixed: 'right',
       minWidth: 280,
@@ -487,6 +501,10 @@ const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
         <span>{{ formatTimestamp(row.created_at) }}</span>
       </template>
 
+      <template #remark="{ row }">
+        <span>{{ row.remark || '-' }}</span>
+      </template>
+
       <template #operation="{ row }">
         <Space size="small" wrap>
           <Button size="small" type="link" @click="openEdit(row)">
@@ -551,6 +569,14 @@ const [Grid, gridApi] = useVbenVxeGrid({ formOptions, gridOptions });
             v-model:value="formState.employee_id"
             v-bind="employeeSelectProps"
             :placeholder="$t('system.user.form.employee-placeholder')"
+          />
+        </FormItem>
+
+        <FormItem :label="$t('system.user.form.remark')">
+          <Input.TextArea
+            v-model:value="formState.remark"
+            :rows="3"
+            :placeholder="$t('system.user.form.remark-placeholder')"
           />
         </FormItem>
 
