@@ -71,6 +71,7 @@ Bug修复:  READ docs/business/<flow>.md → 定位模块 → READ docs/modules/
 - ❌ 页面组件间互相 import
 - ❌ 一次性加载全部文档
 - ❌ 做任务范围外的"顺手重构"
+- ❌ 使用 TypeScript 非空断言 `!` 运算符（禁止 `x!.prop` / `y!()` 等语法，应使用显式判空或可选链替代）
 
 ### 提交规范
 

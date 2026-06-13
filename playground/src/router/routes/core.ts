@@ -37,6 +37,12 @@ const coreRoutes: RouteRecordRaw[] = [
     path: '/',
     redirect: preferences.app.defaultHomePath,
     children: [
+      /** 重定向已废弃的 /analytics 路由到默认首页 */
+      {
+        name: 'AnalyticsRedirect',
+        path: '/analytics',
+        redirect: preferences.app.defaultHomePath,
+      },
       {
         name: 'Notifications',
         path: '/notifications',
